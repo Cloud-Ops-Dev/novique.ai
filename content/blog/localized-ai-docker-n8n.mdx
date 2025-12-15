@@ -1,0 +1,31 @@
+---
+title: "Localized AI with Docker and n8n"
+summary: "Learn how to set up a localized AI solution using Docker, n8n, and Ollama for enhanced privacy and control. Perfect for testing at work without data leaving your local network."
+author: "Mark Howell"
+date: "2024-04-06"
+headerImage: "https://media.licdn.com/mediaD5612AQEG2hLopJjdVw"
+featured: false
+tags: ["AI", "Docker", "Automation", "n8n", "Privacy"]
+---
+
+If you have not yet tried [n8n](https://n8n.io/), you need to check out this workflow automation tool. If you're like me and testing on a home computer, n8n can be installed as a docker image, and can then be used with LLMs in Docker for a localized AI solution that enhances privacy and control.
+
+## What is n8n?
+
+n8n is an open-source, fair-code licensed platform for workflow automation, allowing users to connect over 400 apps and build AI-driven processes without extensive coding. It supports custom scripts in JavaScript and Python, making it versatile for localized AI setups where data privacy is crucial.
+
+## What is Docker and How It Fits with LLMs?
+
+Docker is a containerization platform that packages applications and their dependencies into isolated containers, sharing the host OS kernel for efficiency. This makes it ideal for running both n8n and large language models (LLMs) locally, ensuring they work consistently across different setups.
+
+## Implementing Localized AI
+
+To set up localized AI, use n8n's Self-hosted AI Starter Kit. Clone the repo and run docker-compose up to start n8n, Ollama (for LLMs), and supporting tools like Qdrant and PostgreSQL. This setup keeps all AI processing on-premise, ideal for sensitive industries.
+
+## Example: Automating Desktop Functions with Python in n8n
+
+You can automate desktop tasks, like opening File Explorer and listing files, using a Python script in n8n with pyautogui, a library for GUI automation.
+
+## Conclusion
+
+I'm very excited and going to have a lot of fun with this. Combining n8n's workflow automation with Docker's containerization for running LLMs locally realizes both privacy and control.

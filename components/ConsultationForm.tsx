@@ -32,11 +32,18 @@ export default function ConsultationForm() {
     setSubmitStatus(null);
 
     try {
-      // TODO: Integrate with EmailJS or your backend API
-      // For now, just simulate a submission
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch("/api/consultation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-      console.log("Consultation booking data:", data);
+      if (!response.ok) {
+        throw new Error("Failed to submit consultation request");
+      }
+
       setSubmitStatus("success");
       reset();
     } catch (error) {

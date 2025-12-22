@@ -4,8 +4,8 @@ import Section from "../Section";
 import Button from "../Button";
 import { getFeaturedPosts } from "@/lib/blog";
 
-export default function BlogSection() {
-  const featuredPosts = getFeaturedPosts();
+export default async function BlogSection() {
+  const featuredPosts = await getFeaturedPosts();
 
   return (
     <Section className="bg-white">
@@ -26,10 +26,18 @@ export default function BlogSection() {
           >
             <Link href={`/blog/${post.slug}`}>
               <div className="relative h-48 w-full bg-gradient-to-br from-blue-100 to-cyan-100">
-                {/* Placeholder for blog header image */}
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                  <span className="text-sm">Blog Image</span>
-                </div>
+                {post.headerImage ? (
+                  <Image
+                    src={post.headerImage}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                    <span className="text-sm">Blog Image</span>
+                  </div>
+                )}
               </div>
             </Link>
 

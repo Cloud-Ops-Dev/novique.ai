@@ -1,0 +1,98 @@
+import { createClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/auth/session'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import BlogPostForm from '@/components/blog/BlogPostForm'
+
+interface PageProps {
+  params: {
+    slug: string
+  }
+}
+
+export default async function EditBlogPostPage({ params }: PageProps) {
+  const user = await getCurrentUser()
+  const supabase = await createClient()
+
+  // Fetch post
+  const { data: post, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', params.slug)
+    .single()
+
+  if (error || !post) {
+    notFound()
+  }
+
+  // Check permissions: editors can only edit their own posts
+  if (user?.role === 'editor' && post.author_id !== user.id) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-600">You can only edit your own posts.</p>
+        <Link
+          href="/admin/blog"
+          className="mt-4 inline-block text-blue-600 hover:text-blue-700"
+        >
+          Back to Blog Posts
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex" aria-label="Breadcrumb">
+        <ol className="flex items-center space-x-2 text-sm">
+          <li>
+            <Link href="/admin/dashboard" className="text-gray-500 hover:text-gray-700">
+              Admin
+            </Link>
+          </li>
+          <li>
+            <span className="text-gray-400">/</span>
+          </li>
+          <li>
+            <Link href="/admin/blog" className="text-gray-500 hover:text-gray-700">
+              Blog
+            </Link>
+          </li>
+          <li>
+            <span className="text-gray-400">/</span>
+          </li>
+          <li>
+            <span className="text-gray-900">Edit: {post.title}</span>
+          </li>
+        </ol>
+      </nav>
+
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Blog Post</h1>
+        <p className="mt-2 text-sm text-gray-700">
+          Update and manage your blog post
+        </p>
+      </div>
+
+      {/* Form */}
+      <BlogPostForm
+        initialData={{
+          id: post.id,
+          slug: post.slug,
+          title: post.title,
+          summary: post.summary,
+          content: post.content,
+          markdownContent: post.markdown_content,
+          metaDescription: post.meta_description,
+          tags: post.tags || [],
+          headerImage: post.header_image,
+          featured: post.featured,
+          status: post.status,
+        }}
+        isAdmin={user?.role === 'admin'}
+      />
+    </div>
+  )
+}

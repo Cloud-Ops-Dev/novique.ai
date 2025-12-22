@@ -8,7 +8,7 @@ import { getPostBySlug, getAllPosts } from "@/lib/blog";
 import { Metadata } from "next";
 
 export async function generateStaticParams() {
-  const posts = getAllPosts();
+  const posts = await getAllPosts();
   return posts.map((post) => ({
     slug: post.slug,
   }));
@@ -20,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -36,7 +36,7 @@ export async function generateMetadata({
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -48,6 +48,17 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       <main>
         {/* Header with background image */}
         <section className="relative bg-gradient-to-br from-primary-900 to-primary-700 py-20">
+          {post.headerImage && (
+            <div className="absolute inset-0">
+              <Image
+                src={post.headerImage}
+                alt={post.title}
+                fill
+                className="object-cover opacity-30"
+                priority
+              />
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-cyan-100 opacity-20" />
 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -136,7 +147,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         <article className="py-12 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
-              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-primary-600 prose-strong:text-gray-900 prose-ul:text-gray-700"
+              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:mb-6 prose-a:text-primary-600 prose-strong:text-gray-900 prose-ul:text-gray-700"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 

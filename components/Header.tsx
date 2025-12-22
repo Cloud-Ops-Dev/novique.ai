@@ -4,9 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import HeaderLogo from "./HeaderLogo";
 import Button from "./Button";
+import { UserMenu } from "./auth/UserMenu";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated, loading } = useAuth();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -37,9 +40,25 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            <Button href="/consultation" size="md">
-              Book Free Consultation
-            </Button>
+            {!loading && (
+              <>
+                {isAuthenticated ? (
+                  <UserMenu />
+                ) : (
+                  <>
+                    <Button href="/consultation" size="md">
+                      Book Free Consultation
+                    </Button>
+                    <Link
+                      href="/login"
+                      className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -79,11 +98,28 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            <div className="px-4 pt-2">
-              <Button href="/consultation" size="md" className="w-full">
-                Book Free Consultation
-              </Button>
-            </div>
+            {!loading && (
+              <div className="px-4 pt-2 space-y-2">
+                {isAuthenticated ? (
+                  <div className="border-t border-gray-200 pt-2">
+                    <UserMenu />
+                  </div>
+                ) : (
+                  <>
+                    <Button href="/consultation" size="md" className="w-full">
+                      Book Free Consultation
+                    </Button>
+                    <Link
+                      href="/login"
+                      className="block text-center py-2 text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
       </nav>

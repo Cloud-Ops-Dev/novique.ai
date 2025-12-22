@@ -5,6 +5,8 @@ import Button from "@/components/Button";
 import Image from "next/image";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "About Novique.ai | AI Experts for Small Business",
   description: "Learn about Novique.ai's mission to make AI accessible and profitable for small businesses. No jargon, just practical solutions.",

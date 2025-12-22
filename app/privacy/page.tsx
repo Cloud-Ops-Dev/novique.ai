@@ -3,6 +3,8 @@ import Footer from "@/components/Footer";
 import Section from "@/components/Section";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Privacy Policy | Novique.ai",
   description: "Novique.ai privacy policy. Learn how we protect and handle your data.",

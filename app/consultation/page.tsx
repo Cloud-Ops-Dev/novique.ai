@@ -4,6 +4,8 @@ import Section from "@/components/Section";
 import ConsultationForm from "@/components/ConsultationForm";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Book Free Consultation | Novique.ai",
   description: "Schedule your free AI consultation with Novique.ai. We'll discuss your business challenges and propose tailored solutions. No cost, no pressure.",

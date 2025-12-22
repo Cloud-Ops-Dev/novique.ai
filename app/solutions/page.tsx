@@ -4,6 +4,8 @@ import Section from "@/components/Section";
 import Button from "@/components/Button";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "AI Solutions for Small Business | Novique.ai",
   description: "Explore our turn-key AI solutions: chatbots, predictive analytics, automated workflows, and more. Custom-tailored for your small business.",

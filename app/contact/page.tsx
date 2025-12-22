@@ -4,6 +4,8 @@ import Section from "@/components/Section";
 import ContactForm from "@/components/ContactForm";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Contact Novique.ai | Get in Touch",
   description: "Have questions about AI for your small business? Contact Novique.ai today. We're here to help!",

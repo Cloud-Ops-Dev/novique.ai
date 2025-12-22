@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -70,12 +71,12 @@ export default async function AdminDashboard() {
               </div>
             </div>
             <div className="bg-gray-50 px-5 py-3">
-              <a
+              <Link
                 href={stat.href}
                 className="text-sm font-medium text-blue-600 hover:text-blue-500"
               >
                 View all →
-              </a>
+              </Link>
             </div>
           </div>
         ))}
@@ -86,7 +87,7 @@ export default async function AdminDashboard() {
         <div className="px-4 py-5 sm:p-6">
           <h2 className="text-lg font-medium text-gray-900">Quick Actions</h2>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a
+            <Link
               href="/admin/blog/new"
               className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-6 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
@@ -107,9 +108,9 @@ export default async function AdminDashboard() {
               <span className="mt-2 block text-sm font-medium text-gray-900">
                 Create Blog Post
               </span>
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/admin/users"
               className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-6 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
@@ -130,9 +131,9 @@ export default async function AdminDashboard() {
               <span className="mt-2 block text-sm font-medium text-gray-900">
                 Manage Users
               </span>
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/"
               className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-6 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
@@ -153,7 +154,7 @@ export default async function AdminDashboard() {
               <span className="mt-2 block text-sm font-medium text-gray-900">
                 View Site
               </span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

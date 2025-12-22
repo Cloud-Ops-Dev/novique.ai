@@ -5,12 +5,13 @@ import Link from 'next/link'
 import BlogPostForm from '@/components/blog/BlogPostForm'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export default async function EditEditorBlogPostPage({ params }: PageProps) {
+  const { slug } = await params
   const user = await getCurrentUser()
   const supabase = await createClient()
 
@@ -22,7 +23,7 @@ export default async function EditEditorBlogPostPage({ params }: PageProps) {
   const { data: post, error } = await supabase
     .from('blog_posts')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
 
   if (error || !post) {

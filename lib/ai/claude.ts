@@ -1,12 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk'
 
-if (!process.env.ANTHROPIC_API_KEY) {
-  throw new Error('ANTHROPIC_API_KEY environment variable is required')
+function getAnthropicClient() {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error('ANTHROPIC_API_KEY environment variable is required')
+  }
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  })
 }
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
 
 export interface ClaudeGenerationOptions {
   prompt: string
@@ -27,6 +28,7 @@ export async function generateWithClaude({
   model = 'claude-3-haiku-20240307',
 }: ClaudeGenerationOptions): Promise<string> {
   try {
+    const anthropic = getAnthropicClient()
     const response = await anthropic.messages.create({
       model,
       max_tokens: maxTokens,
@@ -176,4 +178,4 @@ The summary should:
   })
 }
 
-export default anthropic
+export default getAnthropicClient

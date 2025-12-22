@@ -1,12 +1,13 @@
 import OpenAI from 'openai'
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY environment variable is required')
+function getOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is required')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
 }
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
 
 export interface OpenAIGenerationOptions {
   prompt: string
@@ -27,6 +28,7 @@ export async function generateWithOpenAI({
   model = 'gpt-4-turbo-preview',
 }: OpenAIGenerationOptions): Promise<string> {
   try {
+    const openai = getOpenAIClient()
     const response = await openai.chat.completions.create({
       model,
       max_tokens: maxTokens,
@@ -180,4 +182,4 @@ The summary should:
   })
 }
 
-export default openai
+export default getOpenAIClient

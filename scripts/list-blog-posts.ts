@@ -37,10 +37,11 @@ async function listBlogPosts() {
 
     console.log(`Found ${posts?.length || 0} blog posts:\n`)
     posts?.forEach((post, index) => {
+      const author = Array.isArray(post.author) ? post.author[0] : post.author
       console.log(`${index + 1}. ${post.title}`)
       console.log(`   Slug: ${post.slug}`)
       console.log(`   Status: ${post.status}`)
-      console.log(`   Author: ${post.author?.full_name || post.author?.email}`)
+      console.log(`   Author: ${author?.full_name || author?.email}`)
       console.log(`   Created: ${new Date(post.created_at).toLocaleString()}`)
       console.log(`   ID: ${post.id}`)
       console.log()

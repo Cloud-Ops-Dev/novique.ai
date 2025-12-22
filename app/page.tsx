@@ -9,6 +9,8 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import AboutSection from "@/components/home/AboutSection";
 import BlogSection from "@/components/home/BlogSection";
 
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <>

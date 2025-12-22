@@ -3,9 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/auth/session'
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 /**
@@ -15,7 +15,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient()
-    const { slug } = params
+    const { slug } = await params
 
     const { data, error } = await supabase
       .from('blog_posts')
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const supabase = await createClient()
-    const { slug } = params
+    const { slug } = await params
     const body = await request.json()
 
     // Get existing post
@@ -167,7 +167,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     const supabase = await createClient()
-    const { slug } = params
+    const { slug } = await params
 
     // Check if post exists
     const { data: existingPost, error: fetchError } = await supabase

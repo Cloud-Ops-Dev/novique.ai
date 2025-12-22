@@ -6,6 +6,8 @@ import Image from "next/image";
 import { getAllPosts } from "@/lib/blog";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Blog - Novique AI Solutions",
   description: "Read our latest articles on AI, automation, and small business technology.",

@@ -39,13 +39,13 @@ export default function BlogPostForm({ initialData, isAdmin = false }: BlogPostF
 
     setUploadingImage(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('postSlug', formData.slug || 'temp')
+      const uploadData = new FormData()
+      uploadData.append('file', file)
+      uploadData.append('postSlug', formData.slug || 'temp')
 
       const response = await fetch('/api/blog/upload-image', {
         method: 'POST',
-        body: formData,
+        body: uploadData,
       })
 
       if (!response.ok) {

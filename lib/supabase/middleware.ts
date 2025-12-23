@@ -16,31 +16,9 @@ export async function createClient(request: NextRequest) {
     request,
   })
 
-  // Diagnostic logging for environment variable debugging
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.error('[Middleware Debug] Missing Supabase credentials:', {
-      url: {
-        exists: !!supabaseUrl,
-        length: supabaseUrl?.length || 0,
-        value: supabaseUrl?.substring(0, 30) || 'undefined',
-      },
-      key: {
-        exists: !!supabaseKey,
-        length: supabaseKey?.length || 0,
-        value: supabaseKey?.substring(0, 20) || 'undefined',
-      },
-      runtime: process.env.NEXT_RUNTIME,
-      vercelEnv: process.env.VERCEL_ENV,
-      allSupabaseEnvKeys: Object.keys(process.env).filter(k => k.includes('SUPABASE')),
-    })
-  }
-
   const supabase = createServerClient(
-    supabaseUrl!,
-    supabaseKey!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {

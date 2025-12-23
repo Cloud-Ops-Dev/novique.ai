@@ -1,0 +1,23 @@
+# Automatically comment on PRs with Vercel preview URL
+# This makes it easy to find the preview deployment for testing
+
+name: Preview URL Comment
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 **Preview deployment ready!**\n\nVercel will comment below with the preview URL once deployment completes.\n\n✅ **Test checklist:**\n- [ ] Authentication works\n- [ ] All features function correctly\n- [ ] No console errors\n- [ ] Mobile responsive\n- [ ] Performance acceptable\n\nOnly merge to `main` after testing the preview!'
+            })

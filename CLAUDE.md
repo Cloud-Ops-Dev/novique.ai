@@ -103,6 +103,13 @@ If you encounter "protected branch" errors, this is intentional - use the featur
 
 ## 📂 Project Structure
 
+**IMPORTANT: This project uses TWO separate directories:**
+
+### 1. Code Repository (This Directory)
+**Location:** `/home/clay/Documents/GitHub/novique.ai/`
+
+This is the git repository that gets pushed to GitHub and deployed to Vercel.
+
 ```
 /home/clay/Documents/GitHub/novique.ai/
 ├── app/                    # Next.js app directory
@@ -114,8 +121,49 @@ If you encounter "protected branch" errors, this is intentional - use the featur
 ├── .github/workflows/     # GitHub Actions
 ├── DEVELOPMENT_WORKFLOW.md # Detailed workflow guide
 ├── GITHUB_SETUP.md        # Branch protection setup
-└── CLAUDE.md              # This file
+├── CLAUDE.md              # This file
+├── SESSION_NOTES.md       # Session history
+└── BLOG_UPDATE_WORKFLOW.md
 ```
+
+**What goes here:**
+- ✅ Source code (app, components, lib, etc.)
+- ✅ Public documentation (README, workflow guides)
+- ✅ Scripts and automation
+- ✅ Configuration files
+- ✅ Session notes for history
+
+### 2. Project Files (Local Only)
+**Location:** `/home/clay/Documents/projects/novique.ai/`
+
+This directory is for session plans, design docs, and planning files that should NOT be committed to GitHub.
+
+```
+/home/clay/Documents/projects/novique.ai/
+├── plans/                 # Claude Code session plans (EnterPlanMode)
+├── design/               # Design documents
+├── status/               # Session status files
+└── notes/                # Planning notes and ideas
+```
+
+**What goes here:**
+- ✅ Claude Code session plans (from EnterPlanMode tool)
+- ✅ Design documents and mockups
+- ✅ Planning files and brainstorming
+- ✅ Session status files (for resuming work)
+- ✅ Private notes and ideas
+- ❌ NEVER commit to GitHub
+
+### Working Directory Rules
+
+**When developing (coding, committing, deploying):**
+```bash
+cd /home/clay/Documents/GitHub/novique.ai
+```
+
+**When creating session plans or design docs:**
+- Save to `/home/clay/Documents/projects/novique.ai/`
+- These files stay local and never get pushed
 
 ---
 

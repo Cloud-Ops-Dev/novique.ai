@@ -51,7 +51,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 src={post.headerImage}
                 alt={post.title}
                 fill
-                className="object-cover opacity-30"
+                className="object-contain object-center opacity-30"
                 priority
               />
             </div>

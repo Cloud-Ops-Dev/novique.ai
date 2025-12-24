@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:safe": "./scripts/dev-with-port-check.sh",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

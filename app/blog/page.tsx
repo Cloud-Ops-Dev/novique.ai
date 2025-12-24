@@ -48,12 +48,12 @@ export default async function BlogPage() {
                     className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
                   >
                     {post.headerImage && (
-                      <div className="relative h-48 w-full overflow-hidden">
+                      <div className="relative h-48 w-full overflow-hidden bg-gray-50">
                         <Image
                           src={post.headerImage}
                           alt={post.title}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="object-contain group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                     )}

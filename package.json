@@ -7,7 +7,8 @@
     "dev:safe": "./scripts/dev-with-port-check.sh",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate:mdx": "npx tsx scripts/migrate-all-mdx.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

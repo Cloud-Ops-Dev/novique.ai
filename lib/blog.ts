@@ -176,10 +176,15 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   // Filter out MDX posts that exist in database (database takes precedence)
   const uniqueFilePosts = filePosts.filter((post) => !dbPostSlugs.has(post.slug))
 
-  // Combine and sort by date
-  const allPosts = [...dbPosts, ...uniqueFilePosts].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
+  // Combine and sort: featured first (by date), then non-featured (by date)
+  const allPosts = [...dbPosts, ...uniqueFilePosts].sort((a, b) => {
+    // If one is featured and the other isn't, featured comes first
+    if (a.featured && !b.featured) return -1
+    if (!a.featured && b.featured) return 1
+
+    // If both have same featured status, sort by date (newest first)
+    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  })
 
   return allPosts
 }

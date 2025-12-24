@@ -32,7 +32,7 @@ All feature development, bug fixes, and changes MUST follow this workflow:
 ### Using the Helper Script (Recommended)
 
 ```bash
-cd /home/clay/Documents/GitHub/novique.ai
+cd /home/clay/IDE/business/novique.ai
 
 # Start new feature
 ./scripts/git-workflow.sh new-feature <feature-name>
@@ -103,15 +103,17 @@ If you encounter "protected branch" errors, this is intentional - use the featur
 
 ## 📂 Project Structure
 
-**IMPORTANT: This project uses TWO separate directories:**
-
-### 1. Code Repository (This Directory)
-**Location:** `/home/clay/Documents/GitHub/novique.ai/`
+**Location:** `/home/clay/IDE/business/novique.ai/`
 
 This is the git repository that gets pushed to GitHub and deployed to Vercel.
 
 ```
-/home/clay/Documents/GitHub/novique.ai/
+/home/clay/IDE/business/novique.ai/
+├── .planning/              # Planning files (git-ignored, local only)
+│   ├── plans/             # Claude Code session plans (EnterPlanMode)
+│   ├── design/            # Design documents
+│   ├── status/            # Session status files
+│   └── notes/             # Planning notes and ideas
 ├── app/                    # Next.js app directory
 ├── components/             # React components
 ├── lib/                    # Utility libraries
@@ -126,27 +128,14 @@ This is the git repository that gets pushed to GitHub and deployed to Vercel.
 └── BLOG_UPDATE_WORKFLOW.md
 ```
 
-**What goes here:**
+**What gets committed to GitHub:**
 - ✅ Source code (app, components, lib, etc.)
 - ✅ Public documentation (README, workflow guides)
 - ✅ Scripts and automation
 - ✅ Configuration files
 - ✅ Session notes for history
 
-### 2. Project Files (Local Only)
-**Location:** `/home/clay/Documents/projects/novique.ai/`
-
-This directory is for session plans, design docs, and planning files that should NOT be committed to GitHub.
-
-```
-/home/clay/Documents/projects/novique.ai/
-├── plans/                 # Claude Code session plans (EnterPlanMode)
-├── design/               # Design documents
-├── status/               # Session status files
-└── notes/                # Planning notes and ideas
-```
-
-**What goes here:**
+**What stays local (in `.planning/`, git-ignored):**
 - ✅ Claude Code session plans (from EnterPlanMode tool)
 - ✅ Design documents and mockups
 - ✅ Planning files and brainstorming
@@ -154,16 +143,15 @@ This directory is for session plans, design docs, and planning files that should
 - ✅ Private notes and ideas
 - ❌ NEVER commit to GitHub
 
-### Working Directory Rules
+### Working Directory
 
-**When developing (coding, committing, deploying):**
+**All work happens in:**
 ```bash
-cd /home/clay/Documents/GitHub/novique.ai
+cd /home/clay/IDE/business/novique.ai
 ```
 
-**When creating session plans or design docs:**
-- Save to `/home/clay/Documents/projects/novique.ai/`
-- These files stay local and never get pushed
+**Planning files are saved to:**
+- `.planning/` directory within the project (automatically git-ignored)
 
 ---
 
@@ -286,7 +274,7 @@ Use the TodoWrite tool to track multi-step tasks:
 
 ### Start Development Server
 ```bash
-cd /home/clay/Documents/GitHub/novique.ai
+cd /home/clay/IDE/business/novique.ai
 npm run dev
 ```
 
@@ -387,6 +375,6 @@ Before merging to `main`:
 
 ---
 
-**Last Updated:** December 23, 2025
+**Last Updated:** December 24, 2025
 
 **This file should be read at the start of each Claude Code session.**

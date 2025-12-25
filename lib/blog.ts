@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
-import { createClient } from '@/lib/supabase/server'
 
 // Configure marked to handle inline HTML and markdown properly
 marked.setOptions({
@@ -89,7 +88,9 @@ function getAllPostsFromFiles(): BlogPost[] {
 
 async function getAllPostsFromDatabase(): Promise<BlogPost[]> {
   try {
-    const supabase = await createClient()
+    // Use admin client for fetching published posts since they should be publicly accessible
+    // This bypasses RLS policies which may block anonymous users
+    const supabase = (await import('@/lib/supabase/server')).createAdminClient()
 
     const { data, error } = await supabase
       .from('blog_posts')
@@ -124,7 +125,9 @@ async function getAllPostsFromDatabase(): Promise<BlogPost[]> {
 
 async function getPostBySlugFromDatabase(slug: string): Promise<BlogPost | undefined> {
   try {
-    const supabase = await createClient()
+    // Use admin client for fetching published posts since they should be publicly accessible
+    // This bypasses RLS policies which may block anonymous users
+    const supabase = (await import('@/lib/supabase/server')).createAdminClient()
 
     const { data, error } = await supabase
       .from('blog_posts')

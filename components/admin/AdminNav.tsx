@@ -8,6 +8,8 @@ interface AdminNavProps {
 export function AdminNav({ user }: AdminNavProps) {
   const navLinks = [
     { href: '/admin/dashboard', label: 'Dashboard' },
+    { href: '/admin/consultations', label: 'Consultations' },
+    { href: '/admin/customers', label: 'Customers' },
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/blog', label: 'Blog Posts' },
   ]

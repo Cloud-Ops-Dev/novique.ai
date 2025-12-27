@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { createClient } from "@/lib/supabase/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,7 +27,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send email using Resend
+    // Save to Supabase database
+    const supabase = await createClient();
+    const { data: consultationData, error: dbError } = await supabase
+      .from("consultation_requests")
+      .insert({
+        name,
+        email,
+        phone,
+        business_type: businessType,
+        business_size: businessSize,
+        preferred_date: preferredDate,
+        preferred_time: preferredTime,
+        meeting_type: meetingType,
+        challenges,
+        status: "pending",
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error("Database error:", dbError);
+      return NextResponse.json(
+        { error: "Failed to save consultation request" },
+        { status: 500 }
+      );
+    }
+
+    // Send email notification using Resend
     const { data, error } = await resend.emails.send({
       from: "Novique.ai Consultation <onboarding@resend.dev>", // Will use Resend's test domain initially
       to: process.env.CONSULTATION_EMAIL || "your-email@example.com", // Your email address
@@ -110,14 +138,16 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Resend error:", error);
-      return NextResponse.json(
-        { error: "Failed to send email" },
-        { status: 500 }
-      );
+      // Email failed but database save succeeded - still return success
+      // Admin can follow up via database record
     }
 
     return NextResponse.json(
-      { success: true, messageId: data?.id },
+      {
+        success: true,
+        consultationId: consultationData.id,
+        messageId: data?.id,
+      },
       { status: 200 }
     );
   } catch (error) {

@@ -293,7 +293,7 @@ export default function CustomerDetailPage() {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to "Consultation Completed"
+                    Setting this will auto-progress to &quot;Consultation Completed&quot;
                   </p>
                 </div>
               </div>
@@ -335,7 +335,7 @@ export default function CustomerDetailPage() {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
                 <p className="mt-1 text-sm text-gray-500">
-                  Setting solutions will auto-progress to "Proposal Sent"
+                  Setting solutions will auto-progress to &quot;Proposal Sent&quot;
                 </p>
               </div>
 
@@ -377,7 +377,7 @@ export default function CustomerDetailPage() {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
                 <p className="mt-1 text-sm text-gray-500">
-                  Setting accepted solutions will auto-progress to "Negotiation"
+                  Setting accepted solutions will auto-progress to &quot;Negotiation&quot;
                 </p>
               </div>
 
@@ -393,7 +393,7 @@ export default function CustomerDetailPage() {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to "Project Active"
+                    Setting this will auto-progress to &quot;Project Active&quot;
                   </p>
                 </div>
 
@@ -487,7 +487,7 @@ export default function CustomerDetailPage() {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to "Implementation"
+                    Setting this will auto-progress to &quot;Implementation&quot;
                   </p>
                 </div>
 
@@ -500,7 +500,7 @@ export default function CustomerDetailPage() {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to "Delivered"
+                    Setting this will auto-progress to &quot;Delivered&quot;
                   </p>
                 </div>
               </div>
@@ -520,7 +520,7 @@ export default function CustomerDetailPage() {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to "Signed Off"
+                    Setting this will auto-progress to &quot;Signed Off&quot;
                   </p>
                 </div>
 
@@ -570,7 +570,7 @@ export default function CustomerDetailPage() {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
                 <p className="mt-1 text-sm text-gray-500">
-                  Setting this will auto-progress to "Closed Won"
+                  Setting this will auto-progress to &quot;Closed Won&quot;
                 </p>
               </div>
             </div>

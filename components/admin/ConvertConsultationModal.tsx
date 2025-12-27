@@ -72,9 +72,9 @@ export function ConvertConsultationModal({
           <ul className="list-disc list-inside space-y-2 mb-6 text-sm text-gray-700">
             <li>Create a new customer record in the CRM</li>
             <li>Transfer all consultation details</li>
-            <li>Set initial stage to "Proposal Development"</li>
+            <li>Set initial stage to &quot;Proposal Development&quot;</li>
             <li>Create an initial interaction log entry</li>
-            <li>Mark this consultation as "converted"</li>
+            <li>Mark this consultation as &quot;converted&quot;</li>
           </ul>
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">

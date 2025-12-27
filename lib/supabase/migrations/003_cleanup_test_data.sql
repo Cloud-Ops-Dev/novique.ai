@@ -6,18 +6,19 @@
 -- Run this in Supabase SQL Editor
 -- =====================================================
 
--- Delete all customer interactions (will cascade delete is not enabled, so delete manually first)
-DELETE FROM customer_interactions;
-
--- Delete all test customers
-DELETE FROM customers;
-
--- Reset consultation_requests (clear converted status and links)
+-- IMPORTANT: Must clear foreign keys FIRST before deleting customers
+-- Step 1: Reset consultation_requests (clear foreign key references)
 UPDATE consultation_requests
 SET
   status = 'pending',
   converted_to_customer_id = NULL
 WHERE status = 'converted';
+
+-- Step 2: Delete all customer interactions
+DELETE FROM customer_interactions;
+
+-- Step 3: Delete all test customers (now safe since foreign keys are cleared)
+DELETE FROM customers;
 
 -- =====================================================
 -- CLEANUP COMPLETE

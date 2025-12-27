@@ -5,16 +5,17 @@ import { requireAdmin } from '@/lib/auth/session'
 // GET /api/consultations/[id] - Get single consultation request
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
     const supabase = await createClient()
 
     const { data, error } = await supabase
       .from('consultation_requests')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -48,10 +49,11 @@ export async function GET(
 // PUT /api/consultations/[id] - Update consultation request
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
     const supabase = await createClient()
     const body = await request.json()
 
@@ -61,7 +63,7 @@ export async function PUT(
         status: body.status,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 

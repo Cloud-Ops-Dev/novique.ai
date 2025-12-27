@@ -5,7 +5,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 // POST /api/consultations/[id]/convert - Convert consultation to customer
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -13,13 +13,14 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const supabase = await createClient()
 
     // Get the consultation request
     const { data: consultation, error: consultationError } = await supabase
       .from('consultation_requests')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (consultationError || !consultation) {
@@ -84,7 +85,7 @@ export async function POST(
         converted_to_customer_id: customer.id,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
 
     return NextResponse.json({
       success: true,

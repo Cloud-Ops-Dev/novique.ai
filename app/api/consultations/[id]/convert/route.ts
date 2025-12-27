@@ -78,7 +78,7 @@ export async function POST(
     })
 
     // Update consultation request
-    await supabase
+    const { error: updateError } = await supabase
       .from('consultation_requests')
       .update({
         status: 'converted',
@@ -86,6 +86,12 @@ export async function POST(
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
+
+    if (updateError) {
+      console.error('Failed to update consultation status:', updateError)
+      // Don't fail the request since customer was created successfully
+      // Just log the error for debugging
+    }
 
     return NextResponse.json({
       success: true,

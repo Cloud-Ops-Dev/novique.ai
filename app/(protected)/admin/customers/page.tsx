@@ -11,6 +11,7 @@ interface Customer {
   name: string
   email: string
   business_type?: string
+  avatar_url?: string
   stage: string
   project_status: string
   next_action_required?: string
@@ -226,11 +227,26 @@ export default function CustomersPage() {
               customers.map((customer) => (
                 <tr key={customer.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{customer.name}</div>
-                    <div className="text-sm text-gray-500">{customer.email}</div>
-                    {customer.business_type && (
-                      <div className="text-sm text-gray-500">{customer.business_type}</div>
-                    )}
+                    <div className="flex items-center">
+                      {customer.avatar_url ? (
+                        <img
+                          src={customer.avatar_url}
+                          alt={customer.name}
+                          className="h-10 w-10 rounded-full mr-3"
+                        />
+                      ) : (
+                        <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-medium mr-3">
+                          {customer.name[0].toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{customer.name}</div>
+                        <div className="text-sm text-gray-500">{customer.email}</div>
+                        {customer.business_type && (
+                          <div className="text-sm text-gray-500">{customer.business_type}</div>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <CustomerStageBadge stage={customer.stage} />

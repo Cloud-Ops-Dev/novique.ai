@@ -12,6 +12,7 @@ export interface CustomerData {
   business_type?: string
   business_size?: string
   initial_challenges?: string
+  avatar_url?: string
 
   // Stage Management
   stage: string
@@ -79,6 +80,7 @@ export function useCustomerEditor({
     business_type: initialData?.business_type || '',
     business_size: initialData?.business_size || '',
     initial_challenges: initialData?.initial_challenges || '',
+    avatar_url: initialData?.avatar_url || '',
     stage: initialData?.stage || 'proposal_development',
     project_status: initialData?.project_status || 'on_track',
     consultation_occurred_date: initialData?.consultation_occurred_date || '',

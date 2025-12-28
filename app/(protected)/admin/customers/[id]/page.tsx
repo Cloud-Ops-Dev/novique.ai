@@ -125,10 +125,23 @@ export default function CustomerDetailPage() {
       {/* Header */}
       <div className="bg-white shadow rounded-lg p-6">
         <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{formData.name}</h1>
-            <p className="mt-1 text-sm text-gray-500">{formData.email}</p>
-            {formData.phone && <p className="text-sm text-gray-500">{formData.phone}</p>}
+          <div className="flex items-start gap-4">
+            {formData.avatar_url ? (
+              <img
+                src={formData.avatar_url}
+                alt={formData.name}
+                className="h-16 w-16 rounded-full"
+              />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-xl">
+                {formData.name?.[0]?.toUpperCase() || '?'}
+              </div>
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">{formData.name}</h1>
+              <p className="mt-1 text-sm text-gray-500">{formData.email}</p>
+              {formData.phone && <p className="text-sm text-gray-500">{formData.phone}</p>}
+            </div>
           </div>
           <div className="flex flex-col items-end gap-2">
             <CustomerStageBadge stage={formData.stage} />

@@ -6,8 +6,13 @@ import { getCurrentUser } from '@/lib/auth/session'
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
-    if (!user || user.role !== 'admin') {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Allow admins and editors to view dashboard
+    if (user.role !== 'admin' && user.role !== 'editor') {
+      return NextResponse.json({ error: 'Unauthorized - requires admin or editor role' }, { status: 403 })
     }
 
     const supabase = await createClient()

@@ -6,13 +6,17 @@ interface AdminNavProps {
 }
 
 export function AdminNav({ user }: AdminNavProps) {
-  const navLinks = [
-    { href: '/admin/dashboard', label: 'Dashboard' },
-    { href: '/admin/consultations', label: 'Consultations' },
-    { href: '/admin/customers', label: 'Customers' },
-    { href: '/admin/users', label: 'Users' },
-    { href: '/admin/blog', label: 'Blog Posts' },
+  // Define all possible nav links with role requirements
+  const allNavLinks = [
+    { href: '/admin/dashboard', label: 'Dashboard', roles: ['admin', 'editor'] },
+    { href: '/admin/consultations', label: 'Consultations', roles: ['admin'] },
+    { href: '/admin/customers', label: 'Customers', roles: ['admin'] },
+    { href: '/admin/users', label: 'Users', roles: ['admin'] },
+    { href: '/admin/blog', label: 'Blog Posts', roles: ['admin', 'editor'] },
   ]
+
+  // Filter nav links based on user role
+  const navLinks = allNavLinks.filter((link) => link.roles.includes(user.role))
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">

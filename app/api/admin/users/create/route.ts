@@ -60,14 +60,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create profile
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: authData.user.id,
-      email,
-      full_name,
-      role,
-      is_active: true,
-    })
+    // Upsert profile (insert or update if exists due to database trigger)
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .upsert({
+        id: authData.user.id,
+        email,
+        full_name,
+        role,
+        is_active: true,
+      }, {
+        onConflict: 'id'
+      })
 
     if (profileError) {
       console.error('Profile error:', profileError)

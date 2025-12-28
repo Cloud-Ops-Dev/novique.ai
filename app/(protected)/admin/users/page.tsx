@@ -1,7 +1,7 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 interface User {
   id: string
@@ -59,17 +59,17 @@ export default function UsersPage() {
 
   async function loadUsers() {
     try {
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const response = await fetch('/api/admin/users')
+      const result = await response.json()
 
-      if (error) throw error
-      setUsers(data || [])
-    } catch (error) {
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to load users')
+      }
+
+      setUsers(result.data || [])
+    } catch (error: any) {
       console.error('Error loading users:', error)
-      setMessage({ type: 'error', text: 'Failed to load users' })
+      setMessage({ type: 'error', text: error.message || 'Failed to load users' })
     } finally {
       setLoading(false)
     }

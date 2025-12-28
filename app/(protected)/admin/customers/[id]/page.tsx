@@ -18,6 +18,7 @@ export default function CustomerDetailPage() {
   const [loading, setLoading] = useState(true)
   const [interactions, setInteractions] = useState<any[]>([])
   const [showAddInteraction, setShowAddInteraction] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [newInteraction, setNewInteraction] = useState({
     interaction_type: 'note',
     subject: '',
@@ -30,6 +31,12 @@ export default function CustomerDetailPage() {
   // Load customer data
   useEffect(() => {
     async function loadCustomer() {
+      // Skip loading for new customer creation
+      if (customerId === 'new') {
+        setLoading(false)
+        return
+      }
+
       try {
         const response = await fetch(`/api/customers/${customerId}`)
         if (!response.ok) throw new Error('Failed to load customer')
@@ -55,16 +62,23 @@ export default function CustomerDetailPage() {
     loadCustomer()
   }, [customerId])
 
-  // Auto-save
-  const { lastSaved } = useAutoSave({
+  // Auto-save (disabled for new customers)
+  const { lastSaved, error: autoSaveError } = useAutoSave({
     onSave: async () => {
       if (formData.name && formData.email) {
         await saveCustomer()
       }
     },
     interval: 30000,
-    enabled: !!formData.name,
+    enabled: !!formData.name && customerId !== 'new',
   })
+
+  // Display auto-save errors
+  useEffect(() => {
+    if (autoSaveError) {
+      setSaveError(`Auto-save failed: ${autoSaveError.message}`)
+    }
+  }, [autoSaveError])
 
   const handleAddInteraction = async () => {
     try {
@@ -115,12 +129,30 @@ export default function CustomerDetailPage() {
                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
               </svg>
               <span className="ml-4 text-sm font-medium text-gray-500">
-                {formData.name}
+                {formData.name || 'New Customer'}
               </span>
             </div>
           </li>
         </ol>
       </nav>
+
+      {/* Error Message */}
+      {saveError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3">
+          <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
+          <div className="flex-1">
+            <h3 className="font-semibold mb-1">Save Failed</h3>
+            <p className="text-sm">{saveError}</p>
+          </div>
+          <button onClick={() => setSaveError(null)} className="text-red-600 hover:text-red-800">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Header */}
       <div className="bg-white shadow rounded-lg p-6">
@@ -138,8 +170,8 @@ export default function CustomerDetailPage() {
               </div>
             )}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{formData.name}</h1>
-              <p className="mt-1 text-sm text-gray-500">{formData.email}</p>
+              <h1 className="text-3xl font-bold text-gray-900">{formData.name || 'New Customer'}</h1>
+              <p className="mt-1 text-sm text-gray-500">{formData.email || 'Enter customer details below'}</p>
               {formData.phone && <p className="text-sm text-gray-500">{formData.phone}</p>}
             </div>
           </div>
@@ -215,22 +247,35 @@ export default function CustomerDetailPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Business Type</label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.business_type || ''}
                     onChange={(e) => updateField('business_type', e.target.value)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Select industry...</option>
+                    <option value="retail">Retail</option>
+                    <option value="restaurant">Restaurant/Food Service</option>
+                    <option value="professional">Professional Services</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="ecommerce">E-commerce</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Business Size</label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.business_size || ''}
                     onChange={(e) => updateField('business_size', e.target.value)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Select size...</option>
+                    <option value="1-5">1-5 employees</option>
+                    <option value="6-20">6-20 employees</option>
+                    <option value="21-50">21-50 employees</option>
+                    <option value="51+">51+ employees</option>
+                  </select>
                 </div>
 
                 <div>
@@ -676,8 +721,14 @@ export default function CustomerDetailPage() {
         </button>
         <button
           onClick={async () => {
-            await saveCustomer()
-            router.push('/admin/customers')
+            try {
+              setSaveError(null)
+              await saveCustomer()
+              router.push('/admin/customers')
+            } catch (error: any) {
+              setSaveError(error.message || 'Failed to save customer')
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
           }}
           disabled={isSaving}
           className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"

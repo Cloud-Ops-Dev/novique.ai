@@ -188,30 +188,40 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Upcoming Meetings (Next 7 Days)
+              Upcoming Activities (Next 7 Days)
             </h3>
-            {stats?.activity?.upcoming_meetings?.length > 0 ? (
+            {stats?.activity?.upcoming_activities?.length > 0 ? (
               <div className="space-y-2">
-                {stats.activity.upcoming_meetings.map((meeting: any) => (
+                {stats.activity.upcoming_activities.map((activity: any) => (
                   <Link
-                    key={meeting.id}
-                    href={`/admin/customers/${meeting.id}`}
+                    key={`${activity.id}-${activity.type}`}
+                    href={`/admin/customers/${activity.id}`}
                     className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{meeting.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {formatDateTime(meeting.proposal_presentation_datetime)}
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-sm font-medium text-gray-900">{activity.name}</p>
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                            activity.type === 'presentation'
+                              ? 'bg-purple-100 text-purple-700'
+                              : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {activity.type === 'presentation' ? 'Presentation' : 'Action'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600">{activity.description}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {formatDateTime(activity.datetime)}
                         </p>
                       </div>
-                      <CustomerStageBadge stage={meeting.stage} />
+                      <CustomerStageBadge stage={activity.stage} />
                     </div>
                   </Link>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No upcoming meetings</p>
+              <p className="text-sm text-gray-500">No upcoming activities</p>
             )}
           </div>
 

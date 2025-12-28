@@ -61,17 +61,48 @@ export async function GET(request: NextRequest) {
     // 2. ACTIVITY TRACKING
     // ============================================
 
-    // Upcoming meetings (next 7 days)
+    // Upcoming activities (next 7 days) - both presentations and next actions
     const sevenDaysFromNow = new Date()
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
+    const today = new Date().toISOString().split('T')[0]
+    const sevenDaysDate = sevenDaysFromNow.toISOString().split('T')[0]
 
-    const { data: upcomingMeetings } = await supabase
+    // Get proposal presentations
+    const { data: upcomingPresentations } = await supabase
       .from('customers')
       .select('id, name, proposal_presentation_datetime, stage')
       .not('proposal_presentation_datetime', 'is', null)
       .gte('proposal_presentation_datetime', new Date().toISOString())
       .lte('proposal_presentation_datetime', sevenDaysFromNow.toISOString())
-      .order('proposal_presentation_datetime', { ascending: true })
+
+    // Get upcoming next actions
+    const { data: upcomingActions } = await supabase
+      .from('customers')
+      .select('id, name, next_action_required, next_action_due_date, stage')
+      .not('next_action_due_date', 'is', null)
+      .gte('next_action_due_date', today)
+      .lte('next_action_due_date', sevenDaysDate)
+      .not('stage', 'in', '(closed_won,closed_lost)')
+
+    // Combine and format activities
+    const upcomingActivities = [
+      ...(upcomingPresentations || []).map(p => ({
+        id: p.id,
+        name: p.name,
+        type: 'presentation' as const,
+        datetime: p.proposal_presentation_datetime,
+        description: 'Proposal Presentation',
+        stage: p.stage
+      })),
+      ...(upcomingActions || []).map(a => ({
+        id: a.id,
+        name: a.name,
+        type: 'action' as const,
+        datetime: a.next_action_due_date,
+        description: a.next_action_required || 'Next Action',
+        stage: a.stage
+      }))
+    ].sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
 
     // Overdue tasks
     const { data: overdueTasks } = await supabase
@@ -142,7 +173,7 @@ export async function GET(request: NextRequest) {
           avg_deal: Math.round(avgDealSize * 100) / 100,
         },
         activity: {
-          upcoming_meetings: upcomingMeetings || [],
+          upcoming_activities: upcomingActivities || [],
           overdue_count: overdueTasks?.length || 0,
           overdue_tasks: overdueTasks || [],
           recent_consultations: recentConsultations || 0,

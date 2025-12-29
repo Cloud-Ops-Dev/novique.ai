@@ -47,6 +47,40 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            'li': {
+              marginTop: '0.25em',
+              marginBottom: '0.25em',
+            },
+            'ul': {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            'ol': {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+          },
+        },
+        lg: {
+          css: {
+            'li': {
+              marginTop: '0.25em',
+              marginBottom: '0.25em',
+            },
+            'ul': {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            'ol': {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+          },
+        },
+      },
     },
   },
   plugins: [

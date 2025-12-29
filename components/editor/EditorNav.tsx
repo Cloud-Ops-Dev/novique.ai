@@ -10,6 +10,8 @@ export function EditorNav({ user }: EditorNavProps) {
     { href: '/editor/dashboard', label: 'Dashboard' },
     { href: '/editor/blog', label: 'My Posts' },
     { href: '/editor/blog/new', label: 'New Post' },
+    { href: '/editor/labs', label: 'My Labs' },
+    { href: '/editor/labs/new', label: 'New Lab' },
   ]
 
   // Show admin link if user is admin

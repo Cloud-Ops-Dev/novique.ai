@@ -16,6 +16,7 @@ export default function Header() {
     { href: "/#how-it-works", label: "How It Works" },
     { href: "/solutions", label: "Solutions" },
     { href: "/blog", label: "Blog" },
+    { href: "/labs", label: "Labs" },
     { href: "/about", label: "About Us" },
     { href: "/contact", label: "Contact" },
   ];

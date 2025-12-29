@@ -24,6 +24,12 @@ export interface LabSections {
   troubleshooting: string
   businessUse: string
   tags: string[]
+  // HTML versions for the editor (optional, added during generation)
+  overviewHtml?: string
+  architectureHtml?: string
+  setupDeploymentHtml?: string
+  troubleshootingHtml?: string
+  businessUseHtml?: string
 }
 
 export interface LabGenerationResult {

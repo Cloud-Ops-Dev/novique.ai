@@ -14,9 +14,9 @@ export default function TestimonialsSection() {
     },
     {
       quote: "The free consult opened our eyes to AI possibilities we never imagined.",
-      author: "James Chen",
+      author: "Mike Jacobs",
       role: "Cafe Entrepreneur",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+      image: "/images/testimonials/mike-jacobs.jpg",
     },
     {
       quote: "Finally, AI that makes sense for a small business. No jargon, just results!",

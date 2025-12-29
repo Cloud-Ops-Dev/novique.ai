@@ -124,7 +124,6 @@ This is the git repository that gets pushed to GitHub and deployed to Vercel.
 ├── DEVELOPMENT_WORKFLOW.md # Detailed workflow guide
 ├── GITHUB_SETUP.md        # Branch protection setup
 ├── CLAUDE.md              # This file
-├── SESSION_NOTES.md       # Session history
 └── BLOG_UPDATE_WORKFLOW.md
 ```
 
@@ -133,12 +132,12 @@ This is the git repository that gets pushed to GitHub and deployed to Vercel.
 - ✅ Public documentation (README, workflow guides)
 - ✅ Scripts and automation
 - ✅ Configuration files
-- ✅ Session notes for history
 
 **What stays local (in `.planning/`, git-ignored):**
 - ✅ Claude Code session plans (from EnterPlanMode tool)
 - ✅ Design documents and mockups
 - ✅ Planning files and brainstorming
+- ✅ **Session notes** (`.planning/status/SESSION_NOTES.md`)
 - ✅ Session status files (for resuming work)
 - ✅ Private notes and ideas
 - ❌ NEVER commit to GitHub
@@ -247,16 +246,25 @@ git push origin main
 
 - **DEVELOPMENT_WORKFLOW.md** - Complete workflow guide for user
 - **GITHUB_SETUP.md** - Instructions for branch protection setup
-- **SESSION_NOTES.md** - Session-by-session development notes
 - **BLOG_UPDATE_WORKFLOW.md** - Blog-specific workflows
 - **DEPLOYMENT.md** - Deployment procedures
+- **`.planning/status/SESSION_NOTES.md`** - Session-by-session development notes (local only, git-ignored)
 
 ---
 
 ## 🔄 Session Continuity
 
-### Session Notes
-Update `SESSION_NOTES.md` at the end of each major session with:
+### Session Notes Location
+**IMPORTANT:** Session notes are stored in `.planning/status/SESSION_NOTES.md` (git-ignored, local only).
+
+This prevents documentation updates from triggering unnecessary Vercel production builds.
+
+At the start of each session:
+1. Read `.planning/status/SESSION_NOTES.md` for recent session history
+2. Check the "Next Steps" section of the most recent session
+3. Run `git log --oneline -10` to see recent commits
+
+Update the session notes at the end of each major session with:
 - What was accomplished
 - Current status
 - Next steps
@@ -360,7 +368,7 @@ Before merging to `main`:
 - **Check current branch** before making commits
 - **Create feature branches** for all work
 - **Test previews** before merging to main
-- **Update SESSION_NOTES.md** after major work
+- **Update `.planning/status/SESSION_NOTES.md`** after major work
 - **Use TodoWrite** for multi-step tasks
 - **Never skip preview testing** - production downtime is unacceptable
 
@@ -370,11 +378,11 @@ Before merging to `main`:
 
 - Git workflow questions → See DEVELOPMENT_WORKFLOW.md
 - GitHub setup → See GITHUB_SETUP.md
-- Session history → See SESSION_NOTES.md
+- Session history → See `.planning/status/SESSION_NOTES.md`
 - Blog workflows → See BLOG_UPDATE_WORKFLOW.md
 
 ---
 
-**Last Updated:** December 24, 2025
+**Last Updated:** December 29, 2025
 
 **This file should be read at the start of each Claude Code session.**

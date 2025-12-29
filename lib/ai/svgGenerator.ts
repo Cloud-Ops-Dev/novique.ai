@@ -21,11 +21,31 @@ export interface WorkflowAnalysis {
   summary: string
 }
 
+// Resource types that should be excluded from workflow diagrams (utility resources)
+const EXCLUDED_RESOURCE_TYPES = [
+  'random_string',
+  'random_id',
+  'random_integer',
+  'random_password',
+  'random_pet',
+  'random_shuffle',
+  'random_uuid',
+  'null_resource',
+  'time_sleep',
+  'time_offset',
+  'time_rotating',
+  'time_static',
+  'local_file',
+  'local_sensitive_file',
+]
+
 /**
  * Analyze repository and extract workflow structure
  */
 export async function analyzeWorkflow(repoData: RepoAnalysis): Promise<WorkflowAnalysis> {
-  const resources = repoData.mainTf ? extractTerraformResources(repoData.mainTf) : []
+  const allResources = repoData.mainTf ? extractTerraformResources(repoData.mainTf) : []
+  // Filter out utility resources that shouldn't appear in diagrams
+  const resources = allResources.filter(r => !EXCLUDED_RESOURCE_TYPES.includes(r.type))
   const providers = repoData.mainTf ? extractTerraformProviders(repoData.mainTf) : []
 
   // Build context for AI analysis
@@ -74,7 +94,9 @@ Respond with a JSON object describing the infrastructure workflow:
 Include the logical flow of data/resources. For Terraform labs, think about:
 - What gets created first (dependencies)
 - Data flow between resources
-- Input variables → Resources → Outputs`
+- Input variables → Resources → Outputs
+
+IMPORTANT: Do NOT include utility resources like random_string, random_id, null_resource, time_sleep, or local_file in the workflow. Only include actual infrastructure resources.`
 
   const response = await generateWithClaude({
     prompt,

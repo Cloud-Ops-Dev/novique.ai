@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { getLabBySlug, getAllLabs } from '@/lib/labs'
 import AnimatedWorkflow from '@/components/labs/AnimatedWorkflow'
 
+// Revalidate lab pages every 60 seconds to pick up edits
+export const revalidate = 60
+
 interface LabPageProps {
   params: Promise<{ slug: string }>
 }

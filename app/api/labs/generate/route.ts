@@ -3,6 +3,9 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { generateLab, regenerateLabSvg } from '@/lib/ai/labGenerator'
 import { generateCustomWorkflowSvg, sanitizeSvg } from '@/lib/ai/svgGenerator'
 
+// Increase timeout for lab generation (requires Vercel Pro for >10s)
+export const maxDuration = 60
+
 /**
  * POST /api/labs/generate
  * Generate lab content from GitHub repository

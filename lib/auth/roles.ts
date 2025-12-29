@@ -24,10 +24,13 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     '*',
   ],
   editor: [
-    // Blog permissions - full access
+    // Blog permissions - full access (read/write)
     'blog:*',
     // Dashboard permissions - read-only
     'dashboard:read',
+    // Customer data - read-only (can view but not edit)
+    'customers:read',
+    'consultations:read',
     // Profile permissions
     'profile:read_own',
     'profile:update_own',

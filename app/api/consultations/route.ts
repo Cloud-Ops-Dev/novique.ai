@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/auth/session'
+import { createAdminClient } from '@/lib/supabase/server'
+import { requireAdminOrEditor } from '@/lib/auth/session'
 
 // GET /api/consultations - List all consultation requests
 export async function GET(request: NextRequest) {
   try {
-    // Require admin authentication
-    await requireAdmin()
+    // Require admin or editor authentication (editors have read-only access)
+    await requireAdminOrEditor()
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { searchParams } = new URL(request.url)
 
     // Query parameters

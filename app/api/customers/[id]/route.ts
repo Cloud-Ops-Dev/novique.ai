@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { getCurrentUser } from '@/lib/auth/session'
+import { createAdminClient, createClient } from '@/lib/supabase/server'
+import { requireAdminOrEditor, getCurrentUser } from '@/lib/auth/session'
 
 // GET /api/customers/[id] - Get single customer with interactions
 export async function GET(
@@ -8,13 +8,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    // Require admin or editor authentication (editors have read-only access)
+    await requireAdminOrEditor()
 
     const { id } = await params
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     // Get customer
     const { data: customer, error: customerError } = await supabase

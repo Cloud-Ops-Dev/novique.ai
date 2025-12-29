@@ -148,6 +148,29 @@ export async function requireAdmin(): Promise<UserProfile> {
 }
 
 /**
+ * Require user to be admin or editor (for read-only admin panel access)
+ *
+ * @returns User profile (guaranteed to be admin or editor)
+ * @throws Redirects to /unauthorized
+ *
+ * @example
+ * const user = await requireAdminOrEditor()
+ */
+export async function requireAdminOrEditor(): Promise<UserProfile> {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  if (user.role !== ROLES.ADMIN && user.role !== ROLES.EDITOR) {
+    redirect('/unauthorized')
+  }
+
+  return user
+}
+
+/**
  * Check if current user can perform action on resource
  *
  * @param resourceOwnerId - ID of the user who owns the resource

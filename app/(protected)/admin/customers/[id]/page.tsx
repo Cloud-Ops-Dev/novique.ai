@@ -19,6 +19,7 @@ export default function CustomerDetailPage() {
   const [interactions, setInteractions] = useState<any[]>([])
   const [showAddInteraction, setShowAddInteraction] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [adminUsers, setAdminUsers] = useState<any[]>([])
   const [newInteraction, setNewInteraction] = useState({
     interaction_type: 'note',
     subject: '',
@@ -27,6 +28,24 @@ export default function CustomerDetailPage() {
 
   const { formData, updateField, errors, saveCustomer, addInteraction, isSaving } =
     useCustomerEditor({})
+
+  // Load admin users
+  useEffect(() => {
+    async function loadAdminUsers() {
+      try {
+        const response = await fetch('/api/admin/users')
+        if (response.ok) {
+          const result = await response.json()
+          // Filter to only admin users
+          const admins = (result.data || []).filter((u: any) => u.role === 'admin')
+          setAdminUsers(admins)
+        }
+      } catch (error) {
+        console.error('Failed to load admin users:', error)
+      }
+    }
+    loadAdminUsers()
+  }, [])
 
   // Load customer data
   useEffect(() => {
@@ -290,6 +309,22 @@ export default function CustomerDetailPage() {
                     <option value="delayed">Delayed</option>
                     <option value="blocked">Blocked</option>
                     <option value="completed">Completed</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Assigned to</label>
+                  <select
+                    value={formData.assigned_admin_id || ''}
+                    onChange={(e) => updateField('assigned_admin_id', e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="">Unassigned</option>
+                    {adminUsers.map((admin) => (
+                      <option key={admin.id} value={admin.id}>
+                        {admin.full_name || admin.email}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

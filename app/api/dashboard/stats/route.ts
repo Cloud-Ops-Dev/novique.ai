@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/auth/session'
 
 // GET /api/dashboard/stats - Get all dashboard metrics
@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized - requires admin or editor role' }, { status: 403 })
     }
 
-    const supabase = await createClient()
+    // Use admin client so editors can read all data (read-only access)
+    const supabase = createAdminClient()
 
     // ============================================
     // 1. REVENUE METRICS

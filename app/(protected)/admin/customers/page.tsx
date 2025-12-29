@@ -1,6 +1,5 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { CustomerStageBadge } from '@/components/admin/CustomerStageBadge'
@@ -44,54 +43,55 @@ export default function CustomersPage() {
 
   async function loadCustomers() {
     setLoading(true)
-    const supabase = createClient()
 
-    // Build query
-    let query = supabase
-      .from('customers')
-      .select('*, assigned_admin:profiles!assigned_admin_id(id, full_name, email)')
-      .order('created_at', { ascending: false })
+    try {
+      // Build query params
+      const params = new URLSearchParams()
+      if (stageFilter !== 'all') {
+        params.append('stage', stageFilter)
+      }
+      if (statusFilter !== 'all') {
+        params.append('status', statusFilter)
+      }
+      if (searchQuery) {
+        params.append('search', searchQuery)
+      }
 
-    // Apply filters
-    if (stageFilter !== 'all') {
-      query = query.eq('stage', stageFilter)
+      // Fetch customers from API (uses admin client, allows editors)
+      const response = await fetch(`/api/customers?${params.toString()}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch customers')
+      }
+
+      const result = await response.json()
+      const customersData = result.data || []
+
+      // Calculate stats from all customers
+      const activeCount = customersData.filter((c: Customer) =>
+        ['project_active', 'implementation', 'delivered'].includes(c.stage)
+      ).length
+
+      const atRiskCount = customersData.filter((c: Customer) =>
+        ['at_risk', 'delayed', 'blocked'].includes(c.project_status)
+      ).length
+
+      const totalRevenue = customersData
+        .filter((c: Customer) => c.stage === 'closed_won')
+        .reduce((sum: number, c: Customer) => sum + (Number(c.agreed_implementation_cost) || 0), 0)
+
+      setCustomers(customersData)
+      setStats({
+        total: customersData.length,
+        active: activeCount,
+        atRisk: atRiskCount,
+        revenue: totalRevenue,
+      })
+    } catch (error) {
+      console.error('Error loading customers:', error)
+      setCustomers([])
+    } finally {
+      setLoading(false)
     }
-
-    if (statusFilter !== 'all') {
-      query = query.eq('project_status', statusFilter)
-    }
-
-    if (searchQuery) {
-      query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
-    }
-
-    const { data: customersData } = await query
-
-    // Calculate stats
-    const { data: allCustomers } = await supabase
-      .from('customers')
-      .select('*')
-
-    const activeCount = allCustomers?.filter((c) =>
-      ['project_active', 'implementation', 'delivered'].includes(c.stage)
-    ).length || 0
-
-    const atRiskCount = allCustomers?.filter((c) =>
-      ['at_risk', 'delayed', 'blocked'].includes(c.project_status)
-    ).length || 0
-
-    const totalRevenue = allCustomers
-      ?.filter((c) => c.stage === 'closed_won')
-      .reduce((sum, c) => sum + (Number(c.agreed_implementation_cost) || 0), 0) || 0
-
-    setCustomers(customersData || [])
-    setStats({
-      total: allCustomers?.length || 0,
-      active: activeCount,
-      atRisk: atRiskCount,
-      revenue: totalRevenue,
-    })
-    setLoading(false)
   }
 
   const statsArray = [

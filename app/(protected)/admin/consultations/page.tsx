@@ -1,6 +1,5 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
 import { useState, useEffect } from 'react'
 import { ConvertConsultationModal } from '@/components/admin/ConvertConsultationModal'
 
@@ -39,49 +38,50 @@ export default function ConsultationsPage() {
 
   async function loadConsultations() {
     setLoading(true)
-    const supabase = createClient()
 
-    // Build query
-    let query = supabase
-      .from('consultation_requests')
-      .select('*')
-      .order('created_at', { ascending: false })
+    try {
+      // Build query params
+      const params = new URLSearchParams()
+      if (statusFilter !== 'all') {
+        params.append('status', statusFilter)
+      }
+      if (searchQuery) {
+        params.append('search', searchQuery)
+      }
 
-    // Apply status filter
-    if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter)
+      // Fetch consultations from API (uses admin client, allows editors)
+      const response = await fetch(`/api/consultations?${params.toString()}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch consultations')
+      }
+
+      const result = await response.json()
+      const consultationsData = result.data || []
+
+      // Calculate stats from all consultations
+      const oneWeekAgo = new Date()
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
+      const thisWeekCount = consultationsData.filter(
+        (c: Consultation) => new Date(c.created_at) >= oneWeekAgo
+      ).length
+
+      const pendingCount = consultationsData.filter((c: Consultation) => c.status === 'pending').length
+      const convertedCount = consultationsData.filter((c: Consultation) => c.status === 'converted').length
+
+      setConsultations(consultationsData)
+      setStats({
+        total: consultationsData.length,
+        pending: pendingCount,
+        thisWeek: thisWeekCount,
+        converted: convertedCount,
+      })
+    } catch (error) {
+      console.error('Error loading consultations:', error)
+      setConsultations([])
+    } finally {
+      setLoading(false)
     }
-
-    // Apply search
-    if (searchQuery) {
-      query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
-    }
-
-    const { data: consultationsData } = await query
-
-    // Calculate stats
-    const { data: allConsultations } = await supabase
-      .from('consultation_requests')
-      .select('*')
-
-    const oneWeekAgo = new Date()
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-
-    const thisWeekCount = allConsultations?.filter(
-      (c) => new Date(c.created_at) >= oneWeekAgo
-    ).length || 0
-
-    const pendingCount = allConsultations?.filter((c) => c.status === 'pending').length || 0
-    const convertedCount = allConsultations?.filter((c) => c.status === 'converted').length || 0
-
-    setConsultations(consultationsData || [])
-    setStats({
-      total: allConsultations?.length || 0,
-      pending: pendingCount,
-      thisWeek: thisWeekCount,
-      converted: convertedCount,
-    })
-    setLoading(false)
   }
 
   const statsArray = [

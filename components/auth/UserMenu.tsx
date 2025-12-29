@@ -111,7 +111,7 @@ export function UserMenu() {
 
           {/* Navigation links */}
           <div className="py-1">
-            {isAdmin && (
+            {isEditorOrHigher && (
               <Link
                 href="/admin/dashboard"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -126,7 +126,7 @@ export function UserMenu() {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 onClick={() => setIsOpen(false)}
               >
-                Editor Dashboard
+                Blog Editor
               </Link>
             )}
             <Link

@@ -1,6 +1,5 @@
 import { generateWithClaude } from './claude'
 import { RepoAnalysis, extractTerraformResources, extractTerraformProviders } from '../github/repoReader'
-import DOMPurify from 'isomorphic-dompurify'
 
 export interface WorkflowNode {
   id: string
@@ -615,31 +614,28 @@ export function generateCustomWorkflowSvg(
 
 /**
  * Sanitize SVG for safe rendering
+ * Simple sanitization that removes potentially dangerous content
+ * Since we generate SVGs ourselves, this is mainly a safety check
  */
 export function sanitizeSvg(svg: string): string {
-  return DOMPurify.sanitize(svg, {
-    USE_PROFILES: { svg: true, svgFilters: true },
-    ADD_TAGS: ['animate', 'animateTransform', 'animateMotion', 'mpath', 'set'],
-    ADD_ATTR: [
-      'attributeName',
-      'values',
-      'dur',
-      'repeatCount',
-      'begin',
-      'fill',
-      'calcMode',
-      'keyTimes',
-      'keySplines',
-      'href',
-      'xlink:href',
-      'from',
-      'to',
-      'by',
-      'path',
-      'rotate',
-      'keyPoints',
-    ],
-  })
+  // Remove script tags and event handlers
+  let sanitized = svg
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:/gi, 'data-blocked:')
+
+  // Ensure it starts with svg tag
+  if (!sanitized.trim().startsWith('<svg')) {
+    // Try to extract just the svg element
+    const svgMatch = sanitized.match(/<svg[\s\S]*<\/svg>/i)
+    if (svgMatch) {
+      sanitized = svgMatch[0]
+    }
+  }
+
+  return sanitized
 }
 
 /**

@@ -11,9 +11,22 @@ export const maxDuration = 60
  * Generate lab content from GitHub repository
  */
 export async function POST(request: NextRequest) {
+  console.log('[Lab Generate] API route called')
+
   try {
+    // Check required environment variables
+    if (!process.env.ANTHROPIC_API_KEY) {
+      console.error('[Lab Generate] Missing ANTHROPIC_API_KEY')
+      return NextResponse.json(
+        { error: 'Server configuration error: Missing AI API key' },
+        { status: 500 }
+      )
+    }
+
     // Check authentication
     const user = await getCurrentUser()
+    console.log('[Lab Generate] User:', user?.email || 'not authenticated')
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -23,7 +36,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const body = await request.json()
+    let body
+    try {
+      body = await request.json()
+      console.log('[Lab Generate] Request body:', JSON.stringify(body).substring(0, 200))
+    } catch (parseError) {
+      console.error('[Lab Generate] Failed to parse request body:', parseError)
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      )
+    }
 
     // Check if this is a custom workflow SVG request
     if (body.customNodes && Array.isArray(body.customNodes)) {
@@ -66,6 +89,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate full lab
+    console.log('[Lab Generate] Starting lab generation for:', body.githubUrl)
     const result = await generateLab(
       {
         githubUrl: body.githubUrl,
@@ -73,14 +97,17 @@ export async function POST(request: NextRequest) {
       },
       user.id
     )
+    console.log('[Lab Generate] Generation result:', result.success ? 'success' : 'failed')
 
     if (!result.success) {
+      console.error('[Lab Generate] Generation failed:', result.error)
       return NextResponse.json(
         { error: result.error || 'Lab generation failed' },
         { status: 500 }
       )
     }
 
+    console.log('[Lab Generate] Lab created with slug:', result.slug)
     return NextResponse.json({
       success: true,
       labId: result.labId,
@@ -88,7 +115,7 @@ export async function POST(request: NextRequest) {
       generationData: result.generationData,
     })
   } catch (error) {
-    console.error('Lab generation error:', error)
+    console.error('[Lab Generate] Unhandled error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to generate lab' },
       { status: 500 }

@@ -21,6 +21,123 @@ This file tracks session-by-session development progress for the Novique.AI proj
 
 ---
 
+## Session: December 29, 2025
+
+### Summary
+Implemented the Labs section with AI-powered lab generation from GitHub repositories. Labs feature animated workflow diagrams that visualize Terraform infrastructure.
+
+### Major Accomplishments
+
+1. **Labs Public Pages** (`feature/labs-section`)
+   - Created `/labs` listing page with animated workflow diagram previews
+   - Created `/labs/[slug]` detail pages with full workflow diagrams
+   - Added Header navigation link to Labs section
+   - Added introductory text explaining labs are built for customer solutions
+
+2. **Lab Editor System** (`feature/labs-section`)
+   - Created `/editor/labs` management page
+   - Created lab creation/edit forms with section editors
+   - Implemented workflow node editor for customizing diagrams
+   - Added "Generate with AI" functionality
+
+3. **AI Lab Generation** (`feature/labs-section`)
+   - Built GitHub repository reader to extract README, Terraform files
+   - Integrated Claude AI to generate lab content sections:
+     - Overview, Architecture, Setup/Deployment, Troubleshooting, Business Use
+   - Auto-generates workflow SVG diagrams from Terraform resources
+   - Filters out utility resources (random_*, null_resource, etc.) from diagrams
+
+4. **SVG Workflow Diagrams** (`feature/labs-section`)
+   - Animated radial layout with Terraform logo hub
+   - Provider-colored cards (AWS orange, Docker blue, etc.)
+   - Animated connection paths between resources
+   - Play/pause and reset controls
+
+5. **Bug Fixes**
+   - Fixed Vercel serverless ESM compatibility by removing isomorphic-dompurify
+   - Added 60-second timeout for lab generation API
+   - Added revalidation to lab detail pages for edit pickup
+   - Fixed LabSections TypeScript interface for HTML properties
+
+6. **GitHub Repo README Updates**
+   - Updated cloud-lab-terraform-ansible, Terraform-Lab-1, athena-data-lab, n8n.mcp
+   - Changed personal/learning language to customer-focused messaging
+
+7. **Blog Post Date Corrections**
+   - Updated 4 blog posts to reflect original writing dates
+
+### Files Created
+
+**Lab Pages:**
+- `app/labs/page.tsx` - Labs listing page
+- `app/labs/[slug]/page.tsx` - Lab detail page
+
+**Lab Editor:**
+- `app/(protected)/editor/labs/page.tsx` - Labs management
+- `app/(protected)/editor/labs/new/page.tsx` - Create new lab
+- `app/(protected)/editor/labs/[slug]/edit/page.tsx` - Edit lab
+
+**API Routes:**
+- `app/api/labs/route.ts` - List/create labs
+- `app/api/labs/[slug]/route.ts` - Get/update/delete lab
+- `app/api/labs/generate/route.ts` - AI lab generation
+
+**Components:**
+- `components/labs/AnimatedWorkflow.tsx` - SVG workflow viewer
+- `components/labs/LabCard.tsx` - Lab preview card
+- `components/labs/LabForm.tsx` - Lab editor form
+- `components/labs/LabGenerationModal.tsx` - AI generation modal
+
+**Libraries:**
+- `lib/labs.ts` - Lab data fetching
+- `lib/ai/labGenerator.ts` - AI content generation
+- `lib/ai/svgGenerator.ts` - Workflow diagram generation
+- `lib/github/repoReader.ts` - GitHub repo parsing
+- `hooks/useLabEditor.ts` - Lab editor state management
+
+### Files Modified
+
+- `components/Header.tsx` - Added Labs navigation link
+- `components/editor/EditorNav.tsx` - Added Labs editor link
+- `tailwind.config.ts` - Added typography plugin configuration
+- `package.json` - Added slugify, marked dependencies
+
+### Database
+
+Labs stored in Supabase `labs` table with fields:
+- slug, title, overview, architecture, setup_deployment
+- troubleshooting, business_use, workflow_svg, github_url
+- tags, featured, status, ai_generated, published_at
+
+### Current Labs Published
+
+1. **Terraform, AWS, and Docker: Building a Cloud-Native Testbed** (July 12, 2025)
+2. **AWS Athena Data Analytics with Terraform Infrastructure** (December 29, 2025)
+
+### Deployment Status
+
+**Production Deployment:**
+- Branch: `feature/labs-section` merged to `main` ✅
+- Production URL: https://novique.ai/labs
+- All labs features live
+
+**Current Branch:** `main`
+
+### Known Issues / Future Work
+
+1. **List spacing in prose** - Typography plugin changes not taking effect on lab detail pages (deferred)
+2. **Additional diagram types** - User wants DFD-style diagrams for non-Terraform projects (future)
+
+### Next Steps
+
+**Future Enhancements:**
+- Add Data Flow Diagram (DFD) template for non-infrastructure labs
+- Add sequence diagram support
+- Add network topology diagram support
+- Fix prose list spacing if needed
+
+---
+
 ## Session: December 28, 2025
 
 ### Summary

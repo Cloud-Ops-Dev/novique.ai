@@ -10,6 +10,20 @@ interface AnimatedWorkflowProps {
   showControls?: boolean
 }
 
+// Detect if content is an image URL rather than SVG content
+function isImageUrl(content: string): boolean {
+  if (!content) return false
+  // Check if it's a URL (starts with http/https or is a relative path)
+  if (content.startsWith('http://') || content.startsWith('https://')) {
+    return true
+  }
+  // Check if it ends with an image extension
+  if (/\.(png|jpg|jpeg|gif|webp|svg)(\?.*)?$/i.test(content)) {
+    return true
+  }
+  return false
+}
+
 export default function AnimatedWorkflow({
   svg,
   height = '25vh',
@@ -20,8 +34,11 @@ export default function AnimatedWorkflow({
   const [key, setKey] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Sanitize SVG on client side
-  const sanitizedSvg = typeof window !== 'undefined'
+  // Determine if this is an image URL or SVG content
+  const isImage = isImageUrl(svg)
+
+  // Sanitize SVG on client side (only if it's SVG content)
+  const sanitizedSvg = !isImage && typeof window !== 'undefined'
     ? DOMPurify.sanitize(svg, {
         USE_PROFILES: { svg: true, svgFilters: true },
         ADD_TAGS: ['animate', 'animateTransform', 'animateMotion'],
@@ -39,8 +56,9 @@ export default function AnimatedWorkflow({
       })
     : svg
 
-  // Handle animation pause/play
+  // Handle animation pause/play (only for SVG content)
   useEffect(() => {
+    if (isImage) return
     if (!containerRef.current) return
 
     const svgElement = containerRef.current.querySelector('svg')
@@ -51,7 +69,7 @@ export default function AnimatedWorkflow({
     } else {
       svgElement.pauseAnimations?.()
     }
-  }, [isPlaying])
+  }, [isPlaying, isImage])
 
   const handleRestart = () => {
     setKey((prev) => prev + 1)
@@ -69,6 +87,26 @@ export default function AnimatedWorkflow({
     )
   }
 
+  // Render image if it's a URL
+  if (isImage) {
+    return (
+      <div className={`relative ${className}`}>
+        <div
+          className="w-full flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden"
+          style={{ height, minHeight: '200px' }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={svg}
+            alt="Workflow diagram"
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // Render SVG content
   return (
     <div className={`relative ${className}`}>
       <div

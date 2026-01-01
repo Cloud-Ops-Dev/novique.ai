@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import TipTapEditor from '@/components/blog/TipTapEditor'
 import { useLabEditor, LabFormData } from '@/hooks/useLabEditor'
@@ -30,6 +30,8 @@ export default function LabForm({ initialData, isAdmin = false }: LabFormProps) 
   const [tagInput, setTagInput] = useState('')
   const [showGenerateModal, setShowGenerateModal] = useState(false)
   const [showWorkflowEditor, setShowWorkflowEditor] = useState(false)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [workflowNodes, setWorkflowNodes] = useState<Array<{
     id: string
     label: string
@@ -74,6 +76,45 @@ export default function LabForm({ initialData, isAdmin = false }: LabFormProps) 
   const handleRemoveTag = (tagToRemove: string) => {
     updateField('tags', formData.tags.filter((tag) => tag !== tagToRemove))
   }
+
+  // Handle workflow image upload
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingImage(true)
+    try {
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+      if (formData.slug) {
+        formDataUpload.append('labSlug', formData.slug)
+      }
+
+      const response = await fetch('/api/labs/upload-image', {
+        method: 'POST',
+        body: formDataUpload,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Upload failed')
+      }
+
+      updateField('workflowSvg', result.url)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to upload image')
+    } finally {
+      setIsUploadingImage(false)
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  // Check if current workflow is an uploaded image (URL) vs generated SVG
+  const isWorkflowImageUrl = formData.workflowSvg?.startsWith('http')
 
   // Save and publish
   const handlePublish = async () => {
@@ -193,7 +234,7 @@ export default function LabForm({ initialData, isAdmin = false }: LabFormProps) 
           <AnimatedWorkflow
             svg={formData.workflowSvg}
             height="250px"
-            showControls={true}
+            showControls={!isWorkflowImageUrl}
             className="border border-gray-200 rounded-lg"
           />
           <div className="mt-2 flex flex-wrap gap-2">
@@ -230,7 +271,32 @@ export default function LabForm({ initialData, isAdmin = false }: LabFormProps) 
             >
               Edit workflow nodes
             </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingImage}
+              className="text-sm text-green-600 hover:text-green-700 disabled:opacity-50"
+            >
+              {isUploadingImage ? 'Uploading...' : 'Upload image'}
+            </button>
+            {formData.workflowSvg && (
+              <button
+                type="button"
+                onClick={() => updateField('workflowSvg', '')}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Clear
+              </button>
+            )}
           </div>
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
         </div>
 
         {/* Section Tabs */}

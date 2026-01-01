@@ -3,8 +3,10 @@ import sharp from 'sharp'
 import { randomUUID } from 'crypto'
 
 const BUCKET_NAME = 'blog-images'
+const LAB_BUCKET_NAME = 'lab-images'
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+const LAB_ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
 
 export interface ImageUploadResult {
   original: string
@@ -163,4 +165,102 @@ export async function ensureBlogImagesBucketExists(): Promise<void> {
       throw new Error(`Failed to create bucket: ${error.message}`)
     }
   }
+}
+
+/**
+ * Validate lab workflow image file
+ */
+export function validateLabImageFile(file: File): void {
+  // Check file size
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File size exceeds 5MB limit')
+  }
+
+  // Check file type
+  if (!LAB_ALLOWED_MIME_TYPES.includes(file.type)) {
+    throw new Error('Invalid file type. Only JPEG, PNG, WebP, GIF, and SVG are allowed.')
+  }
+}
+
+/**
+ * Upload lab workflow image to Supabase Storage
+ * Returns the public URL of the uploaded image
+ */
+export async function uploadLabWorkflowImage(
+  file: File,
+  labSlug?: string
+): Promise<string> {
+  validateLabImageFile(file)
+
+  const supabase = await createClient()
+
+  // Generate unique filename
+  const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'png'
+  const uniqueId = randomUUID()
+  const baseFileName = labSlug
+    ? `${labSlug}-${uniqueId}`
+    : `workflow-${uniqueId}`
+
+  // Convert file to buffer
+  const arrayBuffer = await file.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+
+  let uploadBuffer: Buffer
+  let contentType = file.type
+
+  // For SVG files, upload as-is without processing
+  if (file.type === 'image/svg+xml') {
+    uploadBuffer = buffer
+  } else {
+    // For raster images, optimize with sharp
+    uploadBuffer = await sharp(buffer)
+      .resize(1200, null, {
+        withoutEnlargement: true,
+        fit: 'inside',
+      })
+      .jpeg({ quality: 85, progressive: true })
+      .toBuffer()
+    contentType = 'image/jpeg'
+  }
+
+  const fileName = `${baseFileName}.${file.type === 'image/svg+xml' ? 'svg' : 'jpg'}`
+  const filePath = `workflows/${fileName}`
+
+  // Note: The 'lab-images' bucket must be created manually in Supabase Dashboard
+  // Go to Storage > New Bucket > Name: "lab-images", Public: true
+
+  // Upload to Supabase Storage
+  const { error } = await supabase.storage
+    .from(LAB_BUCKET_NAME)
+    .upload(filePath, uploadBuffer, {
+      contentType,
+      upsert: false,
+    })
+
+  if (error) {
+    throw new Error(`Upload failed: ${error.message}`)
+  }
+
+  // Get public URL
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(LAB_BUCKET_NAME).getPublicUrl(filePath)
+
+  return publicUrl
+}
+
+/**
+ * Delete lab workflow image from storage
+ */
+export async function deleteLabWorkflowImage(imageUrl: string): Promise<void> {
+  const supabase = await createClient()
+
+  // Extract file path from URL
+  const urlParts = imageUrl.split(`/${LAB_BUCKET_NAME}/`)
+  if (urlParts.length < 2) {
+    throw new Error('Invalid image URL')
+  }
+
+  const filePath = urlParts[1]
+  await supabase.storage.from(LAB_BUCKET_NAME).remove([filePath])
 }

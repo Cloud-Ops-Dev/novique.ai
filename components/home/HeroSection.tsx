@@ -14,13 +14,18 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
+          {/* Headline */}
+          <h1 className="text-sm sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
+            From This Chaos... To This Freedom.
+          </h1>
+
           {/* Hero Image */}
           <div className="mb-6">
             <Image
               src="/images/newhhero1.jpg"
               alt="From chaos to freedom - AI workflow automation for small businesses"
               width={1248}
-              height={640}
+              height={530}
               className="w-full h-auto rounded-lg shadow-xl mx-auto"
               priority
             />
@@ -32,7 +37,7 @@ export default function HeroSection() {
           </h2>
 
           {/* Subheadline */}
-          <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
             Imagine reclaiming your day: No more endless data entry, scheduling headaches, or customer follow-ups eating your time. At Novique, we build custom AI tools that automate the boring stuff, boost your efficiency, and help you snag more customers—without you needing a PhD in tech. Start with a free chat and watch your workflow transform.{" "}
             <span className="italic">(We handle the setup, you handle the high-fives.)</span>
           </p>

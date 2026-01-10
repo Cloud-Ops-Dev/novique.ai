@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function ProblemSection() {
   return (
     <Section background="white">
-      <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div className="grid md:grid-cols-2 gap-12 items-center md:items-start">
         {/* Image */}
         <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-xl">
           <Image

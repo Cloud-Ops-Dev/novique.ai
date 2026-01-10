@@ -27,7 +27,7 @@ export default function HeroSection() {
           </div>
 
           {/* Tagline */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 mb-6">
+          <h2 className="text-sm sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
             AI Workflow Automation That Actually Works for Small Businesses.
           </h2>
 

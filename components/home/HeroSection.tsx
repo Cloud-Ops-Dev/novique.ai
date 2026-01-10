@@ -21,7 +21,7 @@ export default function HeroSection() {
               alt="From chaos to freedom - AI workflow automation for small businesses"
               width={1248}
               height={762}
-              className="rounded-lg shadow-xl mx-auto"
+              className="w-full h-auto rounded-lg shadow-xl mx-auto"
               priority
             />
           </div>

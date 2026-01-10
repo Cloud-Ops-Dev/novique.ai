@@ -1,39 +1,40 @@
 "use client";
 
+import Image from "next/image";
 import Button from "../Button";
-import Logo from "../Logo";
 import { motion } from "framer-motion";
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-200 via-gray-100 to-blue-100">
-      {/* Abstract AI Background */}
-      <div className="absolute inset-0 overflow-hidden opacity-15">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-blob" />
-        <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000" />
-        <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-slate-300 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000" />
-      </div>
-
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-50 to-white">
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {/* Logo - Centered above headline */}
-          <div className="flex justify-center mb-8">
-            <Logo className="h-48 w-auto md:h-72 lg:h-84" />
+          {/* Hero Image */}
+          <div className="mb-6">
+            <Image
+              src="/images/newhhero1.jpg"
+              alt="From chaos to freedom - AI workflow automation for small businesses"
+              width={1248}
+              height={640}
+              className="w-full h-auto rounded-lg shadow-xl mx-auto"
+              priority
+            />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold text-primary-900 mb-6 leading-tight">
-            Unlock AI for Your Small Business{" "}
-            <span className="text-primary-600">– Without the Headache</span>
-          </h1>
+          {/* Tagline */}
+          <h2 className="text-sm sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
+            AI Workflow Automation That Actually Works for Small Businesses.
+          </h2>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto">
-            At Novique, we make powerful AI simple and accessible. You know it can transform your business – we&apos;ll show you how, starting with a{" "}
-            <span className="font-semibold text-primary-600">free consultation</span>.
+          {/* Subheadline */}
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
+            Imagine reclaiming your day: No more endless data entry, scheduling headaches, or customer follow-ups eating your time. At Novique, we build custom AI tools that automate the boring stuff, boost your efficiency, and help you snag more customers—without you needing a PhD in tech. Start with a free chat and watch your workflow transform.{" "}
+            <span className="italic">(We handle the setup, you handle the high-fives.)</span>
           </p>
 
           {/* CTA Buttons */}
@@ -45,11 +46,6 @@ export default function HeroSection() {
               See How It Works
             </Button>
           </div>
-
-          {/* Small note */}
-          <p className="text-sm text-gray-600 italic">
-            No tech expertise required. We handle everything at novique.ai.
-          </p>
         </motion.div>
       </div>
 

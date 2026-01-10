@@ -19,8 +19,8 @@ export default function HeroSection() {
             <Image
               src="/images/newhhero1.jpg"
               alt="From chaos to freedom - AI workflow automation for small businesses"
-              width={1200}
-              height={675}
+              width={1248}
+              height={762}
               className="rounded-lg shadow-xl mx-auto"
               priority
             />

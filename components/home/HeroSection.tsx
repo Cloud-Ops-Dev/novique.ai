@@ -33,12 +33,12 @@ export default function HeroSection() {
 
           {/* Tagline */}
           <h2 className="text-sm sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
-            AI Workflow Automation That Actually Works for Small Businesses.
+            Imagine reclaiming your day...
           </h2>
 
           {/* Subheadline */}
           <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Imagine reclaiming your day: No more endless data entry, scheduling headaches, or customer follow-ups eating your time. At Novique, we build custom AI tools that automate the boring stuff, boost your efficiency, and help you snag more customers—without you needing a PhD in tech. Start with a free chat and watch your workflow transform.{" "}
+            No more endless data entry, scheduling headaches, or customer follow-ups eating your time. At Novique, we build custom AI tools that automate the boring stuff, boost your efficiency, and help you snag more customers—without you needing a PhD in tech. Start with a free chat and watch your workflow transform.{" "}
             <span className="italic">(We handle the setup, you handle the high-fives.)</span>
           </p>
 

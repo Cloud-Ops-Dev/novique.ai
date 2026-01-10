@@ -15,7 +15,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
         >
           {/* Headline */}
-          <h1 className="text-sm sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
             From This Chaos... To This Freedom.
           </h1>
 
@@ -32,7 +32,7 @@ export default function HeroSection() {
           </div>
 
           {/* Tagline */}
-          <h2 className="text-sm sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 mb-6">
             Imagine reclaiming your day...
           </h2>
 

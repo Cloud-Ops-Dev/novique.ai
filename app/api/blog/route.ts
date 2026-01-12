@@ -123,6 +123,9 @@ export async function POST(request: NextRequest) {
         featured: body.featured || false,
         status: body.status || 'draft',
         tags: body.tags || [],
+        // Social metadata
+        key_insights: body.keyInsights || [],
+        core_takeaway: body.coreTakeaway || null,
         published_at: body.status === 'published' ? new Date().toISOString() : null,
       })
       .select('*, author:profiles(id, full_name, email)')

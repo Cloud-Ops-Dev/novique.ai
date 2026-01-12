@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import TipTapEditor from './TipTapEditor'
+import SocialMetadataSection from './SocialMetadataSection'
 import { useBlogEditor } from '@/hooks/useBlogEditor'
 import { useAutoSave } from '@/hooks/useAutoSave'
 
@@ -305,6 +306,18 @@ export default function BlogPostForm({ initialData, isAdmin = false }: BlogPostF
           </div>
         )}
       </div>
+
+      {/* Social Media Metadata */}
+      <SocialMetadataSection
+        keyInsights={formData.keyInsights || []}
+        coreTakeaway={formData.coreTakeaway || ''}
+        onKeyInsightsChange={(insights) => updateField('keyInsights', insights)}
+        onCoreTakeawayChange={(takeaway) => updateField('coreTakeaway', takeaway)}
+        blogTitle={formData.title}
+        blogContent={formData.content}
+        blogSummary={formData.summary}
+        postId={formData.id}
+      />
 
       {/* Content Editor */}
       <div>

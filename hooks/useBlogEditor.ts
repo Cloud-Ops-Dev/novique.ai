@@ -14,6 +14,9 @@ export interface BlogPostData {
   headerImage?: string
   featured: boolean
   status: 'draft' | 'pending_review' | 'scheduled' | 'published'
+  // Social metadata (source of truth for platform adapters)
+  keyInsights?: string[] // 3 bullet points for social distribution
+  coreTakeaway?: string // Single sentence summary for sharp posts
 }
 
 interface UseBlogEditorOptions {
@@ -38,6 +41,9 @@ export function useBlogEditor({
     headerImage: initialData?.headerImage || '',
     featured: initialData?.featured || false,
     status: initialData?.status || 'draft',
+    // Social metadata
+    keyInsights: initialData?.keyInsights || [],
+    coreTakeaway: initialData?.coreTakeaway || '',
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})

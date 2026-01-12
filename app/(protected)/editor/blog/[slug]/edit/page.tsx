@@ -95,6 +95,9 @@ export default async function EditEditorBlogPostPage({ params }: PageProps) {
           headerImage: post.header_image,
           featured: post.featured,
           status: post.status,
+          // Social metadata
+          keyInsights: post.key_insights || [],
+          coreTakeaway: post.core_takeaway || '',
         }}
         isAdmin={false}
       />

@@ -93,6 +93,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       header_image: body.headerImage || null,
       featured: body.featured || false,
       tags: body.tags || [],
+      // Social metadata
+      key_insights: body.keyInsights || [],
+      core_takeaway: body.coreTakeaway || null,
       updated_at: new Date().toISOString(),
     }
 

@@ -22,6 +22,9 @@ export interface BlogPost {
   source?: 'database' | 'mdx' // Track where post came from
   status?: string
   aiGenerated?: boolean
+  // Social metadata (source of truth for platform adapters)
+  keyInsights?: string[] // 3 bullet points for social distribution
+  coreTakeaway?: string // Single sentence summary for sharp posts
 }
 
 const postsDirectory = path.join(process.cwd(), 'content/blog')
@@ -116,6 +119,9 @@ async function getAllPostsFromDatabase(): Promise<BlogPost[]> {
       source: 'database' as const,
       status: post.status,
       aiGenerated: post.ai_generated,
+      // Social metadata
+      keyInsights: post.key_insights || undefined,
+      coreTakeaway: post.core_takeaway || undefined,
     }))
   } catch (error) {
     console.error('Error fetching posts from database:', error)
@@ -153,6 +159,9 @@ async function getPostBySlugFromDatabase(slug: string): Promise<BlogPost | undef
       source: 'database',
       status: data.status,
       aiGenerated: data.ai_generated,
+      // Social metadata
+      keyInsights: data.key_insights || undefined,
+      coreTakeaway: data.core_takeaway || undefined,
     }
   } catch (error) {
     console.error(`Error fetching post ${slug} from database:`, error)

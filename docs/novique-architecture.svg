@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#2d5a87"/>
+    </linearGradient>
+    <linearGradient id="frontendGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <linearGradient id="backendGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <linearGradient id="dbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="externalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899"/>
+      <stop offset="100%" style="stop-color:#db2777"/>
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="arrowheadBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#f8fafc"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="60" fill="url(#headerGrad)"/>
+  <text x="600" y="38" text-anchor="middle" fill="white" font-size="24" font-weight="bold">Novique.AI Architecture</text>
+
+  <!-- ========== USER LAYER ========== -->
+  <text x="30" y="95" fill="#374151" font-size="14" font-weight="bold">USER LAYER</text>
+
+  <!-- Browser/User -->
+  <rect x="30" y="110" width="180" height="80" rx="8" fill="white" stroke="#e2e8f0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="120" y="145" text-anchor="middle" fill="#374151" font-size="14" font-weight="bold">Browser</text>
+  <text x="120" y="165" text-anchor="middle" fill="#64748b" font-size="11">Public Pages</text>
+  <text x="120" y="180" text-anchor="middle" fill="#64748b" font-size="11">Admin/Editor UI</text>
+
+  <!-- ========== FRONTEND LAYER ========== -->
+  <text x="250" y="95" fill="#374151" font-size="14" font-weight="bold">FRONTEND (Next.js 15 + React 19)</text>
+
+  <!-- Public Routes -->
+  <rect x="250" y="110" width="160" height="100" rx="8" fill="url(#frontendGrad)" filter="url(#shadow)"/>
+  <text x="330" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Public Routes</text>
+  <text x="330" y="155" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/ (Homepage)</text>
+  <text x="330" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/blog, /labs</text>
+  <text x="330" y="185" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/consultation</text>
+  <text x="330" y="200" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/about, /contact</text>
+
+  <!-- Auth Routes -->
+  <rect x="420" y="110" width="130" height="100" rx="8" fill="url(#frontendGrad)" filter="url(#shadow)"/>
+  <text x="485" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">(auth) Routes</text>
+  <text x="485" y="155" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/login</text>
+  <text x="485" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/signup</text>
+  <text x="485" y="185" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/forgot-password</text>
+  <text x="485" y="200" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/reset-password</text>
+
+  <!-- Protected Routes -->
+  <rect x="560" y="110" width="180" height="100" rx="8" fill="url(#frontendGrad)" filter="url(#shadow)"/>
+  <text x="650" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">(protected) Routes</text>
+  <text x="650" y="155" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/admin/* (Admin only)</text>
+  <text x="650" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/editor/* (Editor+)</text>
+  <text x="650" y="185" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Dashboard, Blog Editor</text>
+  <text x="650" y="200" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">CRM, User Management</text>
+
+  <!-- Components -->
+  <rect x="750" y="110" width="140" height="100" rx="8" fill="url(#frontendGrad)" filter="url(#shadow)"/>
+  <text x="820" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Components</text>
+  <text x="820" y="155" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Header/Footer</text>
+  <text x="820" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Tiptap Editor</text>
+  <text x="820" y="185" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Forms (RHF)</text>
+  <text x="820" y="200" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Framer Motion</text>
+
+  <!-- Middleware -->
+  <rect x="900" y="110" width="130" height="100" rx="8" fill="#1e293b" filter="url(#shadow)"/>
+  <text x="965" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Middleware</text>
+  <text x="965" y="155" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Session Refresh</text>
+  <text x="965" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Auth Check</text>
+  <text x="965" y="185" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Role Verification</text>
+  <text x="965" y="200" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Cookie Updates</text>
+
+  <!-- ========== BACKEND LAYER ========== -->
+  <text x="30" y="245" fill="#374151" font-size="14" font-weight="bold">BACKEND (API Routes)</text>
+
+  <!-- Blog API -->
+  <rect x="30" y="260" width="140" height="90" rx="8" fill="url(#backendGrad)" filter="url(#shadow)"/>
+  <text x="100" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/blog</text>
+  <text x="100" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">CRUD Operations</text>
+  <text x="100" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Image Upload</text>
+  <text x="100" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Hybrid DB+MDX</text>
+
+  <!-- Labs API -->
+  <rect x="180" y="260" width="140" height="90" rx="8" fill="url(#backendGrad)" filter="url(#shadow)"/>
+  <text x="250" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/labs</text>
+  <text x="250" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">CRUD Operations</text>
+  <text x="250" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">SVG Generation</text>
+  <text x="250" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">GitHub Linking</text>
+
+  <!-- AI API -->
+  <rect x="330" y="260" width="160" height="90" rx="8" fill="url(#aiGrad)" filter="url(#shadow)"/>
+  <text x="410" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/ai</text>
+  <text x="410" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/research-topic</text>
+  <text x="410" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/generate-post</text>
+  <text x="410" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">/generate-image</text>
+
+  <!-- Consultations API -->
+  <rect x="500" y="260" width="150" height="90" rx="8" fill="url(#backendGrad)" filter="url(#shadow)"/>
+  <text x="575" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/consultations</text>
+  <text x="575" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Request Handling</text>
+  <text x="575" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Convert to Customer</text>
+  <text x="575" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Status Updates</text>
+
+  <!-- Customers API -->
+  <rect x="660" y="260" width="140" height="90" rx="8" fill="url(#backendGrad)" filter="url(#shadow)"/>
+  <text x="730" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/customers</text>
+  <text x="730" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">CRM CRUD</text>
+  <text x="730" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Interactions Log</text>
+  <text x="730" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Pipeline Stages</text>
+
+  <!-- Admin API -->
+  <rect x="810" y="260" width="130" height="90" rx="8" fill="url(#backendGrad)" filter="url(#shadow)"/>
+  <text x="875" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/admin</text>
+  <text x="875" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">User Management</text>
+  <text x="875" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Create Users</text>
+  <text x="875" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">System Stats</text>
+
+  <!-- Cron API -->
+  <rect x="950" y="260" width="140" height="90" rx="8" fill="#dc2626" filter="url(#shadow)"/>
+  <text x="1020" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="bold">/api/cron</text>
+  <text x="1020" y="305" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Weekly Post Gen</text>
+  <text x="1020" y="320" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Sundays 9 AM</text>
+  <text x="1020" y="335" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Vercel Crons</text>
+
+  <!-- ========== LIB LAYER ========== -->
+  <text x="30" y="390" fill="#374151" font-size="14" font-weight="bold">LIBRARIES (lib/)</text>
+
+  <!-- Auth Lib -->
+  <rect x="30" y="405" width="130" height="80" rx="8" fill="#475569" filter="url(#shadow)"/>
+  <text x="95" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">lib/auth</text>
+  <text x="95" y="448" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">session.ts</text>
+  <text x="95" y="462" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">roles.ts</text>
+  <text x="95" y="476" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">RBAC Permissions</text>
+
+  <!-- Supabase Lib -->
+  <rect x="170" y="405" width="130" height="80" rx="8" fill="#475569" filter="url(#shadow)"/>
+  <text x="235" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">lib/supabase</text>
+  <text x="235" y="448" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">client.ts (browser)</text>
+  <text x="235" y="462" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">server.ts (SSR)</text>
+  <text x="235" y="476" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">middleware.ts</text>
+
+  <!-- AI Lib -->
+  <rect x="310" y="405" width="150" height="80" rx="8" fill="url(#aiGrad)" filter="url(#shadow)"/>
+  <text x="385" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">lib/ai</text>
+  <text x="385" y="448" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">claude.ts, openai.ts</text>
+  <text x="385" y="462" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">contentGenerator.ts</text>
+  <text x="385" y="476" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">research.ts</text>
+
+  <!-- Editor Lib -->
+  <rect x="470" y="405" width="130" height="80" rx="8" fill="#475569" filter="url(#shadow)"/>
+  <text x="535" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">lib/editor</text>
+  <text x="535" y="448" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">tiptapConfig.ts</text>
+  <text x="535" y="462" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">markdownConverter.ts</text>
+  <text x="535" y="476" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">HTML ↔ Markdown</text>
+
+  <!-- Storage Lib -->
+  <rect x="610" y="405" width="120" height="80" rx="8" fill="#475569" filter="url(#shadow)"/>
+  <text x="670" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">lib/storage</text>
+  <text x="670" y="448" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">imageUpload.ts</text>
+  <text x="670" y="462" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Supabase Storage</text>
+  <text x="670" y="476" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">File Management</text>
+
+  <!-- GitHub Lib -->
+  <rect x="740" y="405" width="120" height="80" rx="8" fill="#475569" filter="url(#shadow)"/>
+  <text x="800" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">lib/github</text>
+  <text x="800" y="448" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">repoReader.ts</text>
+  <text x="800" y="462" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Labs Integration</text>
+  <text x="800" y="476" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Code Fetching</text>
+
+  <!-- ========== DATABASE LAYER ========== -->
+  <text x="30" y="525" fill="#374151" font-size="14" font-weight="bold">DATABASE (Supabase PostgreSQL)</text>
+
+  <!-- profiles -->
+  <rect x="30" y="540" width="130" height="85" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="95" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">profiles</text>
+  <text x="95" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">id, email, full_name</text>
+  <text x="95" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">role (admin/editor)</text>
+  <text x="95" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">avatar_url, is_active</text>
+
+  <!-- blog_posts -->
+  <rect x="170" y="540" width="150" height="85" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="245" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">blog_posts</text>
+  <text x="245" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">slug, title, content</text>
+  <text x="245" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">author_id, tags, status</text>
+  <text x="245" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">ai_generated, featured</text>
+
+  <!-- labs -->
+  <rect x="330" y="540" width="150" height="85" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="405" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">labs</text>
+  <text x="405" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">slug, title, overview</text>
+  <text x="405" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">architecture, workflow_svg</text>
+  <text x="405" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">github_url, status</text>
+
+  <!-- consultation_requests -->
+  <rect x="490" y="540" width="160" height="85" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="570" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">consultation_requests</text>
+  <text x="570" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">name, email, message</text>
+  <text x="570" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">business_type, status</text>
+  <text x="570" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">→ converted_to_customer</text>
+
+  <!-- customers -->
+  <rect x="660" y="540" width="150" height="85" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="735" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">customers (CRM)</text>
+  <text x="735" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">name, email, phone</text>
+  <text x="735" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">stage, project_status</text>
+  <text x="735" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">payment_status, value</text>
+
+  <!-- interactions -->
+  <rect x="820" y="540" width="140" height="85" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="890" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">interactions</text>
+  <text x="890" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">customer_id, type</text>
+  <text x="890" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">notes, interaction_date</text>
+  <text x="890" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">created_by, metadata</text>
+
+  <!-- RLS Box -->
+  <rect x="970" y="540" width="120" height="85" rx="8" fill="#1e293b" filter="url(#shadow)"/>
+  <text x="1030" y="565" text-anchor="middle" fill="white" font-size="11" font-weight="bold">RLS Policies</text>
+  <text x="1030" y="583" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Admin: Full access</text>
+  <text x="1030" y="597" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Editor: Blog/Labs</text>
+  <text x="1030" y="611" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Viewer: Read-only</text>
+
+  <!-- ========== EXTERNAL SERVICES ========== -->
+  <text x="30" y="665" fill="#374151" font-size="14" font-weight="bold">EXTERNAL SERVICES</text>
+
+  <!-- Anthropic Claude -->
+  <rect x="30" y="680" width="140" height="75" rx="8" fill="url(#aiGrad)" filter="url(#shadow)"/>
+  <text x="100" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Anthropic Claude</text>
+  <text x="100" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">claude-3-haiku</text>
+  <text x="100" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Content Generation</text>
+  <text x="100" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">SEO Metadata</text>
+
+  <!-- OpenAI -->
+  <rect x="180" y="680" width="120" height="75" rx="8" fill="url(#aiGrad)" filter="url(#shadow)"/>
+  <text x="240" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">OpenAI</text>
+  <text x="240" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">GPT-4 Compatible</text>
+  <text x="240" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">DALL-E Images</text>
+  <text x="240" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Content Enhancement</text>
+
+  <!-- Brave Search -->
+  <rect x="310" y="680" width="130" height="75" rx="8" fill="url(#externalGrad)" filter="url(#shadow)"/>
+  <text x="375" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Brave Search</text>
+  <text x="375" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Web Research</text>
+  <text x="375" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Topic Discovery</text>
+  <text x="375" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">News Articles</text>
+
+  <!-- RSS Feeds -->
+  <rect x="450" y="680" width="130" height="75" rx="8" fill="url(#externalGrad)" filter="url(#shadow)"/>
+  <text x="515" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">RSS Feeds</text>
+  <text x="515" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">MIT Tech Review</text>
+  <text x="515" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">VentureBeat, Forbes</text>
+  <text x="515" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">TechCrunch</text>
+
+  <!-- Unsplash -->
+  <rect x="590" y="680" width="120" height="75" rx="8" fill="url(#externalGrad)" filter="url(#shadow)"/>
+  <text x="650" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Unsplash</text>
+  <text x="650" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Stock Photos</text>
+  <text x="650" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Blog Headers</text>
+  <text x="650" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Free Images</text>
+
+  <!-- Resend -->
+  <rect x="720" y="680" width="120" height="75" rx="8" fill="url(#externalGrad)" filter="url(#shadow)"/>
+  <text x="780" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Resend</text>
+  <text x="780" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Email Service</text>
+  <text x="780" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Notifications</text>
+  <text x="780" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Contact Forms</text>
+
+  <!-- Supabase Auth -->
+  <rect x="850" y="680" width="130" height="75" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="915" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Supabase Auth</text>
+  <text x="915" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Email/Password</text>
+  <text x="915" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">OAuth Providers</text>
+  <text x="915" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Session Tokens</text>
+
+  <!-- Supabase Storage -->
+  <rect x="990" y="680" width="130" height="75" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+  <text x="1055" y="705" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Supabase Storage</text>
+  <text x="1055" y="723" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Image Uploads</text>
+  <text x="1055" y="737" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Blog Images</text>
+  <text x="1055" y="751" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">User Avatars</text>
+
+  <!-- ========== DEPLOYMENT ========== -->
+  <text x="30" y="790" fill="#374151" font-size="14" font-weight="bold">DEPLOYMENT</text>
+
+  <!-- Vercel -->
+  <rect x="30" y="805" width="200" height="75" rx="8" fill="#000000" filter="url(#shadow)"/>
+  <text x="130" y="830" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Vercel</text>
+  <text x="130" y="850" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">https://novique.ai</text>
+  <text x="130" y="866" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Auto-deploy from main</text>
+  <text x="130" y="878" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Preview on feature branches</text>
+
+  <!-- GitHub -->
+  <rect x="240" y="805" width="180" height="75" rx="8" fill="#24292e" filter="url(#shadow)"/>
+  <text x="330" y="830" text-anchor="middle" fill="white" font-size="12" font-weight="bold">GitHub</text>
+  <text x="330" y="850" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Source Control</text>
+  <text x="330" y="866" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">Feature Branch Workflow</text>
+  <text x="330" y="878" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="9">CI/CD Actions</text>
+
+  <!-- Tech Stack Summary -->
+  <rect x="450" y="790" width="670" height="90" rx="8" fill="white" stroke="#e2e8f0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="785" y="815" text-anchor="middle" fill="#374151" font-size="12" font-weight="bold">Technology Stack Summary</text>
+  <text x="540" y="840" text-anchor="start" fill="#64748b" font-size="10">Frontend: Next.js 15, React 19, TypeScript, Tailwind CSS, Framer Motion</text>
+  <text x="540" y="858" text-anchor="start" fill="#64748b" font-size="10">Backend: Next.js API Routes, Supabase (PostgreSQL + Auth + Storage)</text>
+  <text x="540" y="876" text-anchor="start" fill="#64748b" font-size="10">AI: Anthropic Claude, OpenAI DALL-E | Email: Resend | Search: Brave | Images: Unsplash</text>
+
+  <!-- Connection arrows (simplified) -->
+  <!-- Browser to Frontend -->
+  <line x1="210" y1="150" x2="250" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Frontend to Backend -->
+  <line x1="500" y1="210" x2="500" y2="260" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Backend to Lib -->
+  <line x1="400" y1="350" x2="400" y2="405" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Lib to Database -->
+  <line x1="300" y1="485" x2="300" y2="540" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- AI API to External AI Services -->
+  <line x1="410" y1="350" x2="150" y2="680" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+  <!-- Lib to Supabase -->
+  <line x1="235" y1="485" x2="235" y2="540" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+</svg>

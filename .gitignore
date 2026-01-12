@@ -38,3 +38,15 @@ next-env.d.ts
 
 # Planning files (local only)
 .planning/
+
+# Business card design files
+public/business-card*.svg
+public/business-card*.png
+public/business-card*.pdf
+public/qr-*.png
+scripts/generate-business-card.js
+
+# Design assets and archives
+socialmedia/
+public/_archive/
+research/

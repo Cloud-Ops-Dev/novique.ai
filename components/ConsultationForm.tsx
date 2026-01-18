@@ -14,6 +14,7 @@ type ConsultationFormData = {
   preferredTime: string;
   meetingType: string;
   challenges: string;
+  smsConsent?: boolean;
 };
 
 export default function ConsultationForm() {
@@ -246,6 +247,19 @@ export default function ConsultationForm() {
         {errors.challenges && (
           <p className="mt-1 text-sm text-red-600">{errors.challenges.message}</p>
         )}
+      </div>
+
+      {/* SMS Consent */}
+      <div className="flex items-start gap-3">
+        <input
+          id="smsConsent"
+          type="checkbox"
+          {...register("smsConsent")}
+          className="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+        />
+        <label htmlFor="smsConsent" className="text-sm text-gray-600">
+          I consent to receive SMS replies from Novique.AI when I text with questions or scheduling requests. Reply STOP to opt out. Standard message rates may apply.
+        </label>
       </div>
 
       {/* Submit Button */}

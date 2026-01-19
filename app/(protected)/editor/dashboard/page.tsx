@@ -1,6 +1,51 @@
 import { getCurrentUser } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import {
+  AdminPageHeader,
+  AdminStatCard,
+  AdminStatsGrid,
+  AdminCard,
+  AdminButton,
+  AdminEmptyState,
+} from '@/components/admin/AdminUI'
+
+// Icons
+const DashboardIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+  </svg>
+)
+
+const DocumentIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+)
+
+const CheckCircleIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+const PencilIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+  </svg>
+)
+
+const PlusIcon = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+  </svg>
+)
+
+const PostIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+  </svg>
+)
 
 export default async function EditorDashboard() {
   const user = await getCurrentUser()
@@ -30,127 +75,102 @@ export default async function EditorDashboard() {
     .eq('author_id', user.id)
     .eq('published', false)
 
-  const stats = [
-    {
-      name: 'Total Posts',
-      value: myPostsCount || 0,
-      description: 'All your blog posts',
-    },
-    {
-      name: 'Published',
-      value: publishedCount || 0,
-      description: 'Live on the site',
-    },
-    {
-      name: 'Drafts',
-      value: draftCount || 0,
-      description: 'Work in progress',
-    },
-  ]
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Editor Dashboard</h1>
-        <p className="mt-2 text-sm text-gray-700">
-          Welcome back, {user.full_name || user.email}! Manage your blog posts and content.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Editor Dashboard"
+        description={`Welcome back, ${user.full_name || user.email}! Manage your blog posts and content.`}
+        icon={<DashboardIcon />}
+        actions={
+          <AdminButton href="/editor/blog/new" icon={<PlusIcon />}>
+            Create New Post
+          </AdminButton>
+        }
+      />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-        {stats.map((stat) => (
-          <div
-            key={stat.name}
-            className="bg-white overflow-hidden shadow rounded-lg"
-          >
-            <div className="p-5">
-              <dt className="text-sm font-medium text-gray-500 truncate">
-                {stat.name}
-              </dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {stat.value}
-              </dd>
-              <p className="mt-2 text-sm text-gray-500">{stat.description}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick Action */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <Link
-            href="/editor/blog/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <svg
-              className="-ml-1 mr-2 h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Create New Post
-          </Link>
-        </div>
-      </div>
+      <AdminStatsGrid columns={3}>
+        <AdminStatCard
+          label="Total Posts"
+          value={myPostsCount || 0}
+          variant="default"
+          icon={<DocumentIcon />}
+        />
+        <AdminStatCard
+          label="Published"
+          value={publishedCount || 0}
+          variant="success"
+          icon={<CheckCircleIcon />}
+        />
+        <AdminStatCard
+          label="Drafts"
+          value={draftCount || 0}
+          variant="warning"
+          icon={<PencilIcon />}
+        />
+      </AdminStatsGrid>
 
       {/* Recent Posts */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">
-            Recent Posts
-          </h2>
-          {myPosts && myPosts.length > 0 ? (
-            <div className="space-y-3">
-              {myPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">
+      <AdminCard title="Recent Posts">
+        {myPosts && myPosts.length > 0 ? (
+          <div className="space-y-3">
+            {myPosts.map((post) => (
+              <div
+                key={post.id}
+                className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-sm transition-all duration-200"
+              >
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-600">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">
                       {post.title}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
                       {post.published ? (
-                        <span className="text-green-600">Published</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-600">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          Published
+                        </span>
                       ) : (
-                        <span className="text-yellow-600">Draft</span>
+                        <span className="inline-flex items-center gap-1 text-amber-600">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                          Draft
+                        </span>
                       )}
-                      {' · '}
-                      {new Date(post.created_at).toLocaleDateString()}
-                    </p>
+                      <span className="text-gray-300">·</span>
+                      <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  <Link
-                    href={`/editor/blog/${post.slug}/edit`}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    Edit →
-                  </Link>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">
-              You haven&apos;t created any posts yet.{' '}
-              <Link
-                href="/editor/blog/new"
-                className="text-blue-600 hover:text-blue-500"
-              >
-                Create your first post
-              </Link>
-            </p>
-          )}
-        </div>
-      </div>
+                <Link
+                  href={`/editor/blog/${post.slug}/edit`}
+                  className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                >
+                  Edit
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <AdminEmptyState
+            icon={<PostIcon />}
+            title="No posts yet"
+            description="You haven't created any posts yet. Get started by creating your first post."
+            action={{
+              label: 'Create First Post',
+              href: '/editor/blog/new',
+            }}
+          />
+        )}
+      </AdminCard>
     </div>
   )
 }

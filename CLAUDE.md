@@ -383,6 +383,23 @@ Before merging to `main`:
 
 ---
 
-**Last Updated:** December 29, 2025
+## 📱 Twilio / Communications Notes
+
+### Toll-Free Verification Status
+**SMS messaging is NOT functional** until toll-free verification is complete.
+- Status: Verification in progress (as of January 2025)
+- Impact: Cannot receive inbound SMS messages
+- Voicemail sync works via cron job (`/api/cron/sync-voicemails`)
+
+### Current Communications Implementation
+- **Voicemails**: Working via 5-minute cron sync from Twilio API
+- **SMS Inbound**: Blocked until toll-free verification completes
+- **SMS Outbound** (admin notifications): May also be affected by verification
+
+Once toll-free verification is approved, update this note and test SMS functionality.
+
+---
+
+**Last Updated:** January 19, 2026
 
 **This file should be read at the start of each Claude Code session.**

@@ -1,6 +1,56 @@
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import Link from 'next/link'
+import {
+  AdminPageHeader,
+  AdminStatCard,
+  AdminStatsGrid,
+  AdminTable,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableBody,
+  AdminTableRow,
+  AdminTableCell,
+  AdminEmptyState,
+  AdminButton,
+} from '@/components/admin/AdminUI'
+
+// Icons
+const LabsIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+  </svg>
+)
+
+const CubeIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+  </svg>
+)
+
+const CheckCircleIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+const PencilIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+  </svg>
+)
+
+const ClockIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+const PlusIcon = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+  </svg>
+)
 
 export default async function EditorLabsPage() {
   const user = await getCurrentUser()
@@ -35,213 +85,170 @@ export default async function EditorLabsPage() {
     .eq('author_id', user.id)
     .eq('status', 'pending_review')
 
-  const stats = [
-    { name: 'Total Labs', value: labs?.length || 0 },
-    { name: 'Published', value: publishedCount || 0 },
-    { name: 'Drafts', value: draftCount || 0 },
-    { name: 'Pending Review', value: pendingCount || 0 },
-  ]
-
   const getStatusBadge = (status: string) => {
-    const badges: Record<string, string> = {
-      published: 'bg-green-100 text-green-800',
-      draft: 'bg-gray-100 text-gray-800',
-      pending_review: 'bg-yellow-100 text-yellow-800',
+    const badges: Record<string, { bg: string; text: string; dot: string }> = {
+      published: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+      draft: { bg: 'bg-gray-50', text: 'text-gray-600', dot: 'bg-gray-400' },
+      pending_review: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
     }
-    return badges[status] || 'bg-gray-100 text-gray-800'
+    return badges[status] || { bg: 'bg-gray-50', text: 'text-gray-600', dot: 'bg-gray-400' }
   }
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Labs</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Create and manage infrastructure labs with animated workflow diagrams
-          </p>
-        </div>
-        <Link
-          href="/editor/labs/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700"
-        >
-          <svg
-            className="-ml-1 mr-2 h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          New Lab
-        </Link>
-      </div>
+      <AdminPageHeader
+        title="My Labs"
+        description="Create and manage infrastructure labs with animated workflow diagrams"
+        icon={<LabsIcon />}
+        actions={
+          <AdminButton href="/editor/labs/new" icon={<PlusIcon />} variant="primary">
+            New Lab
+          </AdminButton>
+        }
+      />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.name}
-            className="bg-white overflow-hidden shadow rounded-lg"
-          >
-            <div className="p-5">
-              <dt className="text-sm font-medium text-gray-500 truncate">
-                {stat.name}
-              </dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {stat.value}
-              </dd>
-            </div>
-          </div>
-        ))}
-      </div>
+      <AdminStatsGrid columns={4}>
+        <AdminStatCard
+          label="Total Labs"
+          value={labs?.length || 0}
+          variant="purple"
+          icon={<CubeIcon />}
+        />
+        <AdminStatCard
+          label="Published"
+          value={publishedCount || 0}
+          variant="success"
+          icon={<CheckCircleIcon />}
+        />
+        <AdminStatCard
+          label="Drafts"
+          value={draftCount || 0}
+          variant="default"
+          icon={<PencilIcon />}
+        />
+        <AdminStatCard
+          label="Pending Review"
+          value={pendingCount || 0}
+          variant="warning"
+          icon={<ClockIcon />}
+        />
+      </AdminStatsGrid>
 
       {/* Labs Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Title
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Status
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Source
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Created
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {labs && labs.length > 0 ? (
-              labs.map((lab) => (
-                <tr key={lab.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
+      <AdminTable>
+        <AdminTableHead>
+          <AdminTableHeader>Title</AdminTableHeader>
+          <AdminTableHeader>Status</AdminTableHeader>
+          <AdminTableHeader>Source</AdminTableHeader>
+          <AdminTableHeader>Created</AdminTableHeader>
+          <AdminTableHeader className="text-right">Actions</AdminTableHeader>
+        </AdminTableHead>
+        <AdminTableBody>
+          {labs && labs.length > 0 ? (
+            labs.map((lab) => {
+              const statusStyle = getStatusBadge(lab.status)
+              return (
+                <AdminTableRow key={lab.id}>
+                  <AdminTableCell>
                     <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 mr-3">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                        </svg>
+                      </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {lab.title}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          /labs/{lab.slug}
-                        </div>
+                        <div className="text-sm font-semibold text-gray-900">{lab.title}</div>
+                        <div className="text-sm text-gray-500">/labs/{lab.slug}</div>
                       </div>
                       {lab.featured && (
-                        <span className="ml-2 px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">
+                        <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-amber-50 text-amber-700 rounded-full">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
                           Featured
                         </span>
                       )}
                       {lab.ai_generated && (
-                        <span className="ml-2 px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded">
+                        <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-purple-50 text-purple-700 rounded-full">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                          </svg>
                           AI
                         </span>
                       )}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(
-                        lab.status
-                      )}`}
-                    >
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`}></span>
                       {lab.status.replace('_', ' ')}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap text-sm">
                     {lab.github_url ? (
                       <a
                         href={lab.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-purple-600 hover:text-purple-900 truncate max-w-xs block"
+                        className="inline-flex items-center gap-1.5 text-purple-600 hover:text-purple-700 transition-colors"
                       >
-                        {lab.github_url.replace('https://github.com/', '')}
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                        </svg>
+                        <span className="truncate max-w-[150px]">{lab.github_url.replace('https://github.com/', '')}</span>
                       </a>
                     ) : (
-                      <span className="text-gray-400">Manual</span>
+                      <span className="text-gray-400 italic">Manual</span>
                     )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap text-sm text-gray-500">
                     {new Date(lab.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link
-                      href={`/editor/labs/${lab.slug}/edit`}
-                      className="text-purple-600 hover:text-purple-900 mr-4"
-                    >
-                      Edit
-                    </Link>
-                    {lab.status === 'published' && (
-                      <Link
-                        href={`/labs/${lab.slug}`}
-                        target="_blank"
-                        className="text-gray-600 hover:text-gray-900"
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <AdminButton
+                        href={`/editor/labs/${lab.slug}/edit`}
+                        variant="ghost"
+                        size="sm"
                       >
-                        View
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="px-6 py-12 text-center text-gray-500"
-                >
-                  <div className="space-y-2">
-                    <svg
-                      className="mx-auto h-12 w-12 text-gray-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1}
-                        d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
-                      />
-                    </svg>
-                    <p>You haven&apos;t created any labs yet.</p>
-                    <Link
-                      href="/editor/labs/new"
-                      className="text-purple-600 hover:text-purple-500"
-                    >
-                      Create your first lab from a GitHub repository
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                        Edit
+                      </AdminButton>
+                      {lab.status === 'published' && (
+                        <Link
+                          href={`/labs/${lab.slug}`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                        >
+                          View
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </Link>
+                      )}
+                    </div>
+                  </AdminTableCell>
+                </AdminTableRow>
+              )
+            })
+          ) : (
+            <tr>
+              <td colSpan={5}>
+                <AdminEmptyState
+                  icon={<LabsIcon />}
+                  title="No labs yet"
+                  description="You haven't created any labs yet. Get started by creating your first lab from a GitHub repository."
+                  action={{
+                    label: 'Create First Lab',
+                    href: '/editor/labs/new',
+                  }}
+                />
+              </td>
+            </tr>
+          )}
+        </AdminTableBody>
+      </AdminTable>
     </div>
   )
 }

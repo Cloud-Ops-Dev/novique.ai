@@ -2,6 +2,47 @@
 
 import { useState, useEffect } from 'react'
 import { ConvertConsultationModal } from '@/components/admin/ConvertConsultationModal'
+import {
+  AdminPageHeader,
+  AdminStatCard,
+  AdminStatsGrid,
+  AdminFilterBar,
+  AdminSelect,
+  AdminTable,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableBody,
+  AdminTableRow,
+  AdminTableCell,
+  AdminEmptyState,
+  AdminButton,
+  AdminPageSkeleton,
+} from '@/components/admin/AdminUI'
+
+// Icons
+const CalendarIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+  </svg>
+)
+
+const ClockIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+const TrendingIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+  </svg>
+)
+
+const CheckCircleIcon = () => (
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
 
 interface Consultation {
   id: string
@@ -92,17 +133,25 @@ export default function ConsultationsPage() {
   ]
 
   const getStatusBadge = (status: string) => {
-    const badges: Record<string, string> = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      contacted: 'bg-blue-100 text-blue-800',
-      converted: 'bg-green-100 text-green-800',
-      cancelled: 'bg-gray-100 text-gray-800',
+    const badges: Record<string, { bg: string; text: string; dot: string }> = {
+      pending: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
+      contacted: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
+      converted: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+      cancelled: { bg: 'bg-gray-50', text: 'text-gray-600', dot: 'bg-gray-400' },
     }
-    return badges[status] || 'bg-gray-100 text-gray-800'
+    return badges[status] || { bg: 'bg-gray-50', text: 'text-gray-600', dot: 'bg-gray-400' }
   }
 
+  const statusOptions = [
+    { value: 'all', label: 'All Status' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'contacted', label: 'Contacted' },
+    { value: 'converted', label: 'Converted' },
+    { value: 'cancelled', label: 'Cancelled' },
+  ]
+
   if (loading) {
-    return <div className="text-center py-12">Loading...</div>
+    return <AdminPageSkeleton />
   }
 
   return (
@@ -120,140 +169,149 @@ export default function ConsultationsPage() {
       )}
 
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Consultation Requests</h1>
-        <p className="mt-2 text-sm text-gray-700">
-          Manage incoming consultation requests and convert to customers
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Consultation Requests"
+        description="Manage incoming consultation requests and convert to customers"
+        icon={<CalendarIcon />}
+      />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-4">
-        {statsArray.map((stat) => (
-          <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <dt className="text-sm font-medium text-gray-500 truncate">{stat.name}</dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">{stat.value}</dd>
-            </div>
-          </div>
-        ))}
-      </div>
+      <AdminStatsGrid columns={4}>
+        <AdminStatCard
+          label="Total Requests"
+          value={stats.total}
+          variant="default"
+          icon={<CalendarIcon />}
+        />
+        <AdminStatCard
+          label="Pending"
+          value={stats.pending}
+          variant="warning"
+          icon={<ClockIcon />}
+        />
+        <AdminStatCard
+          label="This Week"
+          value={stats.thisWeek}
+          variant="info"
+          icon={<TrendingIcon />}
+        />
+        <AdminStatCard
+          label="Converted"
+          value={stats.converted}
+          variant="success"
+          icon={<CheckCircleIcon />}
+        />
+      </AdminStatsGrid>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="contacted">Contacted</option>
-            <option value="converted">Converted</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-      </div>
+      <AdminFilterBar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name or email..."
+      >
+        <AdminSelect
+          value={statusFilter}
+          onChange={setStatusFilter}
+          options={statusOptions}
+        />
+      </AdminFilterBar>
 
       {/* Consultations Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Business
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Preferred Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {consultations && consultations.length > 0 ? (
-              consultations.map((consultation) => (
-                <tr key={consultation.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{consultation.name}</div>
-                    <div className="text-sm text-gray-500">{consultation.email}</div>
-                    {consultation.phone && (
-                      <div className="text-sm text-gray-500">{consultation.phone}</div>
+      <AdminTable>
+        <AdminTableHead>
+          <AdminTableHeader>Contact</AdminTableHeader>
+          <AdminTableHeader>Business</AdminTableHeader>
+          <AdminTableHeader>Preferred Date</AdminTableHeader>
+          <AdminTableHeader>Status</AdminTableHeader>
+          <AdminTableHeader>Created</AdminTableHeader>
+          <AdminTableHeader className="text-right">Actions</AdminTableHeader>
+        </AdminTableHead>
+        <AdminTableBody>
+          {consultations && consultations.length > 0 ? (
+            consultations.map((consultation) => {
+              const statusStyle = getStatusBadge(consultation.status)
+              return (
+                <AdminTableRow key={consultation.id}>
+                  <AdminTableCell>
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold mr-3 shadow-sm">
+                        {consultation.name[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-gray-900">{consultation.name}</div>
+                        <div className="text-sm text-gray-500">{consultation.email}</div>
+                        {consultation.phone && (
+                          <div className="text-xs text-gray-400">{consultation.phone}</div>
+                        )}
+                      </div>
+                    </div>
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <div className="text-sm text-gray-900">{consultation.business_type || '-'}</div>
+                    {consultation.business_size && (
+                      <div className="text-xs text-gray-500">{consultation.business_size}</div>
                     )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{consultation.business_type}</div>
-                    <div className="text-sm text-gray-500">{consultation.business_size}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap">
                     <div className="text-sm text-gray-900">
                       {consultation.preferred_date
                         ? new Date(consultation.preferred_date).toLocaleDateString()
-                        : 'N/A'}
+                        : '-'}
                     </div>
-                    <div className="text-sm text-gray-500">{consultation.preferred_time}</div>
+                    {consultation.preferred_time && (
+                      <div className="text-xs text-gray-500">{consultation.preferred_time}</div>
+                    )}
                     {consultation.meeting_type && (
-                      <div className="text-sm text-gray-500 capitalize">
+                      <div className="text-xs text-gray-400 capitalize">
                         {consultation.meeting_type}
                       </div>
                     )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap">
                     <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(
-                        consultation.status
-                      )}`}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}
                     >
-                      {consultation.status}
+                      <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`}></span>
+                      {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap text-sm text-gray-500">
                     {new Date(consultation.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  </AdminTableCell>
+                  <AdminTableCell className="whitespace-nowrap text-right">
                     {consultation.status === 'converted' ? (
-                      <span className="text-green-600">✓ Converted</span>
+                      <span className="inline-flex items-center gap-1 text-emerald-600 text-sm font-medium">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        Converted
+                      </span>
                     ) : (
-                      <button
+                      <AdminButton
                         onClick={() => setSelectedConsultation(consultation)}
-                        className="text-blue-600 hover:text-blue-900"
+                        variant="primary"
+                        size="sm"
                       >
-                        Convert to Customer
-                      </button>
+                        Convert
+                      </AdminButton>
                     )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                  No consultation requests found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                  </AdminTableCell>
+                </AdminTableRow>
+              )
+            })
+          ) : (
+            <tr>
+              <td colSpan={6}>
+                <AdminEmptyState
+                  icon={<CalendarIcon />}
+                  title="No consultation requests"
+                  description="Consultation requests will appear here when submitted"
+                />
+              </td>
+            </tr>
+          )}
+        </AdminTableBody>
+      </AdminTable>
     </div>
   )
 }

@@ -360,7 +360,7 @@ export default function CommunicationsPage() {
                   {/* Preview text */}
                   {comm.body && (
                     <p className="mt-2 text-sm text-gray-600 truncate pl-12">
-                      "{comm.body}"
+                      &ldquo;{comm.body}&rdquo;
                     </p>
                   )}
                   {comm.type === "voicemail" &&

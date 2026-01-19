@@ -102,11 +102,6 @@ export default function Footer() {
                   X
                 </a>
               </li>
-              <li>
-                <Link href="/contact" className="text-primary-100 hover:text-white transition-colors">
-                  Email Us
-                </Link>
-              </li>
             </ul>
           </div>
         </div>

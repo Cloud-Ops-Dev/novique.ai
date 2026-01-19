@@ -9,10 +9,12 @@ export function AdminNav({ user }: AdminNavProps) {
   // Define all possible nav links with role requirements
   const allNavLinks = [
     { href: '/admin/dashboard', label: 'Dashboard', roles: ['admin', 'editor'] },
+    { href: '/admin/communications', label: 'Communications', roles: ['admin', 'editor'] },
     { href: '/admin/consultations', label: 'Consultations', roles: ['admin', 'editor'] },
     { href: '/admin/customers', label: 'Customers', roles: ['admin', 'editor'] },
     { href: '/admin/users', label: 'Users', roles: ['admin'] },
     { href: '/admin/blog', label: 'Blog Posts', roles: ['admin', 'editor'] },
+    { href: '/admin/social', label: 'Social', roles: ['admin', 'editor'] },
   ]
 
   // Filter nav links based on user role

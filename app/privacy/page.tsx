@@ -71,7 +71,7 @@ export default function PrivacyPage() {
             </p>
             <p className="text-gray-700">
               Email: <a href="mailto:privacy@novique.ai" className="text-primary-600 hover:underline">privacy@novique.ai</a><br />
-              Phone: (555) 123-4567
+              Phone: <a href="tel:+18334560671" className="text-primary-600 hover:underline">1 (833) 456-0671</a>
             </p>
           </div>
         </Section>

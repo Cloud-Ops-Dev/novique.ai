@@ -48,6 +48,7 @@ export default function CommunicationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [transcribingId, setTranscribingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -161,6 +162,27 @@ export default function CommunicationsPage() {
       audioRef.current.play();
       audioRef.current.onended = () => setPlayingId(null);
       setPlayingId(id);
+    }
+  }
+
+  async function transcribeVoicemail(id: string) {
+    setTranscribingId(id);
+    try {
+      const response = await fetch(`/api/communications/${id}/transcribe`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Transcription failed");
+      }
+      // Reload to show the transcription
+      loadCommunications();
+    } catch (error: any) {
+      console.error("Error transcribing:", error);
+      alert(`Transcription failed: ${error.message}`);
+      loadCommunications(); // Reload to show failed status
+    } finally {
+      setTranscribingId(null);
     }
   }
 
@@ -387,6 +409,28 @@ export default function CommunicationsPage() {
                           >
                             {playingId === comm.id ? "\u23F8 Pause" : "\u25B6 Play Voicemail"}
                           </button>
+                          {(comm.transcription_status === "pending" ||
+                            comm.transcription_status === "failed") && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                transcribeVoicemail(comm.id);
+                              }}
+                              disabled={transcribingId === comm.id}
+                              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {transcribingId === comm.id
+                                ? "Transcribing..."
+                                : comm.transcription_status === "failed"
+                                  ? "Retry Transcription"
+                                  : "Transcribe"}
+                            </button>
+                          )}
+                          {comm.transcription_status === "in_progress" && (
+                            <span className="text-sm text-blue-600 italic">
+                              Transcription in progress...
+                            </span>
+                          )}
                           <span className="text-sm text-gray-500">
                             Duration: {formatDuration(comm.duration || 0)}
                           </span>

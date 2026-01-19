@@ -8,10 +8,15 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    console.log("[audio] Starting audio proxy request");
+
     // Require admin or editor authentication
     await requireAdminOrEditor();
+    console.log("[audio] Auth passed");
 
     const { id } = await params;
+    console.log("[audio] Communication ID:", id);
+
     const supabase = createAdminClient();
 
     // Get recording URL from database
@@ -49,16 +54,24 @@ export async function GET(
     const apiKeySid = process.env.TWILIO_API_KEY_SID;
     const apiKeySecret = process.env.TWILIO_API_KEY_SECRET;
 
+    console.log("[audio] Env check - TWILIO_ACCOUNT_SID:", accountSid ? "set" : "NOT SET");
+    console.log("[audio] Env check - TWILIO_AUTH_TOKEN:", authToken ? "set" : "NOT SET");
+    console.log("[audio] Env check - TWILIO_API_KEY_SID:", apiKeySid ? "set" : "NOT SET");
+    console.log("[audio] Env check - TWILIO_API_KEY_SECRET:", apiKeySecret ? "set" : "NOT SET");
+
     let authUsername: string;
     let authPassword: string;
 
     if (apiKeySid && apiKeySecret) {
+      console.log("[audio] Using API key authentication");
       authUsername = apiKeySid;
       authPassword = apiKeySecret;
     } else if (accountSid && authToken) {
+      console.log("[audio] Using account credentials authentication");
       authUsername = accountSid;
       authPassword = authToken;
     } else {
+      console.error("[audio] No Twilio credentials configured!");
       return NextResponse.json(
         { error: "Twilio credentials not configured" },
         { status: 500 }
@@ -67,6 +80,7 @@ export async function GET(
 
     // Twilio recording URLs need authentication and .mp3 extension
     const audioUrl = `${communication.recording_url}.mp3`;
+    console.log("[audio] Fetching from Twilio URL:", audioUrl);
 
     const response = await fetch(audioUrl, {
       headers: {
@@ -74,8 +88,10 @@ export async function GET(
       },
     });
 
+    console.log("[audio] Twilio response status:", response.status);
+
     if (!response.ok) {
-      console.error("Failed to fetch audio from Twilio:", response.status);
+      console.error("[audio] Failed to fetch audio from Twilio:", response.status, response.statusText);
       return NextResponse.json(
         { error: "Failed to fetch audio" },
         { status: 502 }
@@ -84,6 +100,7 @@ export async function GET(
 
     // Stream the audio back to the client
     const audioBuffer = await response.arrayBuffer();
+    console.log("[audio] Audio buffer size:", audioBuffer.byteLength, "bytes");
 
     return new NextResponse(audioBuffer, {
       status: 200,

@@ -389,14 +389,27 @@ Before merging to `main`:
 **SMS messaging is NOT functional** until toll-free verification is complete.
 - Status: Verification in progress (as of January 2025)
 - Impact: Cannot receive inbound SMS messages
-- Voicemail sync works via cron job (`/api/cron/sync-voicemails`)
+- Voicemail webhook working ✅
 
 ### Current Communications Implementation
-- **Voicemails**: Working via 5-minute cron sync from Twilio API
+- **Voicemails**: Working via real-time Twilio Studio Flow webhook to `/api/twilio/recording-complete`
+  - Important: Use `www.novique.ai` URL (non-www 307 redirects break POST requests)
 - **SMS Inbound**: Blocked until toll-free verification completes
 - **SMS Outbound** (admin notifications): May also be affected by verification
 
 Once toll-free verification is approved, update this note and test SMS functionality.
+
+### Future Work: Communications Hub Enhancements
+The admin Communications page (`/admin/communications`) will be expanded to include:
+
+1. **SMS Integration** (pending Twilio toll-free verification)
+   - Inbound SMS display in unified inbox
+   - SMS reply functionality from admin panel
+
+2. **Email Integration** (larger project)
+   - May require migrating current email hosting (Protonmail has no API)
+   - Inbox notifications for business email
+   - Consider: Resend, SendGrid, or hosted email solution with API access
 
 ---
 

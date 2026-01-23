@@ -51,8 +51,15 @@ export default function CompanyInfoStep({
             type="number"
             min={1}
             max={100}
-            value={company.employeesImpacted}
-            onChange={(e) => onUpdateCompany('employeesImpacted', parseInt(e.target.value) || 1)}
+            value={company.employeesImpacted || ''}
+            onChange={(e) => {
+              const val = e.target.value;
+              onUpdateCompany('employeesImpacted', val === '' ? 0 : parseInt(val));
+            }}
+            onBlur={(e) => {
+              const val = parseInt(e.target.value);
+              if (!val || val < 1) onUpdateCompany('employeesImpacted', 1);
+            }}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
           <p className="mt-1 text-sm text-gray-500">Number of team members who will use automation</p>
@@ -71,8 +78,15 @@ export default function CompanyInfoStep({
               type="number"
               min={10}
               max={200}
-              value={costs.hourlyRate}
-              onChange={(e) => onUpdateCosts('hourlyRate', parseFloat(e.target.value) || 10)}
+              value={costs.hourlyRate || ''}
+              onChange={(e) => {
+                const val = e.target.value;
+                onUpdateCosts('hourlyRate', val === '' ? 0 : parseFloat(val));
+              }}
+              onBlur={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!val || val < 10) onUpdateCosts('hourlyRate', 10);
+              }}
               className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>

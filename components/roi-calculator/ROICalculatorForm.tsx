@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useROICalculator } from '@/hooks/useROICalculator';
 import StepIndicator from './steps/StepIndicator';
 import IntroStep from './steps/IntroStep';
@@ -11,6 +12,11 @@ import Button from '@/components/Button';
 
 export default function ROICalculatorForm() {
   const calculator = useROICalculator();
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [calculator.currentStep]);
 
   // Step 0: Intro/Getting Started - full width, no results panel
   if (calculator.currentStep === 0) {

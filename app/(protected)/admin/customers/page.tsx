@@ -89,6 +89,7 @@ export default function CustomersPage() {
   const [stageFilter, setStageFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [showArchived, setShowArchived] = useState(false)
 
   useEffect(() => {
     loadCustomers()
@@ -146,6 +147,11 @@ export default function CustomersPage() {
       setLoading(false)
     }
   }
+
+  // Filter out archived (closed_lost) customers unless showArchived is true
+  const displayedCustomers = showArchived
+    ? customers
+    : customers.filter(c => c.stage !== 'closed_lost')
 
   const statsArray = [
     { name: 'Total Customers', value: stats.total },
@@ -243,6 +249,15 @@ export default function CustomersPage() {
           onChange={setStatusFilter}
           options={statusOptions}
         />
+        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer ml-2">
+          <input
+            type="checkbox"
+            checked={showArchived}
+            onChange={(e) => setShowArchived(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          Show Archived
+        </label>
       </AdminFilterBar>
 
       {/* Customers Table */}
@@ -256,8 +271,8 @@ export default function CustomersPage() {
           <AdminTableHeader className="text-right">Actions</AdminTableHeader>
         </AdminTableHead>
         <AdminTableBody>
-          {customers && customers.length > 0 ? (
-            customers.map((customer) => (
+          {displayedCustomers && displayedCustomers.length > 0 ? (
+            displayedCustomers.map((customer) => (
               <AdminTableRow key={customer.id}>
                 <AdminTableCell>
                   <div className="flex items-center">

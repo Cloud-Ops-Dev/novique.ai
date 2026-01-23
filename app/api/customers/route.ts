@@ -108,6 +108,8 @@ export async function POST(request: NextRequest) {
         assigned_admin_id: user.id,
         stage: 'proposal_development',
         project_status: 'on_track',
+        roi_assessment_id: body.roi_assessment_id || null,
+        roi_estimate: body.roi_estimate || null,
       })
       .select('*, assigned_admin:profiles!assigned_admin_id(id, full_name, email)')
       .single()
@@ -120,12 +122,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // If created from ROI assessment, mark it as converted
+    if (body.roi_assessment_id) {
+      await supabase
+        .from('roi_assessments')
+        .update({
+          converted: true,
+          converted_at: new Date().toISOString(),
+          converted_to_customer_id: customer.id,
+        })
+        .eq('id', body.roi_assessment_id)
+    }
+
     // Create initial interaction
+    const interactionNote = body.roi_assessment_id
+      ? 'Customer created from ROI assessment'
+      : 'Customer manually added to CRM'
+
     await supabase.from('customer_interactions').insert({
       customer_id: customer.id,
       interaction_type: 'note',
       subject: 'Customer record created',
-      notes: 'Customer manually added to CRM',
+      notes: interactionNote,
       created_by: user.id,
     })
 

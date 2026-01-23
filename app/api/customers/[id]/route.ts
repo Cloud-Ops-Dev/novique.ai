@@ -70,7 +70,7 @@ export async function PUT(
     const body = await request.json()
 
     // Remove fields that shouldn't be directly updated
-    const { id: bodyId, created_at, updated_at, search_vector, interactions, assigned_admin, ...updateData } = body
+    const { id: bodyId, created_at, updated_at, search_vector, interactions, assigned_admin, consultation_request_id, roi_assessment_id, ...updateData } = body
 
     // Update customer (trigger will handle stage progression)
     const { data: customer, error } = await supabase
@@ -101,7 +101,8 @@ export async function PUT(
   }
 }
 
-// DELETE /api/customers/[id] - Soft delete (mark as closed_lost)
+// DELETE /api/customers/[id] - Archive (soft delete) or Delete (hard delete)
+// Use ?permanent=true for hard delete, otherwise archives to closed_lost
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -113,31 +114,69 @@ export async function DELETE(
     }
 
     const { id } = await params
+    const { searchParams } = new URL(request.url)
+    const permanent = searchParams.get('permanent') === 'true'
     const supabase = await createClient()
 
-    // Soft delete by marking as closed_lost
-    const { error } = await supabase
-      .from('customers')
-      .update({ stage: 'closed_lost' })
-      .eq('id', id)
+    if (permanent) {
+      // Hard delete - remove customer and all related data
 
-    if (error) {
-      console.error('Database error:', error)
-      return NextResponse.json(
-        { error: 'Failed to delete customer' },
-        { status: 500 }
-      )
+      // First, clear any ROI assessment references to this customer
+      await supabase
+        .from('roi_assessments')
+        .update({
+          converted: false,
+          converted_at: null,
+          converted_to_customer_id: null,
+        })
+        .eq('converted_to_customer_id', id)
+
+      // Delete interactions
+      await supabase
+        .from('customer_interactions')
+        .delete()
+        .eq('customer_id', id)
+
+      // Then delete customer
+      const { error } = await supabase
+        .from('customers')
+        .delete()
+        .eq('id', id)
+
+      if (error) {
+        console.error('Database error:', error)
+        return NextResponse.json(
+          { error: 'Failed to delete customer' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({ success: true, action: 'deleted' })
+    } else {
+      // Soft delete by marking as closed_lost (archive)
+      const { error } = await supabase
+        .from('customers')
+        .update({ stage: 'closed_lost' })
+        .eq('id', id)
+
+      if (error) {
+        console.error('Database error:', error)
+        return NextResponse.json(
+          { error: 'Failed to archive customer' },
+          { status: 500 }
+        )
+      }
+
+      // Log interaction
+      await supabase.from('customer_interactions').insert({
+        customer_id: id,
+        interaction_type: 'stage_change',
+        notes: 'Customer archived (marked as closed_lost)',
+        created_by: user.id,
+      })
+
+      return NextResponse.json({ success: true, action: 'archived' })
     }
-
-    // Log interaction
-    await supabase.from('customer_interactions').insert({
-      customer_id: id,
-      interaction_type: 'stage_change',
-      notes: 'Customer marked as closed_lost',
-      created_by: user.id,
-    })
-
-    return NextResponse.json({ success: true })
   } catch (error: any) {
     if (error?.message?.includes('NEXT_REDIRECT')) {
       throw error

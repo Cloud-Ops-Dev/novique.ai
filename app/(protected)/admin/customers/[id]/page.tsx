@@ -26,6 +26,16 @@ export default function CustomerDetailPage() {
     notes: '',
   })
 
+  // ROI Assessment selection for new customers
+  const [roiAssessments, setRoiAssessments] = useState<any[]>([])
+  const [selectedRoiId, setSelectedRoiId] = useState<string>('')
+  const [loadingRoi, setLoadingRoi] = useState(false)
+
+  // Delete/Archive confirmation
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const { formData, updateField, errors, saveCustomer, addInteraction, isSaving } =
     useCustomerEditor({})
 
@@ -46,6 +56,91 @@ export default function CustomerDetailPage() {
     }
     loadAdminUsers()
   }, [])
+
+  // Load non-converted ROI assessments for new customer creation
+  useEffect(() => {
+    if (customerId !== 'new') return
+
+    async function loadRoiAssessments() {
+      setLoadingRoi(true)
+      try {
+        const response = await fetch('/api/roi-assessments?converted=false')
+        if (response.ok) {
+          const result = await response.json()
+          setRoiAssessments(result.data || [])
+        }
+      } catch (error) {
+        console.error('Failed to load ROI assessments:', error)
+      } finally {
+        setLoadingRoi(false)
+      }
+    }
+    loadRoiAssessments()
+  }, [customerId])
+
+  // Handle ROI assessment selection
+  const handleRoiSelect = (roiId: string) => {
+    setSelectedRoiId(roiId)
+
+    if (!roiId) {
+      // Clear ROI-related fields when deselected
+      updateField('roi_assessment_id', undefined)
+      updateField('roi_estimate', undefined)
+      return
+    }
+
+    const assessment = roiAssessments.find((a) => a.id === roiId)
+    if (!assessment) return
+
+    // Industry to business_type mapping
+    const industryMap: Record<string, string> = {
+      home_services: 'other',
+      professional_services: 'professional',
+      healthcare: 'healthcare',
+      retail: 'retail',
+      real_estate: 'professional',
+      construction: 'manufacturing',
+      manufacturing: 'manufacturing',
+      other: 'other',
+    }
+
+    // Auto-populate fields
+    updateField('roi_assessment_id', assessment.id)
+    updateField('email', assessment.email)
+    updateField('roi_estimate', assessment.calculated_results)
+
+    if (assessment.industry) {
+      updateField('business_type', industryMap[assessment.industry] || 'other')
+    }
+
+    // Map employees_impacted to business_size
+    if (assessment.employees_impacted) {
+      const emp = assessment.employees_impacted
+      let businessSize = ''
+      if (emp <= 5) businessSize = '1-5'
+      else if (emp <= 20) businessSize = '6-20'
+      else if (emp <= 50) businessSize = '21-50'
+      else businessSize = '51+'
+      updateField('business_size', businessSize)
+    }
+
+    // Build initial challenges from workflows
+    if (assessment.selected_workflows?.length > 0) {
+      const workflowNames: Record<string, string> = {
+        lead_followup: 'Lead Capture + Follow-up',
+        appointment_scheduling: 'Appointment Scheduling + Reminders',
+        invoice_generation: 'Invoice/Quote Generation',
+        customer_intake: 'Customer Intake Forms',
+        status_updates: 'Status Updates + Reporting',
+        task_routing: 'Internal Task Routing',
+        support_triage: 'Support Triage',
+      }
+      const workflows = assessment.selected_workflows
+        .map((w: string) => workflowNames[w] || w)
+        .join(', ')
+      updateField('initial_challenges', `Interested in automation for: ${workflows}`)
+    }
+  }
 
   // Load customer data
   useEffect(() => {
@@ -110,6 +205,40 @@ export default function CustomerDetailPage() {
       setNewInteraction({ interaction_type: 'note', subject: '', notes: '' })
     } catch (error) {
       console.error('Failed to add interaction:', error)
+    }
+  }
+
+  const handleArchive = async () => {
+    if (!formData.id) return
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/customers/${formData.id}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) throw new Error('Failed to archive customer')
+      router.push('/admin/customers')
+    } catch (error) {
+      console.error('Archive error:', error)
+      setSaveError('Failed to archive customer')
+      setIsDeleting(false)
+      setShowArchiveConfirm(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!formData.id) return
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/customers/${formData.id}?permanent=true`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) throw new Error('Failed to delete customer')
+      router.push('/admin/customers')
+    } catch (error) {
+      console.error('Delete error:', error)
+      setSaveError('Failed to delete customer')
+      setIsDeleting(false)
+      setShowDeleteConfirm(false)
     }
   }
 
@@ -231,6 +360,45 @@ export default function CustomerDetailPage() {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
+              {/* ROI Assessment Selector - Only for new customers */}
+              {customerId === 'new' && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Import from ROI Assessment (Optional)
+                  </h4>
+                  <p className="text-xs text-blue-700 mb-3">
+                    Select an ROI assessment to auto-populate customer details
+                  </p>
+                  <select
+                    value={selectedRoiId}
+                    onChange={(e) => handleRoiSelect(e.target.value)}
+                    disabled={loadingRoi}
+                    className="block w-full rounded-md border-blue-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                  >
+                    <option value="">-- Manual Entry (no assessment) --</option>
+                    {roiAssessments.map((assessment) => {
+                      const results = assessment.calculated_results || {}
+                      const benefit = results.totalBenefitPerMonth
+                        ? `$${results.totalBenefitPerMonth.toLocaleString()}/mo`
+                        : 'N/A'
+                      return (
+                        <option key={assessment.id} value={assessment.id}>
+                          {assessment.email} - Est. {benefit} (
+                          {new Date(assessment.created_at).toLocaleDateString()})
+                        </option>
+                      )
+                    })}
+                  </select>
+                  {loadingRoi && <p className="text-xs text-blue-600 mt-1">Loading assessments...</p>}
+                  {!loadingRoi && roiAssessments.length === 0 && (
+                    <p className="text-xs text-blue-600 mt-1">No unconverted ROI assessments available</p>
+                  )}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Name *</label>
@@ -328,6 +496,52 @@ export default function CustomerDetailPage() {
                   </select>
                 </div>
               </div>
+
+              {/* ROI Estimate Section */}
+              {formData.roi_estimate && Object.keys(formData.roi_estimate).length > 0 && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+                  <h4 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    ROI Estimate (from Assessment)
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {formData.roi_estimate.hoursSavedPerMonth !== undefined && (
+                      <div className="bg-white rounded-md p-2 shadow-sm">
+                        <p className="text-xs text-gray-500">Hours Saved/Mo</p>
+                        <p className="text-lg font-bold text-blue-600">
+                          {formData.roi_estimate.hoursSavedPerMonth.toFixed(1)} hrs
+                        </p>
+                      </div>
+                    )}
+                    {formData.roi_estimate.totalBenefitPerMonth !== undefined && (
+                      <div className="bg-white rounded-md p-2 shadow-sm">
+                        <p className="text-xs text-gray-500">Total Benefit/Mo</p>
+                        <p className="text-lg font-bold text-emerald-600">
+                          ${formData.roi_estimate.totalBenefitPerMonth.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    {formData.roi_estimate.roiPercent !== undefined && (
+                      <div className="bg-white rounded-md p-2 shadow-sm">
+                        <p className="text-xs text-gray-500">Est. ROI</p>
+                        <p className="text-lg font-bold text-indigo-600">
+                          {formData.roi_estimate.roiPercent.toLocaleString()}%
+                        </p>
+                      </div>
+                    )}
+                    {formData.roi_estimate.paybackMonths !== undefined && (
+                      <div className="bg-white rounded-md p-2 shadow-sm">
+                        <p className="text-xs text-gray-500">Payback Period</p>
+                        <p className="text-lg font-bold text-amber-600">
+                          {formData.roi_estimate.paybackMonths.toFixed(1)} mo
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Initial Challenges</label>
@@ -746,30 +960,93 @@ export default function CustomerDetailPage() {
         </div>
       </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end gap-3">
-        <button
-          onClick={() => router.push('/admin/customers')}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Back to Customers
-        </button>
-        <button
-          onClick={async () => {
-            try {
-              setSaveError(null)
-              await saveCustomer()
-              router.push('/admin/customers')
-            } catch (error: any) {
-              setSaveError(error.message || 'Failed to save customer')
-              window.scrollTo({ top: 0, behavior: 'smooth' })
-            }
-          }}
-          disabled={isSaving}
-          className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isSaving ? 'Saving...' : 'Save & Close'}
-        </button>
+      {/* Footer Actions */}
+      <div className="flex justify-between gap-3">
+        {/* Delete/Archive - only for existing customers */}
+        <div className="flex gap-2">
+          {customerId !== 'new' && (
+            <>
+              {showArchiveConfirm ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-amber-600 font-medium">Archive this customer?</span>
+                  <button
+                    onClick={handleArchive}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:opacity-50"
+                  >
+                    {isDeleting ? 'Archiving...' : 'Yes, archive'}
+                  </button>
+                  <button
+                    onClick={() => setShowArchiveConfirm(false)}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : showDeleteConfirm ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-red-600 font-medium">Permanently delete? This cannot be undone.</span>
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Yes, delete'}
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowArchiveConfirm(true)}
+                    className="px-4 py-2 border border-amber-300 rounded-md text-sm font-medium text-amber-700 bg-white hover:bg-amber-50"
+                  >
+                    Archive
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="px-4 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Save/Back buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => router.push('/admin/customers')}
+            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Back to Customers
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                setSaveError(null)
+                await saveCustomer()
+                router.push('/admin/customers')
+              } catch (error: any) {
+                setSaveError(error.message || 'Failed to save customer')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }
+            }}
+            disabled={isSaving}
+            className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+          >
+            {isSaving ? 'Saving...' : 'Save & Close'}
+          </button>
+        </div>
       </div>
     </div>
   )

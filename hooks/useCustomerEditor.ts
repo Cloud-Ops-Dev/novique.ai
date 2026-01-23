@@ -1,9 +1,21 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
+export interface ROIEstimate {
+  hoursSavedPerMonth?: number
+  laborSavingsPerMonth?: number
+  errorSavingsPerMonth?: number
+  revenueUpliftPerMonth?: number
+  totalBenefitPerMonth?: number
+  netBenefitPerMonth?: number
+  roiPercent?: number
+  paybackMonths?: number
+}
+
 export interface CustomerData {
   id?: string
   consultation_request_id?: string
+  roi_assessment_id?: string
 
   // Basic Info
   name: string
@@ -13,6 +25,9 @@ export interface CustomerData {
   business_size?: string
   initial_challenges?: string
   avatar_url?: string
+
+  // ROI Estimate from assessment
+  roi_estimate?: ROIEstimate
 
   // Stage Management
   stage: string
@@ -74,6 +89,7 @@ export function useCustomerEditor({
   const [formData, setFormData] = useState<CustomerData>({
     id: initialData?.id,
     consultation_request_id: initialData?.consultation_request_id,
+    roi_assessment_id: initialData?.roi_assessment_id,
     name: initialData?.name || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
@@ -81,6 +97,7 @@ export function useCustomerEditor({
     business_size: initialData?.business_size || '',
     initial_challenges: initialData?.initial_challenges || '',
     avatar_url: initialData?.avatar_url || '',
+    roi_estimate: initialData?.roi_estimate,
     stage: initialData?.stage || 'proposal_development',
     project_status: initialData?.project_status || 'on_track',
     consultation_occurred_date: initialData?.consultation_occurred_date || '',
@@ -179,6 +196,8 @@ export function useCustomerEditor({
           signoff_date: formData.signoff_date || null,
           payment_confirmed_date: formData.payment_confirmed_date || null,
           next_action_due_date: formData.next_action_due_date || null,
+          roi_assessment_id: formData.roi_assessment_id || null,
+          roi_estimate: formData.roi_estimate || null,
         }
 
         const response = await fetch(endpoint, {

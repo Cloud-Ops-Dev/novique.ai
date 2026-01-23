@@ -12,6 +12,9 @@ import {
   AdminPageSkeleton,
   AdminButton,
 } from '@/components/admin/AdminUI'
+import { ROIPricingSettings } from '@/lib/roi/types'
+import { DEFAULT_PRICING_SETTINGS } from '@/lib/roi/plans'
+import { getROIPricingSettings, saveROIPricingSettings, resetROIPricingSettings } from '@/lib/roi/settings'
 
 // Icons
 const DashboardIcon = () => (
@@ -49,8 +52,14 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // ROI Pricing Settings
+  const [roiSettings, setRoiSettings] = useState<ROIPricingSettings>(DEFAULT_PRICING_SETTINGS)
+  const [roiSettingsSaved, setRoiSettingsSaved] = useState(false)
+
   useEffect(() => {
     loadStats()
+    // Load ROI settings from localStorage
+    setRoiSettings(getROIPricingSettings())
   }, [])
 
   async function loadStats() {
@@ -179,6 +188,115 @@ export default function AdminDashboard() {
           icon={<TargetIcon />}
         />
       </AdminStatsGrid>
+
+      {/* ROI Calculator Settings */}
+      <AdminCard
+        title="ROI Calculator Settings"
+        description="Configure pricing calculations for the public ROI calculator"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Monthly Value Multiplier */}
+          <div>
+            <label htmlFor="monthlyMultiplier" className="block text-sm font-medium text-gray-700 mb-2">
+              Monthly Value Multiplier
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                id="monthlyMultiplier"
+                value={Math.round(roiSettings.monthlyValueMultiplier * 100)}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value) || 0
+                  setRoiSettings(prev => ({
+                    ...prev,
+                    monthlyValueMultiplier: value / 100
+                  }))
+                  setRoiSettingsSaved(false)
+                }}
+                min={1}
+                max={100}
+                step={1}
+                className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Percentage of monthly business value used to calculate monthly fee (default: 15%)
+            </p>
+          </div>
+
+          {/* One-Time Charge Multiplier */}
+          <div>
+            <label htmlFor="oneTimeMultiplier" className="block text-sm font-medium text-gray-700 mb-2">
+              One-Time Charge Multiplier
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                id="oneTimeMultiplier"
+                value={roiSettings.oneTimeChargeMultiplier}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value) || 0
+                  setRoiSettings(prev => ({
+                    ...prev,
+                    oneTimeChargeMultiplier: value
+                  }))
+                  setRoiSettingsSaved(false)
+                }}
+                min={1}
+                max={10}
+                step={0.5}
+                className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">×</span>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Multiplier applied to monthly fee for one-time setup cost (default: 3×)
+            </p>
+          </div>
+        </div>
+
+        {/* Formula Preview */}
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h4 className="text-sm font-semibold text-gray-700 mb-2">Current Formula</h4>
+          <div className="text-sm text-gray-600 space-y-1">
+            <p><span className="font-mono bg-gray-200 px-1 rounded">Monthly Fee</span> = Monthly Business Value × {Math.round(roiSettings.monthlyValueMultiplier * 100)}% (rounded to nearest $50, then clamped by tier)</p>
+            <p><span className="font-mono bg-gray-200 px-1 rounded">One-Time Fee</span> = Monthly Fee × {roiSettings.oneTimeChargeMultiplier}</p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-6 flex items-center gap-3">
+          <AdminButton
+            variant="primary"
+            onClick={() => {
+              saveROIPricingSettings(roiSettings)
+              setRoiSettingsSaved(true)
+              setTimeout(() => setRoiSettingsSaved(false), 3000)
+            }}
+          >
+            Save Settings
+          </AdminButton>
+          <AdminButton
+            variant="ghost"
+            onClick={() => {
+              resetROIPricingSettings()
+              setRoiSettings(DEFAULT_PRICING_SETTINGS)
+              setRoiSettingsSaved(false)
+            }}
+          >
+            Reset to Defaults
+          </AdminButton>
+          {roiSettingsSaved && (
+            <span className="text-sm text-green-600 flex items-center gap-1">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Settings saved!
+            </span>
+          )}
+        </div>
+      </AdminCard>
 
       {/* Section 2: Activity Tracking */}
       <AdminCard title="Upcoming Activities">

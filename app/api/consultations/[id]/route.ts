@@ -87,3 +87,39 @@ export async function PUT(
     )
   }
 }
+
+// DELETE /api/consultations/[id] - Delete consultation request
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin()
+    const { id } = await params
+    const supabase = await createClient()
+
+    const { error } = await supabase
+      .from('consultation_requests')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('Database error:', error)
+      return NextResponse.json(
+        { error: 'Failed to delete consultation' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    if (error?.message?.includes('NEXT_REDIRECT')) {
+      throw error
+    }
+    console.error('API error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}

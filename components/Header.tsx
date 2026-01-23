@@ -13,8 +13,8 @@ export default function Header() {
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/#how-it-works", label: "How It Works" },
     { href: "/solutions", label: "Solutions" },
+    { href: "/roi", label: "ROI Calculator" },
     { href: "/blog", label: "Blog" },
     { href: "/labs", label: "Labs" },
     { href: "/about", label: "About Us" },

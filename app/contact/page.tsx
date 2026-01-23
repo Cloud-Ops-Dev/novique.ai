@@ -87,6 +87,29 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Quick Links */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h3 className="font-semibold text-primary-900 mb-4">Quick Links</h3>
+                <ul className="space-y-3">
+                  <li>
+                    <a href="/roi" className="text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      Novique Solution ROI Calculator
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/consultation" className="text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Book a Consultation
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             {/* Contact Form */}

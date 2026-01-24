@@ -527,7 +527,9 @@ export default async function SegmentROILandingPage({ params }: PageProps) {
           </p>
 
           <div className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
-            <ROICalculatorForm />
+            <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-gray-200" />}>
+              <ROICalculatorForm />
+            </Suspense>
           </div>
         </section>
 

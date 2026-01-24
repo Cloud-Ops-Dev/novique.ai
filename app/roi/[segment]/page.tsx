@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -351,7 +352,9 @@ export default async function SegmentROILandingPage({ params }: PageProps) {
       <Header />
       <main className="mx-auto w-full max-w-5xl px-6 py-12 pt-24">
         {/* Client-side URL param sync for existing calculator behavior */}
-        <SegmentParamSync segment={segment} />
+        <Suspense fallback={null}>
+          <SegmentParamSync segment={segment} />
+        </Suspense>
 
         <header className="text-center">
           <h1 className="text-4xl font-semibold tracking-tight text-primary-900 md:text-5xl">

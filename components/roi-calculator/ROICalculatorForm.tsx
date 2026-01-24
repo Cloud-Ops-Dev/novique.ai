@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useROICalculator } from '@/hooks/useROICalculator';
 import StepIndicator from './steps/StepIndicator';
@@ -18,10 +18,27 @@ export default function ROICalculatorForm() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const wizardRef = useRef<HTMLDivElement>(null);
+  const hasAutoStarted = useRef(false);
 
-  // Scroll to top when step changes
+  // Auto-start wizard when arriving with segment param (from segment landing pages)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const segmentParam = searchParams.get('segment');
+    if (segmentParam && calculator.currentStep === 0 && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      // Small delay to ensure DOM is ready, then advance and scroll
+      setTimeout(() => {
+        calculator.nextStep();
+        wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [searchParams, calculator]);
+
+  // Scroll to wizard container when step changes (not to top of page)
+  useEffect(() => {
+    if (calculator.currentStep > 0 && wizardRef.current) {
+      wizardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }, [calculator.currentStep]);
 
   // Handle segment selection - update URL while preserving other params
@@ -52,7 +69,7 @@ export default function ROICalculatorForm() {
   // Step 0: Intro/Getting Started - full width, no results panel
   if (calculator.currentStep === 0) {
     return (
-      <div className="max-w-6xl mx-auto">
+      <div id="roi-assessment" ref={wizardRef} className="max-w-6xl mx-auto scroll-mt-24">
         <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
           <IntroStep onStart={calculator.nextStep} />
         </div>
@@ -61,7 +78,7 @@ export default function ROICalculatorForm() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div id="roi-assessment" ref={wizardRef} className="max-w-6xl mx-auto scroll-mt-24">
       <div className="grid lg:grid-cols-5 gap-8">
         {/* Left: Form Steps (3 columns) */}
         <div className="lg:col-span-3">

@@ -21,18 +21,30 @@ export default function ROICalculatorForm() {
   const wizardRef = useRef<HTMLDivElement>(null);
   const hasAutoStarted = useRef(false);
 
-  // Auto-start wizard when arriving with segment param (from segment landing pages)
+  // Auto-start wizard ONLY on /roi page with ?start=1 (explicit intent from CTAs)
+  // Sector pages (/roi/[segment]) should NOT auto-scroll - let users browse content first
+  const isBaseROIPage = pathname === '/roi';
+  const shouldAutoStart = searchParams.get('start') === '1';
+
   useEffect(() => {
-    const segmentParam = searchParams.get('segment');
-    if (segmentParam && calculator.currentStep === 0 && !hasAutoStarted.current) {
-      hasAutoStarted.current = true;
-      // Small delay to ensure DOM is ready, then advance and scroll
-      setTimeout(() => {
-        calculator.nextStep();
-        wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }, [searchParams, calculator]);
+    if (!isBaseROIPage || !shouldAutoStart) return;
+    if (calculator.currentStep !== 0 || hasAutoStarted.current) return;
+
+    hasAutoStarted.current = true;
+
+    // Advance wizard and scroll, then remove start=1 to prevent re-triggers
+    setTimeout(() => {
+      calculator.nextStep();
+      wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Clean up URL - remove start=1 but keep other params like segment
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('start');
+      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(newUrl, { scroll: false });
+    }, 100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBaseROIPage, shouldAutoStart]);
 
   // Scroll to wizard container when step changes (not to top of page)
   useEffect(() => {

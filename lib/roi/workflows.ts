@@ -74,6 +74,7 @@ export const INDUSTRIES = [
   { value: 'real_estate', label: 'Real Estate' },
   { value: 'construction', label: 'Construction' },
   { value: 'manufacturing', label: 'Manufacturing' },
+  { value: 'logistics', label: 'Logistics & Transportation' },
   { value: 'other', label: 'Other' },
 ];
 

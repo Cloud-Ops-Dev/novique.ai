@@ -49,7 +49,7 @@ export const SEGMENT_META: Record<ROISegment, SegmentMeta> = {
     id: 'logistics',
     label: 'Logistics & Transportation',
     subtitle: 'Freight, delivery, dispatch, fleet',
-    industry: 'manufacturing',
+    industry: 'logistics',
     narrative:
       'Logistics operations run on tight timelines where manual updates and dispatch coordination create delays and errors. Automation saves time daily while improving response speed and consistency.',
     reframing:
@@ -104,7 +104,7 @@ export const SEGMENT_DEFAULTS: Record<ROISegment, SegmentDefaults> = {
   logistics: {
     employeesImpacted: 3,
     hourlyRate: 40,
-    industry: 'manufacturing',
+    industry: 'logistics',
     enabledWorkflows: ['status_updates', 'task_routing', 'support_triage'],
     workflowOverrides: {
       status_updates: { eventsPerWeek: 50, minutesBefore: 15 }, // 50 shipments/week

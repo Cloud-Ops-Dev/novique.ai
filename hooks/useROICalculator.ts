@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ROIState, ROIResults, WorkflowSelection, Scenario, PlanTier, ReadinessFlags, ResultsState, DerivedPricing, ROIPricingSettings } from '@/lib/roi/types';
 import { calculateROI } from '@/lib/roi/calculations';
 import { DEFAULT_WORKFLOWS } from '@/lib/roi/workflows';
 import { computeDerivedPricing, DEFAULT_PRICING_SETTINGS } from '@/lib/roi/plans';
 import { getROIPricingSettings } from '@/lib/roi/settings';
+import { ROISegment, parseSegment, mapSegmentToState } from '@/lib/roi/segments';
 
 export type Step = 0 | 1 | 2 | 3;
 
@@ -16,6 +17,8 @@ interface UseROICalculatorReturn {
   results: ROIResults;
   readiness: ReadinessFlags;
   derivedPricing: DerivedPricing | null;
+  segment: ROISegment | null;
+  isDirty: boolean;
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: Step) => void;
@@ -29,6 +32,8 @@ interface UseROICalculatorReturn {
   setScenario: (scenario: Scenario) => void;
   selectPlan: (plan: PlanTier) => void;
   resetCalculator: () => void;
+  setSegment: (segment: ROISegment | null) => void;
+  applySegmentDefaults: (segment: ROISegment, options?: { force?: boolean }) => void;
 }
 
 // Initial state starts empty to enable progressive disclosure
@@ -74,6 +79,9 @@ export function useROICalculator(): UseROICalculatorReturn {
   const [state, setState] = useState<ROIState>(DEFAULT_STATE);
   const [currentStep, setCurrentStep] = useState<Step>(0);
   const [pricingSettings, setPricingSettings] = useState<ROIPricingSettings>(DEFAULT_PRICING_SETTINGS);
+  const [segment, setSegmentState] = useState<ROISegment | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const initializedSegmentRef = useRef<string | null>(null);
   const searchParams = useSearchParams();
 
   const results = useMemo(() => calculateROI(state), [state]);
@@ -137,6 +145,28 @@ export function useROICalculator(): UseROICalculatorReturn {
     }
   }, [searchParams]); // Run on searchParams change
 
+  // Handle segment from URL params
+  useEffect(() => {
+    const segmentParam = searchParams.get('segment');
+    const parsedSegment = parseSegment(segmentParam);
+
+    // Only apply defaults on initial load for this segment
+    if (parsedSegment && initializedSegmentRef.current !== parsedSegment) {
+      setSegmentState(parsedSegment);
+
+      // Only apply defaults if form is pristine (not dirty)
+      if (!isDirty) {
+        const segmentState = mapSegmentToState(parsedSegment, state);
+        setState(prev => ({ ...prev, ...segmentState }));
+      }
+
+      initializedSegmentRef.current = parsedSegment;
+    } else if (!parsedSegment) {
+      setSegmentState(null);
+      initializedSegmentRef.current = null;
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const nextStep = useCallback(() => {
     setCurrentStep(prev => Math.min(prev + 1, 3) as Step);
   }, []);
@@ -154,6 +184,7 @@ export function useROICalculator(): UseROICalculatorReturn {
       ...prev,
       company: { ...prev.company, [field]: value },
     }));
+    setIsDirty(true);
   }, []);
 
   const updateCosts = useCallback((field: keyof ROIState['costs'], value: number) => {
@@ -161,6 +192,7 @@ export function useROICalculator(): UseROICalculatorReturn {
       ...prev,
       costs: { ...prev.costs, [field]: value },
     }));
+    setIsDirty(true);
   }, []);
 
   const toggleWorkflow = useCallback((id: string) => {
@@ -170,6 +202,7 @@ export function useROICalculator(): UseROICalculatorReturn {
         w.id === id ? { ...w, enabled: !w.enabled } : w
       ),
     }));
+    setIsDirty(true);
   }, []);
 
   const updateWorkflow = useCallback((
@@ -183,6 +216,7 @@ export function useROICalculator(): UseROICalculatorReturn {
         w.id === id ? { ...w, [field]: value } : w
       ),
     }));
+    setIsDirty(true);
   }, []);
 
   const updateQuality = useCallback((updates: Partial<ROIState['quality']>) => {
@@ -190,6 +224,7 @@ export function useROICalculator(): UseROICalculatorReturn {
       ...prev,
       quality: { ...prev.quality, ...updates },
     }));
+    setIsDirty(true);
   }, []);
 
   const updateRevenue = useCallback((updates: Partial<ROIState['revenue']>) => {
@@ -197,6 +232,7 @@ export function useROICalculator(): UseROICalculatorReturn {
       ...prev,
       revenue: { ...prev.revenue, ...updates },
     }));
+    setIsDirty(true);
   }, []);
 
   const updateNovique = useCallback((updates: Partial<ROIState['novique']>) => {
@@ -224,7 +260,28 @@ export function useROICalculator(): UseROICalculatorReturn {
   const resetCalculator = useCallback(() => {
     setState(DEFAULT_STATE);
     setCurrentStep(0);
+    setSegmentState(null);
+    setIsDirty(false);
+    initializedSegmentRef.current = null;
   }, []);
+
+  const setSegment = useCallback((newSegment: ROISegment | null) => {
+    setSegmentState(newSegment);
+    if (newSegment) {
+      initializedSegmentRef.current = newSegment;
+    }
+  }, []);
+
+  const applySegmentDefaults = useCallback((segmentToApply: ROISegment, options?: { force?: boolean }) => {
+    const { force = false } = options || {};
+
+    // Only apply if forced or form is pristine
+    if (force || !isDirty) {
+      const segmentState = mapSegmentToState(segmentToApply, state);
+      setState(prev => ({ ...prev, ...segmentState }));
+      setIsDirty(false); // Reset dirty after applying defaults
+    }
+  }, [isDirty, state]);
 
   return {
     state,
@@ -232,6 +289,8 @@ export function useROICalculator(): UseROICalculatorReturn {
     results,
     readiness,
     derivedPricing,
+    segment,
+    isDirty,
     nextStep,
     prevStep,
     goToStep,
@@ -245,5 +304,7 @@ export function useROICalculator(): UseROICalculatorReturn {
     setScenario,
     selectPlan,
     resetCalculator,
+    setSegment,
+    applySegmentDefaults,
   };
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Section from "@/components/Section";
@@ -93,20 +94,20 @@ export default function ContactPage() {
                 <h3 className="font-semibold text-primary-900 mb-4">Quick Links</h3>
                 <ul className="space-y-3">
                   <li>
-                    <a href="/roi" className="text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-2">
+                    <Link href="/roi" className="text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
                       Novique Solution ROI Calculator
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/consultation" className="text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-2">
+                    <Link href="/consultation" className="text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       Book a Consultation
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>

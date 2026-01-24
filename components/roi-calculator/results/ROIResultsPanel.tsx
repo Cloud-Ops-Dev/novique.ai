@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ROIResults, Scenario, WorkflowSelection, ReadinessFlags, DerivedPricing, ResultsState } from '@/lib/roi/types';
 import { getPlanById } from '@/lib/roi/plans';
+import { ROISegment, SEGMENT_META } from '@/lib/roi/segments';
 import MetricCard from './MetricCard';
 import SavingsBreakdownBars from './SavingsBreakdownBars';
 
@@ -18,6 +19,7 @@ interface ROIResultsPanelProps {
   workflows: WorkflowSelection[];
   readiness: ReadinessFlags;
   derivedPricing: DerivedPricing | null;
+  segment: ROISegment | null;
 }
 
 const scenarios: { value: Scenario; label: string }[] = [
@@ -108,6 +110,7 @@ export default function ROIResultsPanel({
   workflows,
   readiness,
   derivedPricing,
+  segment,
 }: ROIResultsPanelProps) {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -355,6 +358,18 @@ export default function ROIResultsPanel({
             />
           ) : (
             <PlaceholderMetricCard label="Monthly Business Value" size="lg" />
+          )}
+
+          {/* Segment Narrative - only show when segment is selected and ROI can be shown */}
+          {segment && readiness.canShowRoi && (
+            <div className="p-4 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl border border-primary-100">
+              <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                {SEGMENT_META[segment].narrative}
+              </p>
+              <p className="text-sm font-medium text-primary-700 italic">
+                {SEGMENT_META[segment].reframing}
+              </p>
+            </div>
           )}
 
           {/* Plan Card - rendered based on state */}

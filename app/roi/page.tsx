@@ -1,16 +1,39 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Section from "@/components/Section";
 import ROICalculatorForm from "@/components/roi-calculator/ROICalculatorForm";
 import { Metadata } from "next";
 
+type SegmentKey = "financial" | "healthcare" | "logistics" | "real-estate";
+const SEGMENT_KEYS: SegmentKey[] = ["financial", "healthcare", "logistics", "real-estate"];
+
+function isSegmentKey(value: string | null): value is SegmentKey {
+  return !!value && SEGMENT_KEYS.includes(value as SegmentKey);
+}
+
+// Base ROI page is indexable, canonical is /roi
 export const metadata: Metadata = {
   title: "AI Automation ROI Calculator | Novique.ai",
   description: "Calculate your potential savings from AI automation. See real ROI projections for your small business in under 2 minutes.",
+  alternates: { canonical: "/roi" },
+  robots: { index: true, follow: true },
 };
 
-export default function ROICalculatorPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function ROICalculatorPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const segmentParamRaw = resolvedSearchParams?.segment;
+  const segmentParam = Array.isArray(segmentParamRaw) ? segmentParamRaw[0] : segmentParamRaw ?? null;
+
+  // Redirect query-based segment URLs to canonical path-based URLs
+  if (isSegmentKey(segmentParam)) {
+    redirect(`/roi/${segmentParam}`);
+  }
   return (
     <>
       <Header />

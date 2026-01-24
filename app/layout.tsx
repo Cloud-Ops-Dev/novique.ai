@@ -9,6 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.novique.ai"),
   title: "Novique.ai - AI Solutions for Your Small Business",
   description: "Unlock AI for your small business without the headache. Custom AI solutions that save time, cut costs, and boost growth. First consultation free.",
   keywords: ["AI consulting", "small business AI", "AI automation", "business automation", "AI chatbots", "AI solutions"],

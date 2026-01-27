@@ -21,11 +21,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    // Support both naming conventions for Twilio credentials
+    const accountSid = process.env.TWILIO_ACCOUNT_SID || process.env.Twilio_Account_SID;
+    const apiKeySid = process.env.Twilio_API_key_SID;
+    const apiKeySecret = process.env.Twilio_API_Key_Secret;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 
-    if (!accountSid || !authToken || !twilioPhone) {
+    // Can authenticate with either Auth Token or API Key
+    const authUsername = apiKeySid || accountSid;
+    const authPassword = apiKeySecret || authToken;
+
+    if (!accountSid || !authUsername || !authPassword || !twilioPhone) {
       console.error("Missing Twilio configuration");
       return NextResponse.json(
         { error: "SMS service not configured" },
@@ -66,7 +73,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString("base64")}`,
+          Authorization: `Basic ${Buffer.from(`${authUsername}:${authPassword}`).toString("base64")}`,
         },
         body: new URLSearchParams({
           To: recipientPhone,

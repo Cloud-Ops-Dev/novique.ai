@@ -21,12 +21,26 @@ const OPT_IN_KEYWORDS = ["START", "SUBSCRIBE", "YES"];
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse form-urlencoded body
-    const formData = await request.formData();
+    // Parse parameters - check both URL query params and form body
+    // Studio Flow sends via URL params, direct Twilio webhooks use form body
     const params: Record<string, string> = {};
-    formData.forEach((value, key) => {
-      params[key] = value.toString();
+
+    // First, get URL query parameters (from Studio Flow)
+    const url = new URL(request.url);
+    url.searchParams.forEach((value, key) => {
+      params[key] = value;
     });
+
+    // Then, try to parse form body (from direct Twilio webhooks)
+    // This will override URL params if both exist
+    try {
+      const formData = await request.formData();
+      formData.forEach((value, key) => {
+        params[key] = value.toString();
+      });
+    } catch {
+      // No form body - that's fine, we'll use URL params
+    }
 
     const { MessageSid, From, To, Body, NumMedia } = params;
 

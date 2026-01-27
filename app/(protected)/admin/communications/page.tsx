@@ -49,6 +49,9 @@ export default function CommunicationsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [transcribingId, setTranscribingId] = useState<string | null>(null);
+  const [replyingToId, setReplyingToId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -183,6 +186,38 @@ export default function CommunicationsPage() {
       loadCommunications(); // Reload to show failed status
     } finally {
       setTranscribingId(null);
+    }
+  }
+
+  async function sendSmsReply(communicationId: string) {
+    if (!replyText.trim()) return;
+
+    setSendingReply(true);
+    try {
+      const response = await fetch("/api/admin/sms/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          communicationId,
+          message: replyText.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Failed to send reply");
+      }
+
+      // Clear reply state and reload
+      setReplyText("");
+      setReplyingToId(null);
+      loadCommunications();
+      loadStats();
+    } catch (error: any) {
+      console.error("Error sending SMS reply:", error);
+      alert(`Failed to send reply: ${error.message}`);
+    } finally {
+      setSendingReply(false);
     }
   }
 
@@ -459,6 +494,56 @@ export default function CommunicationsPage() {
                           >
                             {comm.customer.name}
                           </Link>
+                        </div>
+                      )}
+
+                      {/* SMS Reply Section */}
+                      {comm.type === "sms" && comm.direction === "inbound" && (
+                        <div className="space-y-3">
+                          {replyingToId === comm.id ? (
+                            <div className="flex flex-col space-y-2">
+                              <textarea
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                placeholder="Type your reply..."
+                                rows={3}
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              />
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    sendSmsReply(comm.id);
+                                  }}
+                                  disabled={sendingReply || !replyText.trim()}
+                                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {sendingReply ? "Sending..." : "Send Reply"}
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setReplyingToId(null);
+                                    setReplyText("");
+                                  }}
+                                  className="text-sm text-gray-600 hover:text-gray-800"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReplyingToId(comm.id);
+                              }}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                            >
+                              Reply via SMS
+                            </button>
+                          )}
                         </div>
                       )}
 

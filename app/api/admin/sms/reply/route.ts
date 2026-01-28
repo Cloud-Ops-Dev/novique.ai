@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Support both naming conventions for Twilio credentials
+    // Support multiple naming conventions for Twilio credentials
     const accountSid = process.env.TWILIO_ACCOUNT_SID || process.env.Twilio_Account_SID;
-    const apiKeySid = process.env.Twilio_API_key_SID;
-    const apiKeySecret = process.env.Twilio_API_Key_Secret;
+    const apiKeySid = process.env.TWILIO_API_KEY_SID || process.env.Twilio_API_key_SID;
+    const apiKeySecret = process.env.TWILIO_API_KEY_SECRET || process.env.Twilio_API_Key_Secret;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 

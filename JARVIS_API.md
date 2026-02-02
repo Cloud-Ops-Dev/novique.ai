@@ -32,7 +32,9 @@ Authorization: Bearer <JARVIS_API_KEY>
 
 ### Base URL
 - **Local:** `http://localhost:3000`
-- **Production:** `https://novique.ai`
+- **Production:** `https://www.novique.ai`
+
+> **Important:** Use `www.novique.ai` for production API calls. The non-www URL redirects and strips the Authorization header.
 
 ---
 

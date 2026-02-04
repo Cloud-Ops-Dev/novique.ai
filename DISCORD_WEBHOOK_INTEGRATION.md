@@ -298,3 +298,4 @@ Once deployed, you'll get:
 ✅ **Mobile** - Get notifications on Discord mobile app anywhere  
 
 Perfect for busy entrepreneurs who need to know about opportunities the moment they happen! 🚀Discord webhook configured for channel #1468438971293106186
+Ready for testing with DISCORD_WEBHOOK_URL environment variable set

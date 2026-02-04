@@ -250,4 +250,4 @@ For issues or questions:
 1. Check webhook server status and logs
 2. Test with `/api/test/webhook` endpoints
 3. Verify environment variable configuration
-4. Review Vercel deployment logs
+4. Review Vercel deployment logsTrigger redeploy with webhook URL environment variable

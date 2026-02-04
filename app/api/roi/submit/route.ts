@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
-import { webhookNotifications, WebhookNotificationService } from "@/lib/services/webhook-notifications";
+import { discordWebhookNotifications, DiscordWebhookNotificationService } from "@/lib/services/discord-webhook-notifications";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -36,12 +36,12 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     }).select().single();
 
-    // Generate ROI score for webhook notification
-    const roiScore = WebhookNotificationService.calculateRoiScore(results);
+    // Generate ROI score for notification
+    const roiScore = DiscordWebhookNotificationService.calculateRoiScore(results);
 
-    // Send instant webhook notification to Jarvis
+    // Send instant Discord notification
     try {
-      await webhookNotifications.roiAssessment({
+      await discordWebhookNotifications.roiAssessment({
         id: roiData?.id?.toString() || `roi_${Date.now()}`,
         email,
         score: roiScore,
@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
         paybackMonths: results.paybackMonths,
       });
     } catch (webhookError) {
-      console.error("Webhook notification failed:", webhookError);
-      // Continue processing even if webhook fails
+      console.error("Discord notification failed:", webhookError);
+      // Continue processing even if notification fails
     }
 
     if (dbError) {

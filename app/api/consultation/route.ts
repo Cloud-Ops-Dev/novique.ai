@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
-import { webhookNotifications } from "@/lib/services/webhook-notifications";
+import { discordWebhookNotifications } from "@/lib/services/discord-webhook-notifications";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -55,9 +55,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send instant webhook notification to Jarvis
+    // Send instant Discord notification
     try {
-      await webhookNotifications.consultationRequest({
+      await discordWebhookNotifications.consultationRequest({
         id: consultationData.id.toString(),
         name,
         email,
@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
         challenges,
       });
     } catch (webhookError) {
-      console.error("Webhook notification failed:", webhookError);
-      // Continue processing even if webhook fails - don't break the user experience
+      console.error("Discord notification failed:", webhookError);
+      // Continue processing even if notification fails - don't break the user experience
     }
 
     // Send email notification using Resend

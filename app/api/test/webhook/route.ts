@@ -1,27 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { webhookNotifications } from '@/lib/services/webhook-notifications'
+import { discordWebhookNotifications } from '@/lib/services/discord-webhook-notifications'
 
 export async function GET() {
   try {
-    // Test webhook connectivity
-    const result = await webhookNotifications.test()
+    // Test Discord webhook connectivity
+    const result = await discordWebhookNotifications.test()
     
     return NextResponse.json({
       success: result.success,
       message: result.success 
-        ? '✅ Webhook test successful! Check your Discord/Desktop/Laptop for test notification.' 
-        : '❌ Webhook test failed. Check webhook server status.',
+        ? '✅ Discord webhook test successful! Check your Discord channel for test notification.' 
+        : '❌ Discord webhook test failed. Check DISCORD_WEBHOOK_URL configuration.',
       error: result.error,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      webhookUrl: process.env.WEBHOOK_URL || 'http://127.0.0.1:3001'
+      discordConfigured: !!process.env.DISCORD_WEBHOOK_URL
     })
   } catch (error) {
-    console.error('Webhook test error:', error)
+    console.error('Discord webhook test error:', error)
     return NextResponse.json(
       { 
         success: false, 
-        message: '❌ Webhook test failed with exception',
+        message: '❌ Discord webhook test failed with exception',
         error: 'Internal server error',
         timestamp: new Date().toISOString()
       },
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     let result
     switch (type) {
       case 'consultation':
-        result = await webhookNotifications.consultationRequest({
+        result = await discordWebhookNotifications.consultationRequest({
           id: `test-consultation-${Date.now()}`,
           name: data.name || 'Test User',
           email: data.email || 'test@example.com',
@@ -47,12 +47,12 @@ export async function POST(request: NextRequest) {
           businessType: data.businessType || 'Technology',
           businessSize: data.businessSize || '10-50 employees',
           meetingType: data.meetingType || 'video',
-          challenges: data.challenges || 'Testing webhook integration'
+          challenges: data.challenges || 'Testing Discord webhook integration'
         })
         break
 
       case 'roi':
-        result = await webhookNotifications.roiAssessment({
+        result = await discordWebhookNotifications.roiAssessment({
           id: `test-roi-${Date.now()}`,
           email: data.email || 'test@example.com',
           score: data.score || 85,
@@ -64,25 +64,16 @@ export async function POST(request: NextRequest) {
         })
         break
 
-      case 'email':
-        result = await webhookNotifications.emailNotification({
-          id: `test-email-${Date.now()}`,
-          from: data.from || 'test@example.com',
-          subject: data.subject || 'Test Email Notification',
-          mailbox: data.mailbox || 'test'
-        })
-        break
-
       case 'sms':
-        result = await webhookNotifications.smsNotification({
+        result = await discordWebhookNotifications.smsNotification({
           id: `test-sms-${Date.now()}`,
           from: data.from || '+1-555-CUSTOMER',
-          body: data.body || 'This is a test SMS message from the webhook integration.'
+          body: data.body || 'This is a test SMS message from Discord webhook integration.'
         })
         break
 
       case 'voicemail':
-        result = await webhookNotifications.voicemailNotification({
+        result = await discordWebhookNotifications.voicemailNotification({
           id: `test-voicemail-${Date.now()}`,
           from: data.from || '+1-555-CUSTOMER',
           duration: data.duration || 45
@@ -91,7 +82,7 @@ export async function POST(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { error: 'Invalid test type. Use: consultation, roi, email, sms, or voicemail' },
+          { error: 'Invalid test type. Use: consultation, roi, sms, or voicemail' },
           { status: 400 }
         )
     }

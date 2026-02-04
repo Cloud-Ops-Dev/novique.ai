@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
+import { webhookNotifications } from "@/lib/services/webhook-notifications";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -52,6 +53,24 @@ export async function POST(request: NextRequest) {
         { error: "Failed to save consultation request" },
         { status: 500 }
       );
+    }
+
+    // Send instant webhook notification to Jarvis
+    try {
+      await webhookNotifications.consultationRequest({
+        id: consultationData.id.toString(),
+        name,
+        email,
+        company: businessType, // Use businessType as company
+        phone,
+        businessType,
+        businessSize,
+        meetingType,
+        challenges,
+      });
+    } catch (webhookError) {
+      console.error("Webhook notification failed:", webhookError);
+      // Continue processing even if webhook fails - don't break the user experience
     }
 
     // Send email notification using Resend

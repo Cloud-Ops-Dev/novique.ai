@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
+import { webhookNotifications, WebhookNotificationService } from "@/lib/services/webhook-notifications";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
     // Save to Supabase database
     // Note: results now includes correct roiPercent computed with derived pricing
     const supabase = await createClient();
-    const { error: dbError } = await supabase.from("roi_assessments").insert({
+    const { data: roiData, error: dbError } = await supabase.from("roi_assessments").insert({
       email,
       calculated_results: {
         ...results,
@@ -33,7 +34,27 @@ export async function POST(request: NextRequest) {
       employees_impacted: employeesImpacted || null,
       selected_workflows: selectedWorkflows || [],
       created_at: new Date().toISOString(),
-    });
+    }).select().single();
+
+    // Generate ROI score for webhook notification
+    const roiScore = WebhookNotificationService.calculateRoiScore(results);
+
+    // Send instant webhook notification to Jarvis
+    try {
+      await webhookNotifications.roiAssessment({
+        id: roiData?.id?.toString() || `roi_${Date.now()}`,
+        email,
+        score: roiScore,
+        company: industry,
+        industry,
+        netBenefit: results.netBenefitPerMonth,
+        roi: results.roiPercent,
+        paybackMonths: results.paybackMonths,
+      });
+    } catch (webhookError) {
+      console.error("Webhook notification failed:", webhookError);
+      // Continue processing even if webhook fails
+    }
 
     if (dbError) {
       console.error("Database error:", dbError);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { webhookNotifications } from "@/lib/services/webhook-notifications";
 
 /**
  * Twilio SMS Webhook - Incoming Message Handler
@@ -130,8 +131,20 @@ export async function POST(request: NextRequest) {
       messageSid: MessageSid,
     });
 
-    // Send admin notification
+    // Send instant webhook notification to Jarvis
     if (communication) {
+      try {
+        await webhookNotifications.smsNotification({
+          id: communication.id.toString(),
+          from: From,
+          body: messageBody,
+        });
+      } catch (webhookError) {
+        console.error("  Webhook notification failed:", webhookError);
+        // Continue processing even if webhook fails
+      }
+
+      // Send admin notification (legacy SMS method)
       await sendAdminNotification({
         from: From,
         preview: messageBody,

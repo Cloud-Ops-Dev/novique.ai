@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { webhookNotifications } from "@/lib/services/webhook-notifications";
 
 /**
  * Twilio Recording Complete Webhook
@@ -85,7 +86,19 @@ export async function POST(request: NextRequest) {
 
     console.log(`  Voicemail stored with ID: ${data.id}`);
 
-    // Send SMS notification to admin if configured
+    // Send instant webhook notification to Jarvis
+    try {
+      await webhookNotifications.voicemailNotification({
+        id: data.id.toString(),
+        from: From,
+        duration: parseInt(RecordingDuration) || 0,
+      });
+    } catch (webhookError) {
+      console.error("  Webhook notification failed:", webhookError);
+      // Continue processing even if webhook fails
+    }
+
+    // Send SMS notification to admin if configured (legacy method)
     const adminPhone = process.env.ADMIN_PHONE_NUMBER;
     if (adminPhone) {
       await sendAdminNotification({

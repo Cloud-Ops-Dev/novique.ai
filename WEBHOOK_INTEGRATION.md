@@ -30,7 +30,17 @@ This integration replaces the 30-minute scheduled email polling system with inst
 - **Data**: Email, calculated ROI score, industry, financial projections
 - **Notification**: "📊 New ROI assessment: [Email] (Score: [X])"
 
-### 3. Future Extensions
+### 3. SMS Messages (`/api/twilio/sms`)
+- **Trigger**: Customer sends SMS to your Twilio number
+- **Data**: Phone number, message content
+- **Notification**: "💬 SMS from [Phone]: [Message preview]"
+
+### 4. Voicemails (`/api/twilio/recording-complete`)
+- **Trigger**: Customer leaves voicemail on your Twilio number
+- **Data**: Phone number, duration, recording URL
+- **Notification**: "📞 Voicemail from [Phone] (Duration: [X]s)"
+
+### 5. Future Extensions
 - Contact form submissions
 - Newsletter signups
 - Admin panel events
@@ -102,6 +112,28 @@ curl -X POST https://your-vercel-app.vercel.app/api/test/webhook \
     "score": 92,
     "roi": 350,
     "netBenefit": 8500
+  }'
+```
+
+**Test SMS Webhook:**
+```bash
+curl -X POST https://your-vercel-app.vercel.app/api/test/webhook \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "sms",
+    "from": "+1-555-CUSTOMER",
+    "body": "Test SMS message content"
+  }'
+```
+
+**Test Voicemail Webhook:**
+```bash
+curl -X POST https://your-vercel-app.vercel.app/api/test/webhook \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "voicemail", 
+    "from": "+1-555-CUSTOMER",
+    "duration": 45
   }'
 ```
 
@@ -201,13 +233,14 @@ curl http://127.0.0.1:3001/health
 
 Once deployed, you should see:
 
-1. **Immediate awareness** of new leads
-2. **Faster response times** to customer inquiries  
-3. **Higher conversion rates** from rapid follow-up
-4. **Reduced missed opportunities**
-5. **Better customer experience** through responsiveness
+1. **Immediate awareness** of new leads (consultations, ROI assessments)
+2. **Instant customer communication alerts** (SMS, voicemails)
+3. **Faster response times** to all customer inquiries  
+4. **Higher conversion rates** from rapid follow-up
+5. **Reduced missed opportunities**
+6. **Better customer experience** through responsiveness
 
-**Bottom line: Know about new business opportunities in seconds, not minutes!** 🎉
+**Bottom line: Know about ALL customer interactions in seconds, not minutes!** 🎉
 
 ---
 

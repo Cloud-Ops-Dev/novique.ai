@@ -39,6 +39,18 @@ interface EmailWebhookData {
   mailbox?: string;
 }
 
+interface SmsWebhookData {
+  id: string;
+  from: string;
+  body: string;
+}
+
+interface VoicemailWebhookData {
+  id: string;
+  from: string;
+  duration?: number;
+}
+
 class WebhookNotificationService {
   private webhookUrl: string;
   private apiKey?: string;
@@ -97,6 +109,32 @@ class WebhookNotificationService {
     };
 
     return this.sendWebhook('/webhook/email', webhookData);
+  }
+
+  /**
+   * Send SMS notification
+   */
+  async smsNotification(data: { id: string; from: string; body: string }): Promise<WebhookResponse> {
+    const webhookData = {
+      id: data.id,
+      from: data.from,
+      body: data.body,
+    };
+
+    return this.sendWebhook('/webhook/sms', webhookData);
+  }
+
+  /**
+   * Send voicemail notification
+   */
+  async voicemailNotification(data: { id: string; from: string; duration?: number }): Promise<WebhookResponse> {
+    const webhookData = {
+      id: data.id,
+      from: data.from,
+      duration: data.duration,
+    };
+
+    return this.sendWebhook('/webhook/voicemail', webhookData);
   }
 
   /**
@@ -225,6 +263,8 @@ export { WebhookNotificationService };
 export type { 
   ConsultationWebhookData, 
   RoiAssessmentWebhookData, 
-  EmailWebhookData, 
+  EmailWebhookData,
+  SmsWebhookData,
+  VoicemailWebhookData, 
   WebhookResponse 
 };

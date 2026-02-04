@@ -73,9 +73,25 @@ export async function POST(request: NextRequest) {
         })
         break
 
+      case 'sms':
+        result = await webhookNotifications.smsNotification({
+          id: `test-sms-${Date.now()}`,
+          from: data.from || '+1-555-CUSTOMER',
+          body: data.body || 'This is a test SMS message from the webhook integration.'
+        })
+        break
+
+      case 'voicemail':
+        result = await webhookNotifications.voicemailNotification({
+          id: `test-voicemail-${Date.now()}`,
+          from: data.from || '+1-555-CUSTOMER',
+          duration: data.duration || 45
+        })
+        break
+
       default:
         return NextResponse.json(
-          { error: 'Invalid test type. Use: consultation, roi, or email' },
+          { error: 'Invalid test type. Use: consultation, roi, email, sms, or voicemail' },
           { status: 400 }
         )
     }

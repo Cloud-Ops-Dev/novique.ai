@@ -13,6 +13,12 @@ import { createClient } from '@/lib/supabase/middleware'
  * CRITICAL: This must run before any protected routes are accessed
  */
 export async function middleware(request: NextRequest) {
+  // Skip auth for webhook endpoints
+  const pathname = request.nextUrl.pathname
+  if (pathname.startsWith('/api/test') || pathname.startsWith('/api/twilio')) {
+    return
+  }
+
   const { supabase, response } = await createClient(request)
 
   // Refresh session if expired - this is handled by getUser()
@@ -38,12 +44,12 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
-     * - _next/image (image optimization files)
+     * - _next/image (image optimization files) 
      * - favicon.ico (favicon file)
      * - public folder
      * - api/test/webhook (webhook testing endpoints)
      * - api/twilio (Twilio webhooks - external service)
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/test/webhook|api/twilio|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/test|api/twilio|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

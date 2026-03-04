@@ -141,3 +141,12 @@ projects/novique.ai/
 ├── components/             # React components
 ├── lib/                    # Utility libraries
 │   └── supabase/          # Supabase client configurations
+```
+
+---
+
+## Open Brain Integration
+
+> Inherits Section 10 of the IDE constitution (`~/IDE/CLAUDE.md`).
+
+Agents MUST search Open Brain at session start for prior context (`search_thoughts`), capture durable project knowledge during work (`capture_thought`), and review for uncaptured insights at session end. Only store knowledge useful across sessions — not transient task state. Open Brain informs decisions but does not override CLAUDE.md authority.

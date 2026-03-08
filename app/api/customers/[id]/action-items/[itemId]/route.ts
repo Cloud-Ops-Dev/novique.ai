@@ -23,6 +23,7 @@ export async function PATCH(
     if (body.description !== undefined) updateData.description = body.description
     if (body.due_date !== undefined) updateData.due_date = body.due_date || null
     if (body.assigned_to !== undefined) updateData.assigned_to = body.assigned_to || null
+    if (body.assigned_label !== undefined) updateData.assigned_label = body.assigned_label
 
     if (body.status !== undefined) {
       updateData.status = body.status

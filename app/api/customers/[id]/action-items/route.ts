@@ -79,6 +79,8 @@ export async function POST(
       )
     }
 
+    const isCustomerAssigned = body.assigned_to === 'customer'
+
     const { data, error } = await supabase
       .from('customer_action_items')
       .insert({
@@ -87,7 +89,8 @@ export async function POST(
         title: body.title,
         description: body.description || null,
         due_date: body.due_date || null,
-        assigned_to: body.assigned_to || null,
+        assigned_to: isCustomerAssigned ? null : (body.assigned_to || null),
+        assigned_label: isCustomerAssigned ? 'Customer' : null,
         source_interaction_id: body.source_interaction_id || null,
         created_by: user.id,
       })

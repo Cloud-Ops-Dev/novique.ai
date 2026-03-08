@@ -17,6 +17,7 @@ export function PhaseInteractionLog({
   onAdded,
 }: PhaseInteractionLogProps) {
   const [showForm, setShowForm] = useState(false)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
     interaction_type: 'meeting' as string,
@@ -149,33 +150,70 @@ export function PhaseInteractionLog({
         {interactions.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-6">No communication entries yet</p>
         ) : (
-          interactions.map((item) => (
-            <div key={item.id} className="px-4 py-3 hover:bg-gray-50">
-              <div className="flex items-start gap-2">
-                <span className="text-base mt-0.5">{typeIcons[item.interaction_type] || '•'}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {item.subject || 'No subject'}
-                    </p>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      {formatDate(item.interaction_date)}
-                    </span>
+          <>
+            {interactions.map((item) => {
+              const isExpanded = expandedId === item.id
+              return (
+                <div
+                  key={item.id}
+                  className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                >
+                  <div className="flex items-start gap-2">
+                    <span className="text-base mt-0.5">{typeIcons[item.interaction_type] || '•'}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {item.subject || 'No subject'}
+                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-gray-400 whitespace-nowrap">
+                            {formatDate(item.interaction_date)}
+                          </span>
+                          <svg
+                            className={`w-3.5 h-3.5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                      {!isExpanded && item.notes && (
+                        <p className="text-xs text-gray-600 mt-1 whitespace-pre-wrap line-clamp-2">
+                          {item.notes}
+                        </p>
+                      )}
+                      {isExpanded && (
+                        <div className="mt-2 space-y-2">
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 font-medium capitalize">
+                              {item.interaction_type}
+                            </span>
+                            {item.created_by_profile?.full_name && (
+                              <span>by {item.created_by_profile.full_name}</span>
+                            )}
+                          </div>
+                          {item.notes && (
+                            <p className="text-sm text-gray-700 whitespace-pre-wrap bg-white border border-gray-100 rounded-md p-3">
+                              {item.notes}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      {!isExpanded && item.created_by_profile?.full_name && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          by {item.created_by_profile.full_name}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {item.notes && (
-                    <p className="text-xs text-gray-600 mt-1 whitespace-pre-wrap line-clamp-3">
-                      {item.notes}
-                    </p>
-                  )}
-                  {item.created_by_profile?.full_name && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      by {item.created_by_profile.full_name}
-                    </p>
-                  )}
                 </div>
-              </div>
-            </div>
-          ))
+              )
+            })}
+          </>
         )}
       </div>
     </div>

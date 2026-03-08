@@ -32,6 +32,7 @@ export interface ActionItem {
   due_date?: string
   status: 'open' | 'completed'
   assigned_to?: string
+  assigned_label?: string
   source_interaction_id?: string
   created_by?: string
   created_at: string

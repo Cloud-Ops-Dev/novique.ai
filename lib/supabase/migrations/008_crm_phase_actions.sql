@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS customer_action_items (
   due_date DATE,
   status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'completed')),
   assigned_to UUID REFERENCES profiles(id),
+  assigned_label TEXT,
   source_interaction_id UUID REFERENCES customer_interactions(id) ON DELETE SET NULL,
   created_by UUID REFERENCES profiles(id),
   created_at TIMESTAMPTZ DEFAULT NOW(),

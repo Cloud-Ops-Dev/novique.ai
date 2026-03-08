@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/auth/session'
 
-// GET /api/customers/[id]/interactions - Get interaction timeline
+// GET /api/customers/[id]/action-items
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -15,25 +15,31 @@ export async function GET(
 
     const { id } = await params
     const supabase = await createClient()
-
     const { searchParams } = new URL(request.url)
     const phase = searchParams.get('phase')
+    const status = searchParams.get('status')
 
     let query = supabase
-      .from('customer_interactions')
-      .select('*, created_by_profile:profiles!created_by(id, full_name, email)')
+      .from('customer_action_items')
+      .select('*, assigned_to_profile:profiles!assigned_to(id, full_name, email)')
       .eq('customer_id', id)
 
     if (phase) {
       query = query.eq('phase', phase)
     }
+    if (status) {
+      query = query.eq('status', status)
+    }
 
-    const { data, error } = await query.order('interaction_date', { ascending: false })
+    const { data, error } = await query
+      .order('status', { ascending: true })
+      .order('due_date', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false })
 
     if (error) {
       console.error('Database error:', error)
       return NextResponse.json(
-        { error: 'Failed to fetch interactions' },
+        { error: 'Failed to fetch action items' },
         { status: 500 }
       )
     }
@@ -51,7 +57,7 @@ export async function GET(
   }
 }
 
-// POST /api/customers/[id]/interactions - Add new interaction
+// POST /api/customers/[id]/action-items
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -66,33 +72,32 @@ export async function POST(
     const supabase = await createClient()
     const body = await request.json()
 
-    // Validate required fields
-    if (!body.interaction_type) {
+    if (!body.phase || !body.title) {
       return NextResponse.json(
-        { error: 'Interaction type is required' },
+        { error: 'Phase and title are required' },
         { status: 400 }
       )
     }
 
-    // Create interaction
     const { data, error } = await supabase
-      .from('customer_interactions')
+      .from('customer_action_items')
       .insert({
         customer_id: id,
-        interaction_type: body.interaction_type,
-        subject: body.subject,
-        notes: body.notes,
-        interaction_date: body.interaction_date || new Date().toISOString(),
-        phase: body.phase || null,
+        phase: body.phase,
+        title: body.title,
+        description: body.description || null,
+        due_date: body.due_date || null,
+        assigned_to: body.assigned_to || null,
+        source_interaction_id: body.source_interaction_id || null,
         created_by: user.id,
       })
-      .select('*, created_by_profile:profiles!created_by(id, full_name, email)')
+      .select('*, assigned_to_profile:profiles!assigned_to(id, full_name, email)')
       .single()
 
     if (error) {
       console.error('Database error:', error)
       return NextResponse.json(
-        { error: 'Failed to create interaction' },
+        { error: 'Failed to create action item' },
         { status: 500 }
       )
     }

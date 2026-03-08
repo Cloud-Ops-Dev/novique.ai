@@ -1,13 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCustomerEditor } from '@/hooks/useCustomerEditor'
 import { useAutoSave } from '@/hooks/useAutoSave'
 import { CustomerStageBadge } from '@/components/admin/CustomerStageBadge'
 import { ProjectHealthIndicator } from '@/components/admin/ProjectHealthIndicator'
 import { InteractionTimeline } from '@/components/admin/InteractionTimeline'
+import { ConsultationSection } from '@/components/admin/customer-sections/ConsultationSection'
+import { ProposalSection } from '@/components/admin/customer-sections/ProposalSection'
+import { AgreementSection } from '@/components/admin/customer-sections/AgreementSection'
+import { DeliverySection } from '@/components/admin/customer-sections/DeliverySection'
+import { ImplementationSection } from '@/components/admin/customer-sections/ImplementationSection'
+import { SignoffSection } from '@/components/admin/customer-sections/SignoffSection'
 import Link from 'next/link'
+import type { Interaction, ActionItem, AdminUser, CrmPhase } from '@/types/crm'
 
 export default function CustomerDetailPage() {
   const params = useParams()
@@ -16,14 +23,17 @@ export default function CustomerDetailPage() {
 
   const [activeTab, setActiveTab] = useState('overview')
   const [loading, setLoading] = useState(true)
-  const [interactions, setInteractions] = useState<any[]>([])
+  const [interactions, setInteractions] = useState<Interaction[]>([])
+  const [actionItems, setActionItems] = useState<ActionItem[]>([])
   const [showAddInteraction, setShowAddInteraction] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const [adminUsers, setAdminUsers] = useState<any[]>([])
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([])
   const [newInteraction, setNewInteraction] = useState({
     interaction_type: 'note',
     subject: '',
     notes: '',
+    interaction_date: '',
+    phase: '' as string,
   })
 
   // ROI Assessment selection for new customers
@@ -46,7 +56,6 @@ export default function CustomerDetailPage() {
         const response = await fetch('/api/admin/users')
         if (response.ok) {
           const result = await response.json()
-          // Filter to only admin users
           const admins = (result.data || []).filter((u: any) => u.role === 'admin')
           setAdminUsers(admins)
         }
@@ -83,7 +92,6 @@ export default function CustomerDetailPage() {
     setSelectedRoiId(roiId)
 
     if (!roiId) {
-      // Clear ROI-related fields when deselected
       updateField('roi_assessment_id', undefined)
       updateField('roi_estimate', undefined)
       return
@@ -92,7 +100,6 @@ export default function CustomerDetailPage() {
     const assessment = roiAssessments.find((a) => a.id === roiId)
     if (!assessment) return
 
-    // Industry to business_type mapping
     const industryMap: Record<string, string> = {
       home_services: 'other',
       professional_services: 'professional',
@@ -104,7 +111,6 @@ export default function CustomerDetailPage() {
       other: 'other',
     }
 
-    // Auto-populate fields
     updateField('roi_assessment_id', assessment.id)
     updateField('email', assessment.email)
     updateField('roi_estimate', assessment.calculated_results)
@@ -113,7 +119,6 @@ export default function CustomerDetailPage() {
       updateField('business_type', industryMap[assessment.industry] || 'other')
     }
 
-    // Map employees_impacted to business_size
     if (assessment.employees_impacted) {
       const emp = assessment.employees_impacted
       let businessSize = ''
@@ -124,7 +129,6 @@ export default function CustomerDetailPage() {
       updateField('business_size', businessSize)
     }
 
-    // Build initial challenges from workflows
     if (assessment.selected_workflows?.length > 0) {
       const workflowNames: Record<string, string> = {
         lead_followup: 'Lead Capture + Follow-up',
@@ -142,10 +146,32 @@ export default function CustomerDetailPage() {
     }
   }
 
+  // Refresh callbacks
+  const refreshInteractions = useCallback(async () => {
+    if (customerId === 'new') return
+    try {
+      const res = await fetch(`/api/customers/${customerId}/interactions`)
+      const result = await res.json()
+      setInteractions(result.data || [])
+    } catch (e) {
+      console.error('Failed to refresh interactions:', e)
+    }
+  }, [customerId])
+
+  const refreshActionItems = useCallback(async () => {
+    if (customerId === 'new') return
+    try {
+      const res = await fetch(`/api/customers/${customerId}/action-items`)
+      const result = await res.json()
+      setActionItems(result.data || [])
+    } catch (e) {
+      console.error('Failed to refresh action items:', e)
+    }
+  }, [customerId])
+
   // Load customer data
   useEffect(() => {
     async function loadCustomer() {
-      // Skip loading for new customer creation
       if (customerId === 'new') {
         setLoading(false)
         return
@@ -158,7 +184,6 @@ export default function CustomerDetailPage() {
         const result = await response.json()
         const customer = result.data
 
-        // Update form data with customer data
         Object.keys(customer).forEach((key) => {
           if (key !== 'interactions') {
             updateField(key as any, customer[key])
@@ -176,6 +201,12 @@ export default function CustomerDetailPage() {
     loadCustomer()
   }, [customerId])
 
+  // Load action items
+  useEffect(() => {
+    if (customerId === 'new') return
+    refreshActionItems()
+  }, [customerId, refreshActionItems])
+
   // Auto-save (disabled for new customers)
   const { lastSaved, error: autoSaveError } = useAutoSave({
     onSave: async () => {
@@ -187,7 +218,6 @@ export default function CustomerDetailPage() {
     enabled: !!formData.name && customerId !== 'new',
   })
 
-  // Display auto-save errors
   useEffect(() => {
     if (autoSaveError) {
       setSaveError(`Auto-save failed: ${autoSaveError.message}`)
@@ -196,13 +226,16 @@ export default function CustomerDetailPage() {
 
   const handleAddInteraction = async () => {
     try {
-      await addInteraction(newInteraction)
-      // Reload interactions
-      const response = await fetch(`/api/customers/${customerId}/interactions`)
-      const result = await response.json()
-      setInteractions(result.data)
+      await addInteraction({
+        ...newInteraction,
+        phase: newInteraction.phase || undefined,
+        interaction_date: newInteraction.interaction_date
+          ? new Date(newInteraction.interaction_date).toISOString()
+          : undefined,
+      })
+      await refreshInteractions()
       setShowAddInteraction(false)
-      setNewInteraction({ interaction_type: 'note', subject: '', notes: '' })
+      setNewInteraction({ interaction_type: 'note', subject: '', notes: '', interaction_date: '', phase: '' })
     } catch (error) {
       console.error('Failed to add interaction:', error)
     }
@@ -242,20 +275,44 @@ export default function CustomerDetailPage() {
     }
   }
 
+  // Phase helpers
+  const getPhaseInteractions = (phase: CrmPhase): Interaction[] =>
+    interactions.filter((i) => i.phase === phase)
+
+  const getPhaseActionItems = (phase: CrmPhase): ActionItem[] =>
+    actionItems.filter((i) => i.phase === phase)
+
+  const getPhaseOpenCount = (phase: CrmPhase): number =>
+    actionItems.filter((i) => i.phase === phase && i.status === 'open').length
+
+  const phases: CrmPhase[] = ['consultation', 'proposal', 'agreement', 'delivery', 'implementation', 'signoff']
+  const totalOpenActions = phases.reduce((sum, p) => sum + getPhaseOpenCount(p), 0)
+
   const tabs = [
     { id: 'overview', name: 'Overview' },
-    { id: 'consultation', name: 'Consultation' },
-    { id: 'proposal', name: 'Proposal' },
-    { id: 'agreement', name: 'Agreement' },
-    { id: 'delivery', name: 'Delivery' },
-    { id: 'implementation', name: 'Implementation' },
-    { id: 'signoff', name: 'Sign-off' },
+    { id: 'consultation', name: 'Consultation', badge: getPhaseOpenCount('consultation') },
+    { id: 'proposal', name: 'Proposal', badge: getPhaseOpenCount('proposal') },
+    { id: 'agreement', name: 'Agreement', badge: getPhaseOpenCount('agreement') },
+    { id: 'delivery', name: 'Delivery', badge: getPhaseOpenCount('delivery') },
+    { id: 'implementation', name: 'Implementation', badge: getPhaseOpenCount('implementation') },
+    { id: 'signoff', name: 'Sign-off', badge: getPhaseOpenCount('signoff') },
     { id: 'timeline', name: 'Timeline' },
   ]
 
   if (loading) {
     return <div className="text-center py-12">Loading customer...</div>
   }
+
+  const sectionProps = (phase: CrmPhase) => ({
+    formData,
+    updateField,
+    interactions: getPhaseInteractions(phase),
+    actionItems: getPhaseActionItems(phase),
+    customerId,
+    adminUsers,
+    onInteractionsChanged: refreshInteractions,
+    onActionItemsChanged: refreshActionItems,
+  })
 
   return (
     <div className="space-y-6">
@@ -326,6 +383,11 @@ export default function CustomerDetailPage() {
           <div className="flex flex-col items-end gap-2">
             <CustomerStageBadge stage={formData.stage} />
             <ProjectHealthIndicator status={formData.project_status} />
+            {totalOpenActions > 0 && (
+              <span className="text-xs text-blue-600 font-medium">
+                {totalOpenActions} open action{totalOpenActions !== 1 ? 's' : ''}
+              </span>
+            )}
             {lastSaved && (
               <p className="text-xs text-gray-500">
                 Last saved: {new Date(lastSaved).toLocaleTimeString()}
@@ -338,7 +400,7 @@ export default function CustomerDetailPage() {
       {/* Tabs */}
       <div className="bg-white shadow rounded-lg">
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+          <nav className="-mb-px flex space-x-8 px-6 overflow-x-auto" aria-label="Tabs">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -347,9 +409,14 @@ export default function CustomerDetailPage() {
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-1.5`}
               >
                 {tab.name}
+                {tab.badge ? (
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                    {tab.badge}
+                  </span>
+                ) : null}
               </button>
             ))}
           </nav>
@@ -587,301 +654,13 @@ export default function CustomerDetailPage() {
             </div>
           )}
 
-          {/* Consultation Tab */}
-          {activeTab === 'consultation' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Consultation Date</label>
-                  <input
-                    type="date"
-                    value={formData.consultation_occurred_date || ''}
-                    onChange={(e) => updateField('consultation_occurred_date', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to &quot;Consultation Completed&quot;
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Consultation Notes</label>
-                <textarea
-                  rows={6}
-                  value={formData.consultation_notes || ''}
-                  onChange={(e) => updateField('consultation_notes', e.target.value)}
-                  placeholder="Notes from the discovery meeting..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Proposal Tab */}
-          {activeTab === 'proposal' && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Investigation Notes</label>
-                <textarea
-                  rows={6}
-                  value={formData.investigation_notes || ''}
-                  onChange={(e) => updateField('investigation_notes', e.target.value)}
-                  placeholder="Notes from investigating possible improvements..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Proposed Solutions</label>
-                <textarea
-                  rows={6}
-                  value={formData.proposed_solutions?.join('\n') || ''}
-                  onChange={(e) => updateField('proposed_solutions', e.target.value.split('\n').filter(s => s.trim()))}
-                  placeholder="Enter each solution on a new line..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-                <p className="mt-1 text-sm text-gray-500">
-                  Setting solutions will auto-progress to &quot;Proposal Sent&quot;
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Proposal Presentation Date/Time</label>
-                  <input
-                    type="datetime-local"
-                    value={formData.proposal_presentation_datetime || ''}
-                    onChange={(e) => updateField('proposal_presentation_datetime', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Proposal Location</label>
-                  <input
-                    type="text"
-                    value={formData.proposal_location || ''}
-                    onChange={(e) => updateField('proposal_location', e.target.value)}
-                    placeholder="Virtual, Office, Customer site..."
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Agreement Tab */}
-          {activeTab === 'agreement' && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Accepted Solutions</label>
-                <textarea
-                  rows={6}
-                  value={formData.accepted_solutions?.join('\n') || ''}
-                  onChange={(e) => updateField('accepted_solutions', e.target.value.split('\n').filter(s => s.trim()))}
-                  placeholder="Enter each accepted solution on a new line..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-                <p className="mt-1 text-sm text-gray-500">
-                  Setting accepted solutions will auto-progress to &quot;Negotiation&quot;
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Implementation Cost</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.agreed_implementation_cost || ''}
-                    onChange={(e) => updateField('agreed_implementation_cost', parseFloat(e.target.value))}
-                    placeholder="0.00"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to &quot;Project Active&quot;
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Recurring Cost (Monthly)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.agreed_recurring_cost || ''}
-                    onChange={(e) => updateField('agreed_recurring_cost', parseFloat(e.target.value))}
-                    placeholder="0.00"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Delivery Requirements</label>
-                <textarea
-                  rows={4}
-                  value={formData.delivery_requirements || ''}
-                  onChange={(e) => updateField('delivery_requirements', e.target.value)}
-                  placeholder="Specific requirements for delivery..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Delivery Tab */}
-          {activeTab === 'delivery' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Solution Due Date</label>
-                  <input
-                    type="date"
-                    value={formData.solution_due_date || ''}
-                    onChange={(e) => updateField('solution_due_date', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">GA Date (from customer)</label>
-                  <input
-                    type="date"
-                    value={formData.ga_date || ''}
-                    onChange={(e) => updateField('ga_date', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">GitHub Repo URL</label>
-                  <input
-                    type="url"
-                    value={formData.github_repo_url || ''}
-                    onChange={(e) => updateField('github_repo_url', e.target.value)}
-                    placeholder="https://github.com/..."
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Wekan Board URL</label>
-                  <input
-                    type="url"
-                    value={formData.wekan_board_url || ''}
-                    onChange={(e) => updateField('wekan_board_url', e.target.value)}
-                    placeholder="http://localhost:8080/..."
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Implementation Tab */}
-          {activeTab === 'implementation' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Implementation Date</label>
-                  <input
-                    type="date"
-                    value={formData.implementation_date || ''}
-                    onChange={(e) => updateField('implementation_date', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to &quot;Implementation&quot;
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Demonstration Date</label>
-                  <input
-                    type="date"
-                    value={formData.demonstration_date || ''}
-                    onChange={(e) => updateField('demonstration_date', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to &quot;Delivered&quot;
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Sign-off Tab */}
-          {activeTab === 'signoff' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Sign-off Date</label>
-                  <input
-                    type="date"
-                    value={formData.signoff_date || ''}
-                    onChange={(e) => updateField('signoff_date', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Setting this will auto-progress to &quot;Signed Off&quot;
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Payment Status</label>
-                  <select
-                    value={formData.payment_status}
-                    onChange={(e) => updateField('payment_status', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="not_applicable">Not Applicable</option>
-                    <option value="pending">Pending</option>
-                    <option value="partial">Partial</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Sign-off Notes</label>
-                <textarea
-                  rows={4}
-                  value={formData.signoff_notes || ''}
-                  onChange={(e) => updateField('signoff_notes', e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Payment Info</label>
-                <textarea
-                  rows={3}
-                  value={formData.payment_info || ''}
-                  onChange={(e) => updateField('payment_info', e.target.value)}
-                  placeholder="Invoice number, payment method, etc..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Payment Confirmed Date</label>
-                <input
-                  type="date"
-                  value={formData.payment_confirmed_date || ''}
-                  onChange={(e) => updateField('payment_confirmed_date', e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-                <p className="mt-1 text-sm text-gray-500">
-                  Setting this will auto-progress to &quot;Closed Won&quot;
-                </p>
-              </div>
-            </div>
-          )}
+          {/* Section Tabs */}
+          {activeTab === 'consultation' && <ConsultationSection {...sectionProps('consultation')} />}
+          {activeTab === 'proposal' && <ProposalSection {...sectionProps('proposal')} />}
+          {activeTab === 'agreement' && <AgreementSection {...sectionProps('agreement')} />}
+          {activeTab === 'delivery' && <DeliverySection {...sectionProps('delivery')} />}
+          {activeTab === 'implementation' && <ImplementationSection {...sectionProps('implementation')} />}
+          {activeTab === 'signoff' && <SignoffSection {...sectionProps('signoff')} />}
 
           {/* Timeline Tab */}
           {activeTab === 'timeline' && (
@@ -897,20 +676,54 @@ export default function CustomerDetailPage() {
                     <h3 className="text-lg font-medium mb-4">Add Interaction</h3>
 
                     <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Type</label>
+                          <select
+                            value={newInteraction.interaction_type}
+                            onChange={(e) =>
+                              setNewInteraction({ ...newInteraction, interaction_type: e.target.value })
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          >
+                            <option value="note">Note</option>
+                            <option value="meeting">Meeting</option>
+                            <option value="email">Email</option>
+                            <option value="call">Call</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Phase (optional)</label>
+                          <select
+                            value={newInteraction.phase}
+                            onChange={(e) =>
+                              setNewInteraction({ ...newInteraction, phase: e.target.value })
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          >
+                            <option value="">No specific phase</option>
+                            <option value="consultation">Consultation</option>
+                            <option value="proposal">Proposal</option>
+                            <option value="agreement">Agreement</option>
+                            <option value="delivery">Delivery</option>
+                            <option value="implementation">Implementation</option>
+                            <option value="signoff">Sign-off</option>
+                          </select>
+                        </div>
+                      </div>
+
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Type</label>
-                        <select
-                          value={newInteraction.interaction_type}
+                        <label className="block text-sm font-medium text-gray-700">Date/Time</label>
+                        <input
+                          type="datetime-local"
+                          value={newInteraction.interaction_date}
                           onChange={(e) =>
-                            setNewInteraction({ ...newInteraction, interaction_type: e.target.value })
+                            setNewInteraction({ ...newInteraction, interaction_date: e.target.value })
                           }
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        >
-                          <option value="note">Note</option>
-                          <option value="meeting">Meeting</option>
-                          <option value="email">Email</option>
-                          <option value="call">Call</option>
-                        </select>
+                        />
+                        <p className="mt-1 text-xs text-gray-500">Leave blank for current time</p>
                       </div>
 
                       <div>

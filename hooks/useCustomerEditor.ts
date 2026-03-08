@@ -256,6 +256,7 @@ export function useCustomerEditor({
       subject?: string
       notes?: string
       interaction_date?: string
+      phase?: string
     }) => {
       if (!formData.id) {
         throw new Error('Customer must be saved before adding interactions')

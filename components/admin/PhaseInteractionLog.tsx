@@ -7,6 +7,7 @@ interface PhaseInteractionLogProps {
   interactions: Interaction[]
   customerId: string
   phase: CrmPhase
+  customerNumber?: string
   onAdded: () => void
 }
 
@@ -14,6 +15,7 @@ export function PhaseInteractionLog({
   interactions,
   customerId,
   phase,
+  customerNumber,
   onAdded,
 }: PhaseInteractionLogProps) {
   const [showForm, setShowForm] = useState(false)
@@ -79,7 +81,10 @@ export function PhaseInteractionLog({
   return (
     <div className="border border-gray-200 rounded-lg">
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 rounded-t-lg">
-        <h4 className="text-sm font-semibold text-gray-700">Communication Log</h4>
+        <h4 className="text-sm font-semibold text-gray-700">
+          Communication Log
+          {customerNumber && <span className="ml-2 text-xs font-mono text-gray-400">#{customerNumber}</span>}
+        </h4>
         <button
           onClick={() => setShowForm(!showForm)}
           className="text-xs font-medium text-blue-600 hover:text-blue-800"
@@ -164,6 +169,7 @@ export function PhaseInteractionLog({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline justify-between gap-2">
                         <p className="text-sm font-medium text-gray-900 truncate">
+                          {customerNumber && <span className="font-mono text-xs text-gray-400 mr-1.5">#{customerNumber}</span>}
                           {item.subject || 'No subject'}
                         </p>
                         <div className="flex items-center gap-1.5">

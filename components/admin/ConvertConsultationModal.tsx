@@ -26,6 +26,7 @@ export function ConvertConsultationModal({
 }: ConvertConsultationModalProps) {
   const router = useRouter()
   const [isConverting, setIsConverting] = useState(false)
+  const [isTest, setIsTest] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!isOpen) return null
@@ -37,6 +38,8 @@ export function ConvertConsultationModal({
     try {
       const response = await fetch(`/api/consultations/${consultation.id}/convert`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_test: isTest }),
       })
 
       if (!response.ok) {
@@ -105,6 +108,16 @@ export function ConvertConsultationModal({
               </div>
             )}
           </div>
+
+          <label className="flex items-center gap-2 mt-4">
+            <input
+              type="checkbox"
+              checked={isTest}
+              onChange={(e) => setIsTest(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Test Customer</span>
+          </label>
 
           {error && (
             <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-4">

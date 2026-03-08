@@ -318,7 +318,7 @@ export default function AdminDashboard() {
                       href={`/admin/customers/${task.id}`}
                       className="text-sm text-red-700 hover:text-red-800 hover:underline"
                     >
-                      {task.name}: {task.next_action_required}
+                      {task.customer_number && <span className="font-mono">#{task.customer_number}</span>} {task.name}: {task.next_action_required}
                     </Link>
                   </li>
                 ))}
@@ -343,7 +343,10 @@ export default function AdminDashboard() {
                     <div className="flex justify-between items-start gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-semibold text-gray-900">{activity.name}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {activity.customer_number && <span className="font-mono text-xs text-gray-400 mr-1.5">#{activity.customer_number}</span>}
+                            {activity.name}
+                          </p>
                           <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
                             activity.type === 'presentation'
                               ? 'bg-purple-100 text-purple-700'
@@ -434,7 +437,10 @@ export default function AdminDashboard() {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 flex-wrap">
-                    <p className="text-sm font-semibold text-gray-900">{project.name}</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {project.customer_number && <span className="font-mono text-xs text-gray-400 mr-1.5">#{project.customer_number}</span>}
+                      {project.name}
+                    </p>
                     <CustomerStageBadge stage={project.stage} />
                     <ProjectHealthIndicator status={project.project_status} />
                   </div>
@@ -491,6 +497,7 @@ export default function AdminDashboard() {
                           href={`/admin/customers/${interaction.customer_id}`}
                           className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
                         >
+                          {interaction.customer.customer_number && <span className="font-mono text-xs mr-1">#{interaction.customer.customer_number}</span>}
                           {interaction.customer.name}
                         </Link>
                       )}

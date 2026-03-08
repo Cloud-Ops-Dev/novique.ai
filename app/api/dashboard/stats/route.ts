@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     // Get proposal presentations
     const { data: upcomingPresentations } = await supabase
       .from('customers')
-      .select('id, name, proposal_presentation_datetime, stage')
+      .select('id, name, customer_number, proposal_presentation_datetime, stage')
       .not('proposal_presentation_datetime', 'is', null)
       .gte('proposal_presentation_datetime', new Date().toISOString())
       .lte('proposal_presentation_datetime', sevenDaysFromNow.toISOString())
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
     // Get upcoming next actions
     const { data: upcomingActions } = await supabase
       .from('customers')
-      .select('id, name, next_action_required, next_action_due_date, stage')
+      .select('id, name, customer_number, next_action_required, next_action_due_date, stage')
       .not('next_action_due_date', 'is', null)
       .gte('next_action_due_date', today)
       .lte('next_action_due_date', sevenDaysDate)
@@ -90,6 +90,7 @@ export async function GET(request: NextRequest) {
       ...(upcomingPresentations || []).map(p => ({
         id: p.id,
         name: p.name,
+        customer_number: p.customer_number,
         type: 'presentation' as const,
         datetime: p.proposal_presentation_datetime,
         description: 'Proposal Presentation',
@@ -98,6 +99,7 @@ export async function GET(request: NextRequest) {
       ...(upcomingActions || []).map(a => ({
         id: a.id,
         name: a.name,
+        customer_number: a.customer_number,
         type: 'action' as const,
         datetime: a.next_action_due_date,
         description: a.next_action_required || 'Next Action',
@@ -108,7 +110,7 @@ export async function GET(request: NextRequest) {
     // Overdue tasks
     const { data: overdueTasks } = await supabase
       .from('customers')
-      .select('id, name, next_action_required, next_action_due_date')
+      .select('id, name, customer_number, next_action_required, next_action_due_date')
       .not('next_action_due_date', 'is', null)
       .lt('next_action_due_date', new Date().toISOString().split('T')[0])
       .not('stage', 'in', '(closed_won,closed_lost)')
@@ -128,7 +130,7 @@ export async function GET(request: NextRequest) {
 
     const { data: activeProjects } = await supabase
       .from('customers')
-      .select('id, name, stage, project_status, solution_due_date, current_blockers')
+      .select('id, name, customer_number, stage, project_status, solution_due_date, current_blockers')
       .in('stage', ['project_active', 'implementation', 'delivered'])
       .order('solution_due_date', { ascending: true })
 
@@ -153,7 +155,7 @@ export async function GET(request: NextRequest) {
         notes,
         interaction_date,
         customer_id,
-        customer:customers(id, name),
+        customer:customers(id, name, customer_number),
         created_by_profile:profiles!created_by(id, full_name)
       `)
       .gte('interaction_date', sevenDaysAgo.toISOString())

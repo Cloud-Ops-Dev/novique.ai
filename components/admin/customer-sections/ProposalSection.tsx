@@ -10,6 +10,7 @@ interface ProposalSectionProps {
   interactions: Interaction[]
   actionItems: ActionItem[]
   customerId: string
+  customerNumber?: string
   adminUsers: AdminUser[]
   onInteractionsChanged: () => void
   onActionItemsChanged: () => void
@@ -21,6 +22,7 @@ export function ProposalSection({
   interactions,
   actionItems,
   customerId,
+  customerNumber,
   adminUsers,
   onInteractionsChanged,
   onActionItemsChanged,
@@ -80,12 +82,14 @@ export function ProposalSection({
           interactions={interactions}
           customerId={customerId}
           phase="proposal"
+          customerNumber={customerNumber}
           onAdded={onInteractionsChanged}
         />
         <PhaseActionItems
           actionItems={actionItems}
           customerId={customerId}
           phase="proposal"
+          customerNumber={customerNumber}
           adminUsers={adminUsers}
           onChanged={onActionItemsChanged}
         />

@@ -7,6 +7,7 @@ interface PhaseActionItemsProps {
   actionItems: ActionItem[]
   customerId: string
   phase: CrmPhase
+  customerNumber?: string
   adminUsers: AdminUser[]
   onChanged: () => void
 }
@@ -15,6 +16,7 @@ export function PhaseActionItems({
   actionItems,
   customerId,
   phase,
+  customerNumber,
   adminUsers,
   onChanged,
 }: PhaseActionItemsProps) {
@@ -202,6 +204,7 @@ export function PhaseActionItems({
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 rounded-t-lg">
         <h4 className="text-sm font-semibold text-gray-700">
           Action Items
+          {customerNumber && <span className="ml-2 text-xs font-mono text-gray-400">#{customerNumber}</span>}
           {openItems.length > 0 && (
             <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
               {openItems.length}
@@ -296,7 +299,10 @@ export function PhaseActionItems({
                     className="flex-1 min-w-0 cursor-pointer"
                     onClick={() => { startEdit(item); setShowForm(false) }}
                   >
-                    <p className="text-sm text-gray-900">{item.title}</p>
+                    <p className="text-sm text-gray-900">
+                      {customerNumber && <span className="font-mono text-xs text-gray-400 mr-1.5">#{customerNumber}</span>}
+                      {item.title}
+                    </p>
                     {item.description && (
                       <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{item.description}</p>
                     )}
@@ -351,7 +357,10 @@ export function PhaseActionItems({
                   className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-500 line-through">{item.title}</p>
+                  <p className="text-sm text-gray-500 line-through">
+                    {customerNumber && <span className="font-mono text-xs text-gray-400 mr-1.5">#{customerNumber}</span>}
+                    {item.title}
+                  </p>
                   {item.completed_at && (
                     <p className="text-xs text-gray-400 mt-0.5">
                       Completed {new Date(item.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

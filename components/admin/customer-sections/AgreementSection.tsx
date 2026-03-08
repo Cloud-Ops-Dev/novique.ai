@@ -10,6 +10,7 @@ interface AgreementSectionProps {
   interactions: Interaction[]
   actionItems: ActionItem[]
   customerId: string
+  customerNumber?: string
   adminUsers: AdminUser[]
   onInteractionsChanged: () => void
   onActionItemsChanged: () => void
@@ -21,6 +22,7 @@ export function AgreementSection({
   interactions,
   actionItems,
   customerId,
+  customerNumber,
   adminUsers,
   onInteractionsChanged,
   onActionItemsChanged,
@@ -86,12 +88,14 @@ export function AgreementSection({
           interactions={interactions}
           customerId={customerId}
           phase="agreement"
+          customerNumber={customerNumber}
           onAdded={onInteractionsChanged}
         />
         <PhaseActionItems
           actionItems={actionItems}
           customerId={customerId}
           phase="agreement"
+          customerNumber={customerNumber}
           adminUsers={adminUsers}
           onChanged={onActionItemsChanged}
         />

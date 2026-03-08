@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,business_type.ilike.%${search}%`)
+      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,business_type.ilike.%${search}%,customer_number.ilike.%${search}%`)
     }
 
     // Apply pagination
@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
         project_status: 'on_track',
         roi_assessment_id: body.roi_assessment_id || null,
         roi_estimate: body.roi_estimate || null,
+        is_test: body.is_test || false,
       })
       .select('*, assigned_admin:profiles!assigned_admin_id(id, full_name, email)')
       .single()

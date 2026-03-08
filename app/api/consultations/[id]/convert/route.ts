@@ -15,6 +15,7 @@ export async function POST(
 
     const { id } = await params
     const supabase = await createClient()
+    const body = await request.json().catch(() => ({}))
 
     // Get the consultation request
     const { data: consultation, error: consultationError } = await supabase
@@ -55,6 +56,7 @@ export async function POST(
         assigned_admin_id: user.id,
         stage: 'proposal_development',
         project_status: 'on_track',
+        is_test: body.is_test || false,
       })
       .select()
       .single()

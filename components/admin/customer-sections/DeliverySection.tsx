@@ -10,6 +10,7 @@ interface DeliverySectionProps {
   interactions: Interaction[]
   actionItems: ActionItem[]
   customerId: string
+  customerNumber?: string
   adminUsers: AdminUser[]
   onInteractionsChanged: () => void
   onActionItemsChanged: () => void
@@ -21,6 +22,7 @@ export function DeliverySection({
   interactions,
   actionItems,
   customerId,
+  customerNumber,
   adminUsers,
   onInteractionsChanged,
   onActionItemsChanged,
@@ -78,12 +80,14 @@ export function DeliverySection({
           interactions={interactions}
           customerId={customerId}
           phase="delivery"
+          customerNumber={customerNumber}
           onAdded={onInteractionsChanged}
         />
         <PhaseActionItems
           actionItems={actionItems}
           customerId={customerId}
           phase="delivery"
+          customerNumber={customerNumber}
           adminUsers={adminUsers}
           onChanged={onActionItemsChanged}
         />

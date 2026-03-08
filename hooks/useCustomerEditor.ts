@@ -16,6 +16,8 @@ export interface CustomerData {
   id?: string
   consultation_request_id?: string
   roi_assessment_id?: string
+  customer_number?: string
+  is_test?: boolean
 
   // Basic Info
   name: string
@@ -90,6 +92,8 @@ export function useCustomerEditor({
     id: initialData?.id,
     consultation_request_id: initialData?.consultation_request_id,
     roi_assessment_id: initialData?.roi_assessment_id,
+    customer_number: initialData?.customer_number,
+    is_test: initialData?.is_test || false,
     name: initialData?.name || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
@@ -215,7 +219,7 @@ export function useCustomerEditor({
 
         // Update form data with saved data to get the ID if it's a new record
         if (!formData.id && result.data?.id) {
-          setFormData((prev) => ({...prev, id: result.data.id}))
+          setFormData((prev) => ({...prev, id: result.data.id, customer_number: result.data.customer_number}))
         }
 
         return result.data

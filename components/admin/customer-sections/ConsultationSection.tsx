@@ -10,6 +10,7 @@ interface ConsultationSectionProps {
   interactions: Interaction[]
   actionItems: ActionItem[]
   customerId: string
+  customerNumber?: string
   adminUsers: AdminUser[]
   onInteractionsChanged: () => void
   onActionItemsChanged: () => void
@@ -21,6 +22,7 @@ export function ConsultationSection({
   interactions,
   actionItems,
   customerId,
+  customerNumber,
   adminUsers,
   onInteractionsChanged,
   onActionItemsChanged,
@@ -58,12 +60,14 @@ export function ConsultationSection({
           interactions={interactions}
           customerId={customerId}
           phase="consultation"
+          customerNumber={customerNumber}
           onAdded={onInteractionsChanged}
         />
         <PhaseActionItems
           actionItems={actionItems}
           customerId={customerId}
           phase="consultation"
+          customerNumber={customerNumber}
           adminUsers={adminUsers}
           onChanged={onActionItemsChanged}
         />

@@ -70,7 +70,7 @@ export async function PUT(
     const body = await request.json()
 
     // Remove fields that shouldn't be directly updated
-    const { id: bodyId, created_at, updated_at, search_vector, interactions, assigned_admin, consultation_request_id, roi_assessment_id, ...updateData } = body
+    const { id: bodyId, created_at, updated_at, search_vector, interactions, assigned_admin, consultation_request_id, roi_assessment_id, customer_number, is_test, ...updateData } = body
 
     // Update customer (trigger will handle stage progression)
     const { data: customer, error } = await supabase
@@ -121,7 +121,17 @@ export async function DELETE(
     if (permanent) {
       // Hard delete - remove customer and all related data
 
-      // First, clear any ROI assessment references to this customer
+      // First, clear any consultation request references to this customer
+      await supabase
+        .from('consultation_requests')
+        .update({
+          status: 'pending',
+          converted_to_customer_id: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('converted_to_customer_id', id)
+
+      // Clear any ROI assessment references to this customer
       await supabase
         .from('roi_assessments')
         .update({
@@ -130,6 +140,12 @@ export async function DELETE(
           converted_to_customer_id: null,
         })
         .eq('converted_to_customer_id', id)
+
+      // Delete action items
+      await supabase
+        .from('customer_action_items')
+        .delete()
+        .eq('customer_id', id)
 
       // Delete interactions
       await supabase

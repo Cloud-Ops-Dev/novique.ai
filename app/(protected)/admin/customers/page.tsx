@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { CustomerStageBadge } from '@/components/admin/CustomerStageBadge'
 import { ProjectHealthIndicator } from '@/components/admin/ProjectHealthIndicator'
 import {
@@ -60,6 +60,8 @@ const PlusIcon = () => (
 
 interface Customer {
   id: string
+  customer_number?: string
+  is_test?: boolean
   name: string
   email: string
   business_type?: string
@@ -89,11 +91,22 @@ export default function CustomersPage() {
   const [stageFilter, setStageFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [showArchived, setShowArchived] = useState(false)
+  const debounceRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Debounce search input
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(searchQuery)
+    }, 300)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [searchQuery])
 
   useEffect(() => {
     loadCustomers()
-  }, [stageFilter, statusFilter, searchQuery])
+  }, [stageFilter, statusFilter, debouncedSearch])
 
   async function loadCustomers() {
     setLoading(true)
@@ -107,8 +120,8 @@ export default function CustomersPage() {
       if (statusFilter !== 'all') {
         params.append('status', statusFilter)
       }
-      if (searchQuery) {
-        params.append('search', searchQuery)
+      if (debouncedSearch) {
+        params.append('search', debouncedSearch)
       }
 
       // Fetch customers from API (uses admin client, allows editors)
@@ -237,7 +250,7 @@ export default function CustomersPage() {
       <AdminFilterBar
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search by name or email..."
+        searchPlaceholder="Search by name, email, or customer ID..."
       >
         <AdminSelect
           value={stageFilter}
@@ -264,6 +277,7 @@ export default function CustomersPage() {
       <AdminTable>
         <AdminTableHead>
           <AdminTableHeader>Customer</AdminTableHeader>
+          <AdminTableHeader>ID</AdminTableHeader>
           <AdminTableHeader>Stage</AdminTableHeader>
           <AdminTableHeader>Status</AdminTableHeader>
           <AdminTableHeader>Next Action</AdminTableHeader>
@@ -295,6 +309,11 @@ export default function CustomersPage() {
                       )}
                     </div>
                   </div>
+                </AdminTableCell>
+                <AdminTableCell className="whitespace-nowrap">
+                  <span className="text-sm font-mono text-gray-600 bg-gray-100 px-2 py-0.5 rounded">
+                    {customer.customer_number}
+                  </span>
                 </AdminTableCell>
                 <AdminTableCell className="whitespace-nowrap">
                   <CustomerStageBadge stage={customer.stage} />
@@ -347,7 +366,7 @@ export default function CustomersPage() {
             ))
           ) : (
             <tr>
-              <td colSpan={6}>
+              <td colSpan={7}>
                 <AdminEmptyState
                   icon={<CustomersIcon />}
                   title="No customers yet"

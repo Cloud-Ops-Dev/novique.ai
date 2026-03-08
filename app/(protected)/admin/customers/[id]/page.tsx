@@ -309,6 +309,7 @@ export default function CustomerDetailPage() {
     interactions: getPhaseInteractions(phase),
     actionItems: getPhaseActionItems(phase),
     customerId,
+    customerNumber: formData.customer_number,
     adminUsers,
     onInteractionsChanged: refreshInteractions,
     onActionItemsChanged: refreshActionItems,
@@ -334,7 +335,7 @@ export default function CustomerDetailPage() {
                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
               </svg>
               <span className="ml-4 text-sm font-medium text-gray-500">
-                {formData.name || 'New Customer'}
+                {formData.customer_number ? `#${formData.customer_number} — ` : ''}{formData.name || 'New Customer'}
               </span>
             </div>
           </li>
@@ -375,7 +376,14 @@ export default function CustomerDetailPage() {
               </div>
             )}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{formData.name || 'New Customer'}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {formData.name || 'New Customer'}
+                {formData.customer_number && (
+                  <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-gray-100 text-gray-700">
+                    #{formData.customer_number}
+                  </span>
+                )}
+              </h1>
               <p className="mt-1 text-sm text-gray-500">{formData.email || 'Enter customer details below'}</p>
               {formData.phone && <p className="text-sm text-gray-500">{formData.phone}</p>}
             </div>
@@ -463,6 +471,18 @@ export default function CustomerDetailPage() {
                   {!loadingRoi && roiAssessments.length === 0 && (
                     <p className="text-xs text-blue-600 mt-1">No unconverted ROI assessments available</p>
                   )}
+                  <label className="flex items-center gap-2 mt-3">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_test || false}
+                      onChange={(e) => updateField('is_test', e.target.checked)}
+                      className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-blue-700">Test Customer</span>
+                  </label>
+                  <p className="text-xs text-blue-600 mt-1">
+                    Test customers get IDs in the 0001-0999 range
+                  </p>
                 </div>
               )}
 

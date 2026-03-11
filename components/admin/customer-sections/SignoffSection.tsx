@@ -38,9 +38,6 @@ export function SignoffSection({
             onChange={(e) => updateField('signoff_date', e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <p className="mt-1 text-sm text-gray-500">
-            Setting this will auto-progress to &quot;Signed Off&quot;
-          </p>
         </div>
 
         <div>
@@ -88,9 +85,6 @@ export function SignoffSection({
           onChange={(e) => updateField('payment_confirmed_date', e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
-        <p className="mt-1 text-sm text-gray-500">
-          Setting this will auto-progress to &quot;Closed Won&quot;
-        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

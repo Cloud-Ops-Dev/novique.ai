@@ -49,9 +49,6 @@ export function ProposalSection({
           placeholder="Enter each solution on a new line..."
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
-        <p className="mt-1 text-sm text-gray-500">
-          Setting solutions will auto-progress to &quot;Proposal Sent&quot;
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

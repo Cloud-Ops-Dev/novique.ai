@@ -9,6 +9,11 @@ export function CustomerStageBadge({ stage }: CustomerStageBadgeProps) {
       className: 'bg-blue-100 text-blue-800',
       tooltip: 'Initial consultation request received',
     },
+    consultation_in_progress: {
+      label: 'Consultation In Progress',
+      className: 'bg-blue-200 text-blue-900',
+      tooltip: 'Consultation meetings ongoing',
+    },
     consultation_completed: {
       label: 'Consultation Done',
       className: 'bg-indigo-100 text-indigo-800',

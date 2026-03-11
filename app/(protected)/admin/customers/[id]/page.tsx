@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCustomerEditor } from '@/hooks/useCustomerEditor'
 import { useAutoSave } from '@/hooks/useAutoSave'
-import { CustomerStageBadge } from '@/components/admin/CustomerStageBadge'
+import { CustomerStageSelector } from '@/components/admin/CustomerStageSelector'
 import { ProjectHealthIndicator } from '@/components/admin/ProjectHealthIndicator'
 import { InteractionTimeline } from '@/components/admin/InteractionTimeline'
 import { ConsultationSection } from '@/components/admin/customer-sections/ConsultationSection'
@@ -389,7 +389,15 @@ export default function CustomerDetailPage() {
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <CustomerStageBadge stage={formData.stage} />
+            <CustomerStageSelector
+              customerId={customerId}
+              currentStage={formData.stage}
+              onStageChanged={(newStage) => {
+                updateField('stage', newStage)
+                refreshInteractions()
+              }}
+              disabled={customerId === 'new'}
+            />
             <ProjectHealthIndicator status={formData.project_status} />
             {totalOpenActions > 0 && (
               <span className="text-xs text-blue-600 font-medium">

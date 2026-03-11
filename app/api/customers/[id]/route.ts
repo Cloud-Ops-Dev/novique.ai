@@ -70,9 +70,9 @@ export async function PUT(
     const body = await request.json()
 
     // Remove fields that shouldn't be directly updated
-    const { id: bodyId, created_at, updated_at, search_vector, interactions, assigned_admin, consultation_request_id, roi_assessment_id, customer_number, is_test, ...updateData } = body
+    const { id: bodyId, created_at, updated_at, search_vector, interactions, assigned_admin, consultation_request_id, roi_assessment_id, customer_number, is_test, stage, ...updateData } = body
 
-    // Update customer (trigger will handle stage progression)
+    // Update customer (stage changes go through /api/customers/[id]/stage)
     const { data: customer, error } = await supabase
       .from('customers')
       .update(updateData)

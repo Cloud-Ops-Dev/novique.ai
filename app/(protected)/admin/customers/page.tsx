@@ -180,6 +180,9 @@ export default function CustomersPage() {
 
   const stageOptions = [
     { value: 'all', label: 'All Stages' },
+    { value: 'consultation_requested', label: 'Consultation Requested' },
+    { value: 'consultation_in_progress', label: 'Consultation In Progress' },
+    { value: 'consultation_completed', label: 'Consultation Done' },
     { value: 'proposal_development', label: 'Proposal Development' },
     { value: 'proposal_sent', label: 'Proposal Sent' },
     { value: 'negotiation', label: 'Negotiation' },

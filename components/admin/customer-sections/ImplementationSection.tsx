@@ -38,9 +38,6 @@ export function ImplementationSection({
             onChange={(e) => updateField('implementation_date', e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <p className="mt-1 text-sm text-gray-500">
-            Setting this will auto-progress to &quot;Implementation&quot;
-          </p>
         </div>
 
         <div>
@@ -51,9 +48,6 @@ export function ImplementationSection({
             onChange={(e) => updateField('demonstration_date', e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <p className="mt-1 text-sm text-gray-500">
-            Setting this will auto-progress to &quot;Delivered&quot;
-          </p>
         </div>
       </div>
 

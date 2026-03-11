@@ -38,9 +38,6 @@ export function AgreementSection({
           placeholder="Enter each accepted solution on a new line..."
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
-        <p className="mt-1 text-sm text-gray-500">
-          Setting accepted solutions will auto-progress to &quot;Negotiation&quot;
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -54,9 +51,6 @@ export function AgreementSection({
             placeholder="0.00"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <p className="mt-1 text-sm text-gray-500">
-            Setting this will auto-progress to &quot;Project Active&quot;
-          </p>
         </div>
 
         <div>

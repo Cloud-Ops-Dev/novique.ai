@@ -36,7 +36,6 @@ const LINKEDIN_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
 
 // LinkedIn OAuth 2.0 scopes
 const LINKEDIN_SCOPES = [
-  'r_liteprofile', // Read basic profile
   'w_member_social', // Post on behalf of member
 ].join(' ');
 

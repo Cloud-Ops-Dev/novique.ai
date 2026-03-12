@@ -34,9 +34,11 @@ const LINKEDIN_API_BASE = 'https://api.linkedin.com/v2';
 const LINKEDIN_AUTH_URL = 'https://www.linkedin.com/oauth/v2/authorization';
 const LINKEDIN_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
 
-// LinkedIn OAuth 2.0 scopes
+// Only requesting w_member_social for now.
+// LinkedIn requires special approval for w_organization_social.
+// When approved, update scope to include it.
 const LINKEDIN_SCOPES = [
-  'w_member_social', // Post on behalf of member
+  'w_member_social',
 ].join(' ');
 
 // Character limit for LinkedIn posts
@@ -130,13 +132,17 @@ export const linkedinClient: SocialClient = {
   getAuthorizationUrl(state: string, redirectUri: string): string {
     const { clientId } = getLinkedInCredentials();
 
-    return buildURL(LINKEDIN_AUTH_URL, {
+    const params = new URLSearchParams({
       response_type: 'code',
       client_id: clientId,
       redirect_uri: redirectUri,
       state,
       scope: LINKEDIN_SCOPES,
     });
+
+    const authUrl = `${LINKEDIN_AUTH_URL}?${params.toString()}`;
+    console.log('[LinkedIn OAuth] Authorization URL generated:', authUrl);
+    return authUrl;
   },
 
   /**

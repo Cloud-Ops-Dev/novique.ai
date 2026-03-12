@@ -81,9 +81,13 @@ export async function GET(
     const client = getClient(platform);
 
     // Build redirect URI (must match what was used in authorization)
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.VERCEL_URL ||
+      'http://localhost:3000';
     const redirectUri =
       process.env.NEXT_PUBLIC_SOCIAL_OAUTH_CALLBACK_URL ||
-      `${new URL(request.url).origin}/api/social/callback/${platform}`;
+      `${baseUrl}/api/social/callback/${platform}`;
 
     // Exchange code for tokens
     const tokens = await client.exchangeCodeForToken(code, redirectUri, state || undefined);

@@ -39,7 +39,6 @@ const LINKEDIN_SCOPES = [
   'r_liteprofile', // Read basic profile
   'r_emailaddress', // Read email
   'w_member_social', // Post on behalf of member
-  'r_organization_social', // Read org posts (if using company page)
   'w_organization_social', // Post to company page
 ].join(' ');
 

@@ -91,9 +91,18 @@ export async function GET(
 
     // Exchange code for tokens
     const tokens = await client.exchangeCodeForToken(code, redirectUri, state || undefined);
+    console.log('[LinkedIn OAuth] Token exchange succeeded');
 
-    // Get account info
-    const accountInfo = await client.getAccountInfo(tokens.access_token);
+    // Get account info (skip for LinkedIn — /v2/me requires r_liteprofile)
+    let accountInfo: { id: string; name: string; handle?: string; profile_image_url?: string };
+    if (platform === 'linkedin') {
+      accountInfo = {
+        id: `linkedin-${user.id}`,
+        name: 'LinkedIn Account',
+      };
+    } else {
+      accountInfo = await client.getAccountInfo(tokens.access_token);
+    }
 
     // Calculate token expiration
     const tokenExpiresAt = tokens.expires_in
@@ -117,8 +126,8 @@ export async function GET(
         .from('social_accounts')
         .update({
           account_name: accountInfo.name,
-          account_handle: accountInfo.handle,
-          profile_image_url: accountInfo.profile_image_url,
+          account_handle: accountInfo.handle || null,
+          profile_image_url: accountInfo.profile_image_url || null,
           access_token: tokens.access_token,
           refresh_token: tokens.refresh_token || null,
           token_expires_at: tokenExpiresAt?.toISOString() || null,
@@ -140,9 +149,9 @@ export async function GET(
         .insert({
           platform,
           account_name: accountInfo.name,
-          account_handle: accountInfo.handle,
+          account_handle: accountInfo.handle || null,
           account_id: accountInfo.id,
-          profile_image_url: accountInfo.profile_image_url,
+          profile_image_url: accountInfo.profile_image_url || null,
           access_token: tokens.access_token,
           refresh_token: tokens.refresh_token || null,
           token_expires_at: tokenExpiresAt?.toISOString() || null,

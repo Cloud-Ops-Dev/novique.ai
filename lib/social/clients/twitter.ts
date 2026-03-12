@@ -10,6 +10,7 @@
  * - Basic tier ($100/month) or higher for posting
  */
 
+import crypto from 'crypto';
 import type {
   SocialClient,
   OAuthTokenResponse,
@@ -137,21 +138,22 @@ export const twitterClient: SocialClient = {
   getAuthorizationUrl(state: string, redirectUri: string): string {
     const { clientId } = getTwitterCredentials();
 
-    // Generate PKCE challenge synchronously for URL generation
-    // In practice, call generatePKCE() async before this and pass codeChallenge
-    const codeVerifier = crypto.randomUUID() + crypto.randomUUID();
+    const codeVerifier = crypto.randomBytes(32).toString('base64url');
+    const codeChallenge = crypto
+      .createHash('sha256')
+      .update(codeVerifier)
+      .digest('base64url');
+
     pkceStore.set(state, codeVerifier);
 
-    // For now, use plain method (S256 requires async)
-    // In production, pre-generate PKCE and store with state
     return buildURL(`${TWITTER_AUTH_BASE}/authorize`, {
       response_type: 'code',
       client_id: clientId,
       redirect_uri: redirectUri,
       scope: TWITTER_SCOPES,
       state,
-      code_challenge: codeVerifier,
-      code_challenge_method: 'plain',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
     });
   },
 

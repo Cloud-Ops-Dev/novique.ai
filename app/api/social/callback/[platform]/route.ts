@@ -91,9 +91,9 @@ export async function GET(
 
     // Exchange code for tokens
     const tokens = await client.exchangeCodeForToken(code, redirectUri, state || undefined);
-    console.log('[LinkedIn OAuth] Token exchange succeeded');
+    console.log(`[${platform} OAuth] Token exchange succeeded`);
 
-    // Get account info (skip for LinkedIn — /v2/me requires r_liteprofile)
+    // Attempt to fetch account info (optional — may fail on free API tiers)
     let accountInfo: { id: string; name: string; handle?: string; profile_image_url?: string };
     if (platform === 'linkedin') {
       accountInfo = {
@@ -101,7 +101,15 @@ export async function GET(
         name: 'LinkedIn Account',
       };
     } else {
-      accountInfo = await client.getAccountInfo(tokens.access_token);
+      try {
+        accountInfo = await client.getAccountInfo(tokens.access_token);
+      } catch (err) {
+        console.warn(`[${platform} OAuth] Profile lookup failed, continuing with connection:`, err);
+        accountInfo = {
+          id: `${platform}-${user.id}`,
+          name: `${platform.charAt(0).toUpperCase() + platform.slice(1)} Account`,
+        };
+      }
     }
 
     // Calculate token expiration

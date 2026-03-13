@@ -43,7 +43,6 @@ const TWITTER_SCOPES = [
   'tweet.read',
   'tweet.write',
   'users.read',
-  'offline.access', // For refresh tokens
 ].join(' ');
 
 // Character limit for tweets

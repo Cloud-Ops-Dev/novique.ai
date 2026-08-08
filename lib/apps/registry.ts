@@ -155,7 +155,7 @@ const apps: Record<string, NoviqueApp> = {
     appleAppId: "6777208251",
     platforms: ["ios"],
     category: "Lifestyle",
-    status: "pre-release",
+    status: "available",
     supportEmail: "support@novique.ai",
     privacyContactEmail: "privacy@novique.ai",
     copyrightOwner: "Novique AI",
@@ -163,7 +163,8 @@ const apps: Record<string, NoviqueApp> = {
     shortDescription: "Private skincare routine and progress journal.",
     landingCopy:
       "Glow Routine is a private skincare routine and progress journal for tracking AM/PM care, notes, and local progress photos without an account. Your routines, product notes, checklist history, and photos stay on your device.",
-    // appStoreUrl is intentionally omitted until the listing is public.
+    appStoreUrl:
+      "https://apps.apple.com/app/apple-store/id6777208251?pt=128943714&ct=novique_site&mt=8",
     brand: {
       bg: "#f8e5ef",
       surface: "#fff8fa",
@@ -186,9 +187,9 @@ const apps: Record<string, NoviqueApp> = {
     },
     landing: {
       eyebrow: "Glow Routine",
-      headline: "Build your personal skincare routine",
+      headline: "Keep your skincare routine simple",
       subcopy:
-        "Set AM and PM steps around your schedule. Start with no account and no pressure.",
+        "Track AM and PM steps, reminders, notes, and private progress without an account.",
       hero: {
         src: "/apps/glow-routine/hero.webp",
         alt: "A person checking their skin in a hand mirror",
@@ -208,10 +209,10 @@ const apps: Record<string, NoviqueApp> = {
           title: "Private by default",
           body: "No login required. Camera permission waits until you add a photo.",
         },
-        cta: "Create my routine",
+        cta: "Available now on iPhone",
       },
       safetyStrip:
-        "No login required. Personal routine tracking. Photos and products stay personal.",
+        "No account. No cloud profile. Your routine, notes, and progress photos stay on your device.",
     },
     privacy: {
       effectiveDate: "June 6, 2026",

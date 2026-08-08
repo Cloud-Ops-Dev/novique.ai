@@ -118,7 +118,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-stroke-1 bg-surface-1 px-5 py-4">
                 <span className="font-display text-dh3 text-ink-1">In the works</span>
                 <span className="inline-flex items-center gap-2 text-sm text-ink-2">LienSentry <StatusTag label="Waitlist" tone="soon" /></span>
-                <span className="inline-flex items-center gap-2 text-sm text-ink-2">Glow Routine <StatusTag label="Coming soon" tone="soon" /></span>
+                <span className="inline-flex items-center gap-2 text-sm text-ink-2">Glow Routine <StatusTag label="Live on iPhone" tone="live" /></span>
                 <Link href="/work" className="ml-auto text-sm text-link hover:text-link-hover">See our work →</Link>
               </div>
             </div>

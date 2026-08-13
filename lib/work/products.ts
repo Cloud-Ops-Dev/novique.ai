@@ -19,6 +19,7 @@ export interface WorkItem {
   slug: string;
   name: string;
   status: WorkStatus;
+  statusLabel?: string; // display override when the default label misfits (e.g. "Open source")
   line: string; // which line of business: SaaS product / App Store app
   blurb: string;
   url?: string; // external product URL, only when truly live/public
@@ -53,6 +54,7 @@ export const PRODUCTS: WorkItem[] = [
     slug: "retinue",
     name: "Retinue",
     status: "live",
+    statusLabel: "Open source",
     line: "Open source",
     blurb:
       "Self-hosted AI teammates that work together — named agents share rooms, take turns, and hand work to each other, all on your own hardware. Our open-source fork, built and run by us.",
@@ -74,8 +76,9 @@ export const PRODUCTS: WorkItem[] = [
   },
   {
     slug: "glow-routine",
-    name: "Glow Routine Journal",
+    name: "Glow Routine",
     status: "live",
+    statusLabel: "Live on iPhone",
     line: "App Store app",
     blurb:
       "A private, local-only skincare routine and progress journal for iOS — no account, no tracking, nothing leaves the device. Part of our Shell Apps line.",
@@ -136,7 +139,7 @@ export const TRACKS: {
 
 /** How we work — plain, no methodology jargon. */
 export const PROCESS: { step: string; detail: string }[] = [
-  { step: "Call", detail: "A free 30-minute call. You describe the task; we tell you straight if AI is the right tool." },
+  { step: "Call", detail: "A free 60-minute call. You describe the task; we tell you straight if AI is the right tool." },
   { step: "Scope", detail: "We write down the smallest version that proves value, with a fixed price and timeline." },
   { step: "Build", detail: "We build it — and show you working software, not slides, along the way." },
   { step: "Operate", detail: "We can keep it running and watch it, so it stays useful instead of rotting." },
@@ -149,14 +152,16 @@ export const AUDIENCE: string[] = [
   "You want automation, but not a six-month enterprise project with a six-figure invoice.",
 ];
 
-export function statusMeta(status: WorkStatus): { label: string; tone: "live" | "soon" } {
+export function statusMeta(status: WorkStatus, statusLabel?: string): { label: string; tone: "live" | "soon" } {
+  const tone: "live" | "soon" = status === "live" ? "live" : "soon";
+  if (statusLabel) return { label: statusLabel, tone };
   switch (status) {
     case "live":
-      return { label: "Live now", tone: "live" };
+      return { label: "Live now", tone };
     case "waitlist":
-      return { label: "Waitlist open", tone: "soon" };
+      return { label: "Waitlist open", tone };
     case "coming-soon":
     default:
-      return { label: "Coming soon", tone: "soon" };
+      return { label: "Coming soon", tone };
   }
 }

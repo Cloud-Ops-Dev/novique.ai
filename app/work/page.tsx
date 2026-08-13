@@ -13,7 +13,7 @@ import { PRODUCTS, SYSTEMS, statusMeta } from "@/lib/work/products";
 export const metadata = {
   title: "Work — Novique",
   description:
-    "What Novique has shipped and what's next. LabelWatch, AnswerCrew, Glow Routine, and Retinue live today, more being built in the open — plus the systems we operate.",
+    "What Novique has shipped and what's next. LabelWatch, AnswerCrew, Retinue, and Glow Routine live today, LienSentry on waitlist — plus the systems we operate.",
 };
 
 const labelwatch = PRODUCTS.find((p) => p.slug === "labelwatch")!;
@@ -42,7 +42,7 @@ export default function WorkPage() {
       <PageHero
         eyebrow="Portfolio"
         headline="What we've shipped — and what's next."
-        subhead="Four products live today, the rest being built in the open. No vaporware, no invented screenshots — just what's real, labeled honestly."
+        subhead="Four products live today, one more with an open waitlist. No vaporware, no invented screenshots — just what's real, labeled honestly."
         ctas={[
           { label: "Book a call", href: "/consultation", variant: "primary" },
           { label: "How we work", href: "/services", variant: "ghost" },
@@ -118,12 +118,12 @@ export default function WorkPage() {
               Visit answercrew.pro ↗
             </DarkButton>
           </ComingCard>
-          <ComingCard name={retinue.name} sub="Open source · github.com/novique-ai/retinue" meta={{ label: "Open source", tone: "live" }} blurb={retinue.blurb}>
+          <ComingCard name={retinue.name} sub="Open source · github.com/novique-ai/retinue" meta={statusMeta(retinue.status, retinue.statusLabel)} blurb={retinue.blurb}>
             <DarkButton href="https://github.com/novique-ai/retinue" external variant="outline">
               View on GitHub ↗
             </DarkButton>
           </ComingCard>
-          <ComingCard name={glow.name} sub="App Store app · Shell Apps" meta={{ label: "Live on iPhone", tone: "live" }} blurb={glow.blurb}>
+          <ComingCard name={glow.name} sub="App Store app" meta={statusMeta(glow.status, glow.statusLabel)} blurb={glow.blurb}>
             <DarkButton href={glow.url!} external variant="outline">
               Get it on the App Store ↗
             </DarkButton>
@@ -165,7 +165,7 @@ export default function WorkPage() {
         </GraphicFrame>
         <div className="relative mx-auto max-w-reading px-6 py-16 text-center">
           <p className="font-display text-dh2 text-ink-0 text-balance">
-            We&apos;d rather show one product that&apos;s live than ten that are vapor.
+            Everything on this page is real, running, and labeled with its honest status.
           </p>
           <p className="mt-3 text-ink-2">This page grows as we ship.</p>
         </div>

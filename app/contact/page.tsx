@@ -21,7 +21,7 @@ const FAQS = [
   },
   {
     q: "Do you work with all industries?",
-    a: "Yes! We've worked with retail, restaurants, professional services, healthcare, and many other industries. Every solution is custom-tailored.",
+    a: "Our own products span regulated data (FDA recall feeds), voice AI for the trades, and consumer iOS — and we scope client work the same way regardless of industry. If a task is repetitive, error-prone, or easy to miss, it's a fit.",
   },
 ];
 

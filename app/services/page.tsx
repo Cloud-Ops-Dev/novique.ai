@@ -117,7 +117,7 @@ export default function ServicesPage() {
             <SectionHeading
               eyebrow="Why Novique"
               title="We don't just consult — we operate our own AI products."
-              subhead="LabelWatch is live and charging customers today. The same team that built and runs it builds yours. We've felt every production edge we'd put you through."
+              subhead="Four of our own products run in production today — LabelWatch, AnswerCrew, Retinue, and Glow Routine. The same team that built and operates them builds yours. We've felt every production edge we'd put you through."
             />
             <div className="mt-6">
               <DarkButton href="/work" variant="outline">See what we&apos;ve shipped</DarkButton>

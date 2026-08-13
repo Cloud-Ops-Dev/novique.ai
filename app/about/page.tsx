@@ -55,7 +55,7 @@ export default function AboutPage() {
           <div>
             <SectionHeading
               eyebrow="What Novique is"
-              title="One studio, two lines of business."
+              title="One studio, two sides of the same craft."
               subhead="We split our time roughly 50/50: building and operating our own AI products, and building the same kind of software for clients. Each side sharpens the other — the products keep us honest about production, and client work keeps us close to real problems."
             />
             <div className="mt-8 grid gap-4 sm:grid-cols-2">

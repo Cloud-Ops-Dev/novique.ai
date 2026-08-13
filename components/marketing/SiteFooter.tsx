@@ -1,13 +1,22 @@
 import Link from "next/link";
+import { PRODUCTS, statusMeta } from "@/lib/work/products";
+
+// Derived from PRODUCTS so the footer can never disagree with the portfolio's
+// source of truth. Glow Routine points at its on-site App Store landing.
+const PRODUCT_LINKS = PRODUCTS.map((p) => {
+  const href = p.slug === "glow-routine" ? "/apps/glow-routine" : p.url ?? "/work";
+  return {
+    href,
+    label: p.name,
+    external: !href.startsWith("/"),
+    tag: statusMeta(p.status, p.statusLabel).tone,
+  };
+});
 
 const COLS: { title: string; links: { href: string; label: string; external?: boolean; tag?: "live" | "soon" }[] }[] = [
   {
     title: "Products",
-    links: [
-      { href: "https://label.watch", label: "LabelWatch", external: true, tag: "live" },
-      { href: "/work", label: "LienSentry", tag: "soon" },
-      { href: "/apps/glow-routine", label: "Glow Routine", tag: "soon" },
-    ],
+    links: PRODUCT_LINKS,
   },
   {
     title: "Services",

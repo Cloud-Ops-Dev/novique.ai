@@ -69,7 +69,7 @@ const FAQ = [
   },
   {
     q: "What if I'm not ready to commit after the call?",
-    a: "That's completely fine. There's zero pressure — plenty of clients take weeks or months to decide. We're here when you're ready.",
+    a: "That's completely fine. There's zero pressure — take whatever time you need to decide. We're here when you're ready.",
   },
 ];
 

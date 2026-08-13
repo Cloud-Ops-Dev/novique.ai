@@ -6,7 +6,7 @@ import DarkButton from "@/components/marketing/DarkButton";
 import { getAllPosts } from "@/lib/blog";
 import { Metadata } from "next";
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300 // ISR — was force-dynamic (Supabase hit per crawl)
 
 export const metadata: Metadata = {
   alternates: { canonical: "/blog" },

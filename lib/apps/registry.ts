@@ -14,7 +14,9 @@
  * (novique-app-pages-plan.json).
  */
 
-export const SITE_URL = "https://www.novique.ai";
+import { SITE_URL } from "@/lib/site";
+
+export { SITE_URL };
 
 export type AppPlatform = "ios" | "android" | "web";
 

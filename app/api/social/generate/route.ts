@@ -5,6 +5,7 @@
  * Generates platform-specific social posts from blog content
  */
 
+import { SITE_URL } from '@/lib/site';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdminOrEditor } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/server';
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
         title: post.title,
         summary: post.summary || '',
         content: post.content,
-        url: `https://novique.ai/blog/${post.slug}`,
+        url: `${SITE_URL}/blog/${post.slug}`,
         tags: post.tags || [],
         header_image: post.header_image,
         key_insights: keyInsights,
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
         type: 'lab',
         title: lab.title,
         summary: lab.overview || '',
-        url: `https://novique.ai/labs/${lab.slug}`,
+        url: `${SITE_URL}/labs/${lab.slug}`,
         tags: lab.tags || [],
         key_insights: metadata.keyInsights,
         core_takeaway: metadata.coreTakeaway,

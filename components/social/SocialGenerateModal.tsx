@@ -1,5 +1,6 @@
 'use client'
 
+import { SITE_URL } from '@/lib/site'
 import { useState, useEffect } from 'react'
 import { PlatformBadge, PlatformPreview, CharacterCounter } from '@/components/social'
 import type { SocialPlatform, GeneratedSocialContent } from '@/lib/social/types'
@@ -145,7 +146,7 @@ export default function SocialGenerateModal({
             sourceType: 'blog',
             sourceId: selectedBlog,
             sourceTitle: blog?.title,
-            sourceUrl: blog ? `https://novique.ai/blog/${blog.slug}` : null,
+            sourceUrl: blog ? `${SITE_URL}/blog/${blog.slug}` : null,
           }),
         })
 

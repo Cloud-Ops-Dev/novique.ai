@@ -10,8 +10,9 @@ import type { NoviqueApp } from "@/lib/apps/registry";
 import { appUrl } from "@/lib/apps/registry";
 import type { BlogPost } from "@/lib/blog";
 import type { Lab } from "@/lib/labs";
+import { SITE_URL } from "@/lib/site";
+import { metaDescription } from "@/lib/seo/description";
 
-const SITE_URL = "https://www.novique.ai";
 const ORG_ID = `${SITE_URL}/#organization`;
 
 // Same profiles /links points at.
@@ -75,11 +76,7 @@ export function blogPostingSchema(post: BlogPost) {
 /** TechArticle for /labs/[slug]. */
 export function techArticleSchema(lab: Lab) {
   const url = `${SITE_URL}/labs/${lab.slug}`;
-  const description = lab.overview
-    .replace(/<[^>]*>/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .substring(0, 160);
+  const description = metaDescription(lab.overview);
   return {
     "@context": "https://schema.org",
     "@type": "TechArticle",

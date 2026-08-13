@@ -148,6 +148,7 @@ export default function SiteHeaderUser({
         className="flex items-center gap-2 rounded-full text-ink-1 transition-colors hover:text-ink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-aqua"
         aria-haspopup="true"
         aria-expanded={open}
+        aria-label="Account menu"
       >
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-aqua/15 text-xs font-semibold text-aqua-bright">
           {initials}

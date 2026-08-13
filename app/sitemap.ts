@@ -3,8 +3,7 @@ import { getAllApps, appPath } from "@/lib/apps/registry";
 import { getAllPosts } from "@/lib/blog";
 import { getAllLabs } from "@/lib/labs";
 import { SEGMENT_URL_SLUGS } from "@/lib/roi/segments";
-
-const BASE_URL = "https://www.novique.ai";
+import { SITE_URL } from "@/lib/site";
 
 // Public, indexable static routes. /links is deliberately excluded (noindex
 // link-in-bio page); auth/admin/editor surfaces never belong here.
@@ -36,14 +35,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const apps = getAllApps();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
-    url: `${BASE_URL}${route}`,
+    url: `${SITE_URL}${route}`,
     changeFrequency: "weekly",
     priority: route === "/" ? 1 : 0.8,
   }));
 
   const roiSegmentEntries: MetadataRoute.Sitemap = SEGMENT_URL_SLUGS.map(
     (segment) => ({
-      url: `${BASE_URL}/roi/${segment}`,
+      url: `${SITE_URL}/roi/${segment}`,
       changeFrequency: "monthly",
       priority: 0.7,
     }),
@@ -54,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const appEntries: MetadataRoute.Sitemap = apps.flatMap((app) => {
     const lastModified = toDate(app.privacy.effectiveDate);
     return (["", "privacy", "support"] as const).map((sub) => ({
-      url: `${BASE_URL}${appPath(app.slug, sub)}`,
+      url: `${SITE_URL}${appPath(app.slug, sub)}`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: sub === "" ? 0.7 : 0.5,
@@ -62,14 +61,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${BASE_URL}/blog/${post.slug}`,
+    url: `${SITE_URL}/blog/${post.slug}`,
     lastModified: toDate(post.date),
     changeFrequency: "monthly",
     priority: 0.6,
   }));
 
   const labEntries: MetadataRoute.Sitemap = labs.map((lab) => ({
-    url: `${BASE_URL}/labs/${lab.slug}`,
+    url: `${SITE_URL}/labs/${lab.slug}`,
     lastModified: toDate(lab.date),
     changeFrequency: "monthly",
     priority: 0.6,

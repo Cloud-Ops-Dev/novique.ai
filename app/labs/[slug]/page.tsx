@@ -1,5 +1,6 @@
 import JsonLd from "@/components/seo/JsonLd"
 import { techArticleSchema } from "@/lib/seo/schema"
+import { metaDescription } from "@/lib/seo/description"
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -31,8 +32,7 @@ export async function generateMetadata({ params }: LabPageProps): Promise<Metada
     return { title: 'Lab Not Found' }
   }
 
-  // Strip HTML from overview for description
-  const description = lab.overview.replace(/<[^>]*>/g, '').substring(0, 160)
+  const description = metaDescription(lab.overview)
 
   return {
     title: lab.title,

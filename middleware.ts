@@ -12,10 +12,30 @@ import { createClient } from '@/lib/supabase/middleware'
  *
  * CRITICAL: This must run before any protected routes are accessed
  */
+// Path prefixes that actually need a session refresh: protected surfaces,
+// auth flows, and authenticated API routes. Everything else (marketing,
+// blog, labs, apps, roi) is anonymous — skipping getUser() there saves a
+// Supabase network round-trip on every public pageview (audit 2026-08-13 §E).
+const AUTH_PATH_PREFIXES = [
+  '/admin',
+  '/editor',
+  '/api',
+  '/login',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+  '/unauthorized',
+]
+
 export async function middleware(request: NextRequest) {
   // Skip auth for webhook endpoints
   const pathname = request.nextUrl.pathname
   if (pathname.startsWith('/api/test') || pathname.startsWith('/api/twilio')) {
+    return
+  }
+
+  // Skip the session refresh entirely on public paths
+  if (!AUTH_PATH_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
     return
   }
 

@@ -8,8 +8,9 @@ import DarkButton from "@/components/marketing/DarkButton";
 import { getPostBySlug } from "@/lib/blog";
 import { enhanceContentImages } from "@/lib/editor/enhanceImages";
 import { Metadata } from "next";
+import { metaDescription } from "@/lib/seo/description";
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300 // ISR — was force-dynamic (Supabase hit per crawl)
 
 // Removed generateStaticParams - pages render on-demand instead of at build time
 
@@ -29,7 +30,7 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description: post.summary,
+    description: metaDescription(post.summary),
     alternates: { canonical: `/blog/${slug}` },
   };
 }

@@ -81,7 +81,7 @@ export const PRODUCTS: WorkItem[] = [
     statusLabel: "Live on iPhone",
     line: "App Store app",
     blurb:
-      "A private, local-only skincare routine and progress journal for iOS — no account, no tracking, nothing leaves the device. Part of our Shell Apps line.",
+      "A private, local-only skincare routine and progress journal for iOS — no account, no tracking, nothing leaves the device.",
     url: "https://apps.apple.com/app/apple-store/id6777208251?pt=128943714&ct=novique_site&mt=8",
   },
 ];

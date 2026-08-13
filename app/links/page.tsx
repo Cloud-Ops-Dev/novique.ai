@@ -67,8 +67,8 @@ const infoLinks = [
     ),
   },
   {
-    name: "Our Solutions",
-    href: "/solutions",
+    name: "Our Services",
+    href: "/services",
     description: "AI services for small businesses",
     icon: (
       <svg

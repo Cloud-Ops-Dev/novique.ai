@@ -15,7 +15,7 @@ function isSegmentKey(value: string | null): value is SegmentKey {
 
 // Base ROI page is indexable, canonical is /roi
 export const metadata: Metadata = {
-  title: "AI Automation ROI Calculator | Novique.ai",
+  title: "AI Automation ROI Calculator",
   description: "Calculate your potential savings from AI automation. See real ROI projections for your small business in under 2 minutes.",
   alternates: { canonical: "/roi" },
   robots: { index: true, follow: true },

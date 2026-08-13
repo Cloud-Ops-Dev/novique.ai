@@ -26,14 +26,14 @@ export async function generateMetadata({ params }: LabPageProps): Promise<Metada
   const lab = await getLabBySlug(slug)
 
   if (!lab) {
-    return { title: 'Lab Not Found | Novique.AI' }
+    return { title: 'Lab Not Found' }
   }
 
   // Strip HTML from overview for description
   const description = lab.overview.replace(/<[^>]*>/g, '').substring(0, 160)
 
   return {
-    title: `${lab.title} | Labs | Novique.AI`,
+    title: lab.title,
     description,
     openGraph: {
       title: lab.title,

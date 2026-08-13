@@ -31,7 +31,7 @@ export async function generateMetadata({
   const app = getApp(slug);
   if (!app) return {};
 
-  const title = `${app.appStoreName} | Novique.ai`;
+  const title = app.appStoreName;
   const description = app.shortDescription;
   return {
     title,

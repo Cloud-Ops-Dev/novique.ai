@@ -6,7 +6,7 @@ import Logo from "@/components/Logo";
 import { getFeaturedPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
-  title: "Links | Novique.ai",
+  title: "Links",
   description:
     "Quick links to Novique.ai resources - featured articles, social media, and more.",
 };

@@ -19,14 +19,27 @@ const interTight = Inter_Tight({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.novique.ai"),
-  title: "Novique.ai - AI Solutions for Your Small Business",
-  description: "Unlock AI for your small business without the headache. Custom AI solutions that save time, cut costs, and boost growth. First consultation free.",
-  keywords: ["AI consulting", "small business AI", "AI automation", "business automation", "AI chatbots", "AI solutions"],
-  authors: [{ name: "Novique.ai" }],
+  title: {
+    default: "Novique — AI consulting and products",
+    template: "%s | Novique",
+  },
+  description:
+    "We build custom AI and automation for small and mid-sized businesses — and build and operate our own AI products, so you get a team that's shipped the real thing.",
+  authors: [{ name: "Novique" }],
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Novique.ai - AI Solutions for Your Small Business",
-    description: "Custom AI solutions that save time, cut costs, and boost growth. First consultation free.",
+    siteName: "Novique",
+    url: "https://www.novique.ai",
+    locale: "en_US",
     type: "website",
+    title: "Novique — AI consulting and products",
+    description:
+      "We build custom AI and automation for small and mid-sized businesses — and build and operate our own AI products, so you get a team that's shipped the real thing.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@noviqueai",
+    creator: "@noviqueai",
   },
 };
 

@@ -26,7 +26,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${post.title} - Novique Blog`,
+    title: post.title,
     description: post.summary,
   };
 }

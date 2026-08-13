@@ -2,7 +2,7 @@ import ThemeShell from "@/components/marketing/ThemeShell";
 import PageHero from "@/components/marketing/PageHero";
 
 export const metadata = {
-  title: "Page not found — Novique",
+  title: "Page not found",
   description: "The page you were looking for doesn't exist or has moved.",
 };
 

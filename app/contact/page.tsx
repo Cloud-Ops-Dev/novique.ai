@@ -6,7 +6,7 @@ import ContactForm from "@/components/ContactForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact Novique.ai | Get in Touch",
+  title: "Contact",
   description: "Have questions about AI for your small business? Contact Novique.ai today. We're here to help!",
 };
 

@@ -11,7 +11,7 @@ import SignalField from "@/components/graphics/SignalField";
 import { PRODUCTS, SYSTEMS, statusMeta } from "@/lib/work/products";
 
 export const metadata = {
-  title: "Work — Novique",
+  title: "Work",
   description:
     "What Novique has shipped and what's next. LabelWatch, AnswerCrew, Retinue, and Glow Routine live today, LienSentry on waitlist — plus the systems we operate.",
 };

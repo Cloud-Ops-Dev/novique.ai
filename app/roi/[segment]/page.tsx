@@ -320,7 +320,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isSegmentKey(segment)) return {};
   const s = SEGMENTS[segment];
   return {
-    title: `${s.h1} | Novique.ai`,
+    title: `${s.h1}`,
     description: `${s.intro1} ${s.ctaHint}`.slice(0, 160),
     alternates: { canonical: `/roi/${segment}` },
     robots: {
@@ -328,14 +328,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       follow: true,
     },
     openGraph: {
-      title: `${s.h1} | Novique.ai`,
+      title: `${s.h1}`,
       description: s.ctaHint,
       url: `/roi/${segment}`,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${s.h1} | Novique.ai`,
+      title: `${s.h1}`,
       description: s.ctaHint,
     },
   };

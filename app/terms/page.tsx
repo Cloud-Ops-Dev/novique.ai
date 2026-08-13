@@ -3,7 +3,7 @@ import PageHero from "@/components/marketing/PageHero";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Novique.ai",
+  title: "Terms of Service",
   description: "Novique.ai terms of service. Read our terms and conditions.",
 };
 

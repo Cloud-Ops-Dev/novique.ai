@@ -9,7 +9,7 @@ import { getAllApps, appPath, statusLabel } from "@/lib/apps/registry";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Apps | Novique.ai",
+  title: "Apps",
   description:
     "Novique mobile apps. Private, well-made tools with support and privacy information for each release.",
   alternates: { canonical: "/apps" },

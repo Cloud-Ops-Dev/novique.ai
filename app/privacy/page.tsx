@@ -3,7 +3,7 @@ import PageHero from "@/components/marketing/PageHero";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Novique.ai",
+  title: "Privacy Policy",
   description: "Novique.ai privacy policy. Learn how we protect and handle your data.",
 };
 

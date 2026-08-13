@@ -114,11 +114,37 @@ export default function Home() {
                   label.watch ↗
                 </a>
               </div>
+              {/* AnswerCrew — live */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-stroke-1 bg-surface-2 px-5 py-4">
+                <span className="font-display text-dh3 text-ink-0">AnswerCrew</span>
+                <StatusTag label="Live now" tone="live" />
+                <span className="text-sm text-ink-2">AI call answering for residential HVAC shops.</span>
+                <a href="https://answercrew.pro" target="_blank" rel="noopener noreferrer" className="ml-auto text-sm text-link hover:text-link-hover">
+                  answercrew.pro ↗
+                </a>
+              </div>
+              {/* Retinue — live, open source */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-stroke-1 bg-surface-2 px-5 py-4">
+                <span className="font-display text-dh3 text-ink-0">Retinue</span>
+                <StatusTag label="Open source" tone="live" />
+                <span className="text-sm text-ink-2">Self-hosted AI teammates that work together.</span>
+                <a href="https://github.com/novique-ai/retinue" target="_blank" rel="noopener noreferrer" className="ml-auto text-sm text-link hover:text-link-hover">
+                  GitHub ↗
+                </a>
+              </div>
+              {/* Glow Routine — live on the App Store */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-stroke-1 bg-surface-2 px-5 py-4">
+                <span className="font-display text-dh3 text-ink-0">Glow Routine</span>
+                <StatusTag label="Live on iPhone" tone="live" />
+                <span className="text-sm text-ink-2">Private skincare routine journal for iOS.</span>
+                <a href="https://apps.apple.com/app/apple-store/id6777208251?pt=128943714&ct=novique_site&mt=8" target="_blank" rel="noopener noreferrer" className="ml-auto text-sm text-link hover:text-link-hover">
+                  App Store ↗
+                </a>
+              </div>
               {/* In the works */}
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-stroke-1 bg-surface-1 px-5 py-4">
                 <span className="font-display text-dh3 text-ink-1">In the works</span>
                 <span className="inline-flex items-center gap-2 text-sm text-ink-2">LienSentry <StatusTag label="Waitlist" tone="soon" /></span>
-                <span className="inline-flex items-center gap-2 text-sm text-ink-2">Glow Routine <StatusTag label="Live on iPhone" tone="live" /></span>
                 <Link href="/work" className="ml-auto text-sm text-link hover:text-link-hover">See our work →</Link>
               </div>
             </div>

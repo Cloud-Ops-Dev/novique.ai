@@ -14,10 +14,12 @@ import { PRODUCTS, SYSTEMS, statusMeta } from "@/lib/work/products";
 export const metadata = {
   title: "Work — Novique",
   description:
-    "What Novique has shipped and what's next. One AI product live today (LabelWatch), more being built in the open — plus the systems we operate.",
+    "What Novique has shipped and what's next. LabelWatch, AnswerCrew, Glow Routine, and Retinue live today, more being built in the open — plus the systems we operate.",
 };
 
 const labelwatch = PRODUCTS.find((p) => p.slug === "labelwatch")!;
+const answercrew = PRODUCTS.find((p) => p.slug === "answercrew")!;
+const retinue = PRODUCTS.find((p) => p.slug === "retinue")!;
 const liensentry = PRODUCTS.find((p) => p.slug === "liensentry")!;
 const glow = PRODUCTS.find((p) => p.slug === "glow-routine")!;
 
@@ -34,7 +36,7 @@ export default function WorkPage() {
       <PageHero
         eyebrow="Portfolio"
         headline="What we've shipped — and what's next."
-        subhead="One product live today, the rest being built in the open. No vaporware, no invented screenshots — just what's real, labeled honestly."
+        subhead="Four products live today, the rest being built in the open. No vaporware, no invented screenshots — just what's real, labeled honestly."
         ctas={[
           { label: "Book a call", href: "/consultation", variant: "primary" },
           { label: "How we work", href: "/services", variant: "ghost" },
@@ -70,18 +72,39 @@ export default function WorkPage() {
         </div>
       </section>
 
+      {/* Also live */}
+      <section className="mx-auto max-w-container px-6 py-12 md:py-16">
+        <div className="mb-8">
+          <SectionHeading eyebrow="Also live" title="More products in production" subhead="Running today, operated by the same team." />
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <ComingCard name={answercrew.name} sub="Voice AI service · answercrew.pro" meta={statusMeta(answercrew.status)} blurb={answercrew.blurb}>
+            <DarkButton href="https://answercrew.pro" external variant="outline">
+              Visit answercrew.pro ↗
+            </DarkButton>
+          </ComingCard>
+          <ComingCard name={retinue.name} sub="Open source · github.com/novique-ai/retinue" meta={{ label: "Open source", tone: "live" }} blurb={retinue.blurb}>
+            <DarkButton href="https://github.com/novique-ai/retinue" external variant="outline">
+              View on GitHub ↗
+            </DarkButton>
+          </ComingCard>
+          <ComingCard name={glow.name} sub="App Store app · Shell Apps" meta={{ label: "Live on iPhone", tone: "live" }} blurb={glow.blurb}>
+            <DarkButton href={glow.url!} external variant="outline">
+              Get it on the App Store ↗
+            </DarkButton>
+          </ComingCard>
+        </div>
+      </section>
+
       {/* Coming work */}
       <section className="mx-auto max-w-container px-6 py-12 md:py-16">
         <div className="mb-8 flex items-end justify-between gap-4">
           <SectionHeading eyebrow="Next up" title="Being built in the open" subhead="Honest status on each — no fabricated UI." />
-          <QueuedNodesRow tones={["soon", "soon"]} className="hidden shrink-0 pb-2 md:flex" />
+          <QueuedNodesRow tones={["soon"]} className="hidden shrink-0 pb-2 md:flex" />
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <ComingCard name={liensentry.name} sub="SaaS product" meta={statusMeta(liensentry.status)} blurb={liensentry.blurb}>
             <WaitlistCapture product="LienSentry" />
-          </ComingCard>
-          <ComingCard name={glow.name} sub="App Store app · Shell Apps" meta={statusMeta(glow.status)} blurb={glow.blurb}>
-            <span className="text-sm text-ink-3">Private by design — no account, no tracking, nothing leaves the device.</span>
           </ComingCard>
         </div>
       </section>

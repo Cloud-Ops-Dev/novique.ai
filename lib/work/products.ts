@@ -41,6 +41,24 @@ export const PRODUCTS: WorkItem[] = [
     ],
   },
   {
+    slug: "answercrew",
+    name: "AnswerCrew",
+    status: "live",
+    line: "Voice AI service",
+    blurb:
+      "AI call answering for residential HVAC shops. Recovers the after-hours and overflow calls they're already missing — answering by each shop's approved booking, safety, and handoff rules, with a monthly recovered-revenue report.",
+    url: "https://answercrew.pro",
+  },
+  {
+    slug: "retinue",
+    name: "Retinue",
+    status: "live",
+    line: "Open source",
+    blurb:
+      "Self-hosted AI teammates that work together — named agents share rooms, take turns, and hand work to each other, all on your own hardware. Our open-source fork, built and run by us.",
+    url: "https://github.com/novique-ai/retinue",
+  },
+  {
     slug: "liensentry",
     name: "LienSentry",
     status: "waitlist",
@@ -51,10 +69,11 @@ export const PRODUCTS: WorkItem[] = [
   {
     slug: "glow-routine",
     name: "Glow Routine Journal",
-    status: "coming-soon",
+    status: "live",
     line: "App Store app",
     blurb:
       "A private, local-only skincare routine and progress journal for iOS — no account, no tracking, nothing leaves the device. Part of our Shell Apps line.",
+    url: "https://apps.apple.com/app/apple-store/id6777208251?pt=128943714&ct=novique_site&mt=8",
   },
 ];
 

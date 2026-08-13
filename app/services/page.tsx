@@ -9,6 +9,7 @@ import SplitFlowDiagram from "@/components/graphics/SplitFlowDiagram";
 import { TRACKS, PROCESS, AUDIENCE } from "@/lib/work/products";
 
 export const metadata = {
+  alternates: { canonical: "/services" },
   title: "Services",
   description:
     "AI that does the work you keep putting off. Novique builds custom automation and monitoring for small and mid-sized businesses — and can keep operating it.",

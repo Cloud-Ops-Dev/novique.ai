@@ -7,6 +7,7 @@ import SectionHeading from '@/components/marketing/SectionHeading'
 import DarkButton from '@/components/marketing/DarkButton'
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/labs" },
   title: 'Labs',
   description: 'Explore our hands-on infrastructure labs with animated workflow diagrams. Learn Terraform, AWS, Docker, and more through practical examples.',
 }

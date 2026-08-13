@@ -6,9 +6,11 @@ import ThemeShell from '@/components/marketing/ThemeShell';
 import ROICalculatorForm from '@/components/roi-calculator/ROICalculatorForm';
 import SegmentParamSync from './segment-param-sync';
 
-type SegmentKey = 'financial' | 'healthcare' | 'logistics' | 'real-estate';
+import { SEGMENT_URL_SLUGS, type SegmentUrlSlug } from '@/lib/roi/segments';
 
-const SEGMENT_KEYS: SegmentKey[] = ['financial', 'healthcare', 'logistics', 'real-estate'];
+type SegmentKey = SegmentUrlSlug;
+
+const SEGMENT_KEYS: SegmentKey[] = [...SEGMENT_URL_SLUGS];
 
 // Prebuild these routes at build time (SSG)
 export function generateStaticParams() {

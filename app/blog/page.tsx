@@ -9,6 +9,7 @@ import { Metadata } from "next";
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/blog" },
   title: "Blog",
   description: "Read our latest articles on AI, automation, and small business technology.",
 };

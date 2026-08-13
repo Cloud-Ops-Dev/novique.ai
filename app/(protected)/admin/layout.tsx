@@ -1,6 +1,10 @@
 import { requireAdminOrEditor } from '@/lib/auth/session'
 import { AdminNav } from '@/components/admin/AdminNav'
 
+export const metadata = {
+  robots: { index: false },
+};
+
 /**
  * Admin layout - requires admin or editor role
  *

@@ -139,6 +139,18 @@ export const ALL_SEGMENTS: ROISegment[] = [
   'realestate',
 ];
 
+// Public URL slugs for the /roi/[segment] route family. Note 'real-estate'
+// (hyphenated URL) vs the internal 'realestate' segment id above — the two
+// lists are intentionally separate.
+export const SEGMENT_URL_SLUGS = [
+  'financial',
+  'healthcare',
+  'logistics',
+  'real-estate',
+] as const;
+
+export type SegmentUrlSlug = (typeof SEGMENT_URL_SLUGS)[number];
+
 // Parse and validate segment from URL param
 export function parseSegment(value: string | null): ROISegment | null {
   if (!value) return null;

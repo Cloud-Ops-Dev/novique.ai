@@ -8,6 +8,7 @@ import { PRODUCTS, SYSTEMS, statusMeta } from "@/lib/work/products";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About",
   description:
     "Novique is a small AI studio that builds and runs its own software products, and builds the same kind of software for small and mid-sized businesses. No jargon, no enterprise budget required.",

@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: LabPageProps): Promise<Metada
   return {
     title: lab.title,
     description,
+    alternates: { canonical: `/labs/${slug}` },
     openGraph: {
       title: lab.title,
       description,

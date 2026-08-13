@@ -11,6 +11,7 @@ import IsoFigure from "@/components/graphics/IsoFigure";
 import { TRACKS } from "@/lib/work/products";
 
 export const metadata = {
+  alternates: { canonical: "/" },
   title: { absolute: "Novique — Put AI to work in your business" },
   description:
     "Novique builds custom AI and automation for small and mid-sized businesses — designed, built, and run for you. We operate our own AI products too, so you get a team that's shipped the real thing.",

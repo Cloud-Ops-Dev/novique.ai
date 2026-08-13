@@ -26,7 +26,6 @@ export const metadata: Metadata = {
   description:
     "We build custom AI and automation for small and mid-sized businesses — and build and operate our own AI products, so you get a team that's shipped the real thing.",
   authors: [{ name: "Novique" }],
-  alternates: { canonical: "/" },
   openGraph: {
     siteName: "Novique",
     url: "https://www.novique.ai",

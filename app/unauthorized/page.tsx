@@ -1,5 +1,9 @@
 import Link from 'next/link'
 
+export const metadata = {
+  robots: { index: false },
+}
+
 export default function UnauthorizedPage() {
   return (
     <div className="theme-dark min-h-screen flex items-center justify-center bg-surface-0 font-sans antialiased py-12 px-4 sm:px-6 lg:px-8">

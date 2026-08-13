@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import JsonLd from "@/components/seo/JsonLd";
+import { softwareApplicationSchema } from "@/lib/seo/schema";
 import SiteHeader from "@/components/marketing/SiteHeader";
 import SiteFooter from "@/components/marketing/SiteFooter";
 import Section from "@/components/Section";
@@ -62,7 +64,12 @@ export default async function AppLandingPage({
   const app = getApp(slug);
   if (!app) notFound();
 
-  return app.landing ? <ThemedLanding app={app} /> : <SimpleLanding app={app} />;
+  return (
+    <>
+      <JsonLd data={softwareApplicationSchema(app)} />
+      {app.landing ? <ThemedLanding app={app} /> : <SimpleLanding app={app} />}
+    </>
+  );
 }
 
 /* ---------------------------------------------------------------- themed --- */

@@ -1,3 +1,5 @@
+import JsonLd from "@/components/seo/JsonLd"
+import { techArticleSchema } from "@/lib/seo/schema"
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -75,6 +77,7 @@ export default async function LabPage({ params }: LabPageProps) {
 
   return (
     <ThemeShell>
+      <JsonLd data={techArticleSchema(lab)} />
       {/* Header */}
       <section className="relative isolate overflow-hidden border-b border-stroke-1">
         <AuroraOrbField intensity="soft" />

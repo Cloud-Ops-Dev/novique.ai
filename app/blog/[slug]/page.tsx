@@ -1,3 +1,5 @@
+import JsonLd from "@/components/seo/JsonLd";
+import { blogPostingSchema } from "@/lib/seo/schema";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -42,6 +44,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
   return (
     <ThemeShell>
+      <JsonLd data={blogPostingSchema(post)} />
       <article>
         {/* Post header */}
         <header className="relative isolate overflow-hidden border-b border-stroke-1">

@@ -1,3 +1,5 @@
+import JsonLd from "@/components/seo/JsonLd";
+import { faqPageSchema } from "@/lib/seo/schema";
 import Link from "next/link";
 import ThemeShell from "@/components/marketing/ThemeShell";
 import PageHero from "@/components/marketing/PageHero";
@@ -29,6 +31,7 @@ const FAQS = [
 export default function ContactPage() {
   return (
     <ThemeShell>
+      <JsonLd data={faqPageSchema(FAQS)} />
       <PageHero
         eyebrow="Contact"
         headline={

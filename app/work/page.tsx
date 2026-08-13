@@ -3,12 +3,11 @@ import PageHero from "@/components/marketing/PageHero";
 import SectionHeading from "@/components/marketing/SectionHeading";
 import StatusTag from "@/components/marketing/StatusTag";
 import DarkButton from "@/components/marketing/DarkButton";
-import WaitlistCapture from "@/components/marketing/WaitlistCapture";
 import GraphicFrame from "@/components/graphics/GraphicFrame";
 import RecallSignal from "@/components/graphics/RecallSignal";
+import ProcessFlowLine from "@/components/graphics/ProcessFlowLine";
 import IsoFigure from "@/components/graphics/IsoFigure";
 import SignalField from "@/components/graphics/SignalField";
-import QueuedNodesRow from "@/components/graphics/QueuedNodesRow";
 import { PRODUCTS, SYSTEMS, statusMeta } from "@/lib/work/products";
 
 export const metadata = {
@@ -28,6 +27,13 @@ const CASE = [
   { k: "What we built", v: "A service that ingests the federal recall feeds every night, normalizes them, and matches each entry against a brand's catalog and competitors — alerting them the moment something lands." },
   { k: "The model", v: "A subscription SaaS at $39 / $99 / $299 a month on Stripe, live today at label.watch. Real customers, real billing." },
   { k: "We operate it", v: "We don't hand it off. The same team that built the recall pipeline runs it in production and watches it — which is exactly how we'd run something for you." },
+];
+
+const LIEN_CASE = [
+  { k: "The problem", v: "Texas Chapter 53 protects a subcontractor's right to get paid — but only if the right notices go out on time. Every commercial job carries three statutory deadlines: fund-trapping notices, derivative-claimant notices, and the lien affidavit. Miss one and the lien rights on that money are gone." },
+  { k: "What we built", v: "A rules engine that tracks every active job's Chapter 53 calendar and alerts the sub before each deadline — email, Slack, Teams, or SMS — with opt-in certified mail and a tracked return receipt when it's time to file." },
+  { k: "The model", v: "A subscription SaaS at $99 / $249 / $499 a month for commercial-mechanical subcontractors. The waitlist is open today at liensentry.com." },
+  { k: "We operate it", v: "Same promise as LabelWatch: we don't hand it off. The team that built the deadline engine runs it and watches it — with an audit-ready trail of every notice." },
 ];
 
 export default function WorkPage() {
@@ -72,6 +78,35 @@ export default function WorkPage() {
         </div>
       </section>
 
+      {/* LienSentry case study */}
+      <section className="mx-auto max-w-container px-6 pb-16 md:pb-24">
+        <div className="nv-card overflow-hidden rounded-2xl">
+          <GraphicFrame height={160} className="border-b border-stroke-1 bg-surface-1">
+            <ProcessFlowLine className="absolute inset-0" />
+          </GraphicFrame>
+          <div className="p-8 md:p-10">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="font-display text-dh1 text-ink-0">{liensentry.name}</h2>
+              <StatusTag label="Waitlist open" tone="soon" />
+            </div>
+            <p className="mt-2 font-mono text-sm text-ink-3">SaaS product · liensentry.com</p>
+            <div className="mt-8 grid gap-x-10 gap-y-8 md:grid-cols-2">
+              {LIEN_CASE.map((c) => (
+                <div key={c.k}>
+                  <h3 className="nv-eyebrow mb-2">{c.k}</h3>
+                  <p className="text-ink-1">{c.v}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8">
+              <DarkButton href="https://liensentry.com" external variant="outline">
+                Join the waitlist at liensentry.com ↗
+              </DarkButton>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Also live */}
       <section className="mx-auto max-w-container px-6 py-12 md:py-16">
         <div className="mb-8">
@@ -92,19 +127,6 @@ export default function WorkPage() {
             <DarkButton href={glow.url!} external variant="outline">
               Get it on the App Store ↗
             </DarkButton>
-          </ComingCard>
-        </div>
-      </section>
-
-      {/* Coming work */}
-      <section className="mx-auto max-w-container px-6 py-12 md:py-16">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <SectionHeading eyebrow="Next up" title="Being built in the open" subhead="Honest status on each — no fabricated UI." />
-          <QueuedNodesRow tones={["soon"]} className="hidden shrink-0 pb-2 md:flex" />
-        </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          <ComingCard name={liensentry.name} sub="SaaS product" meta={statusMeta(liensentry.status)} blurb={liensentry.blurb}>
-            <WaitlistCapture product="LienSentry" />
           </ComingCard>
         </div>
       </section>

@@ -65,6 +65,12 @@ export const PRODUCTS: WorkItem[] = [
     line: "SaaS product",
     blurb:
       "Texas Chapter 53 lien-deadline tracking for commercial-mechanical subcontractors — the three statutory notices per job, watched and sent by certified mail before the deadline.",
+    url: "https://liensentry.com",
+    tiers: [
+      { name: "Starter", price: "$99" },
+      { name: "Pro", price: "$249" },
+      { name: "Team", price: "$499" },
+    ],
   },
   {
     slug: "glow-routine",

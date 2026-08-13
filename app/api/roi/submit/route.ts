@@ -3,7 +3,13 @@ import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { discordWebhookNotifications, DiscordWebhookNotificationService } from "@/lib/services/discord-webhook-notifications";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy: constructing Resend without a key throws, which would break build-time
+// page-data collection and cold starts. Same pattern as lib/ai/openai.ts.
+function getResend() {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error("RESEND_API_KEY is not configured");
+  return new Resend(key);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     // Send notification email to admin
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: "Novique.ai <notifications@novique.ai>",
         to: "mark@novique.ai",
         subject: "New ROI Calculator Lead",

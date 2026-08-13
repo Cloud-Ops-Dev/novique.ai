@@ -17,7 +17,7 @@ CRM_REQUIRED_DEPS="node npm jq"
 # Build commands (empty = skip gate)
 CRM_LINT_CMD="npx next lint"
 CRM_TEST_CMD=""
-CRM_BUILD_CMD=""  # TODO: enable once RESEND_API_KEY available locally
+CRM_BUILD_CMD="npm run build"  # re-enabled 2026-08-13: Resend is lazy-init now, build no longer needs RESEND_API_KEY
 CRM_TYPECHECK_CMD="npx tsc --noEmit"
 
 # Container images (name:dockerfile:context entries, empty = no images)

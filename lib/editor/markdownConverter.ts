@@ -1,5 +1,50 @@
 import TurndownService from 'turndown'
 import { gfm } from 'turndown-plugin-gfm'
+import { marked } from 'marked'
+
+/**
+ * Convert Markdown to HTML for TipTap / blog storage.
+ * Does not mutate marked's global defaults (public blog pages use breaks: true).
+ */
+export function markdownToHtml(markdown: string): string {
+  return String(
+    marked.parse(markdown || '', {
+      async: false,
+      gfm: true,
+      breaks: false,
+    })
+  )
+}
+
+/**
+ * True when plain text is authored markdown (headings, fences, tables, quotes),
+ * not a single bullet or a stray hash.
+ */
+export function looksLikeMarkdown(text: string): boolean {
+  if (!text || text.trim().length < 8) return false
+  return (
+    /^(#{1,6})\s+\S/m.test(text) ||
+    /^>\s+\S/m.test(text) ||
+    /^```/m.test(text) ||
+    /^\|.+\|/m.test(text) ||
+    (/\*\*[^*]+\*\*/.test(text) && /^[-*+]\s+\S/m.test(text))
+  )
+}
+
+/**
+ * Clipboard is raw markdown wrapped in a trivial HTML shell (VS Code, chat,
+ * a .md file) rather than already-converted rich HTML (Docs, a web page).
+ */
+export function clipboardIsRawMarkdown(text: string, html: string): boolean {
+  if (!looksLikeMarkdown(text)) return false
+  if (!html) return true
+  const untagged = html.replace(/<[^>]+>/g, ' ')
+  if (/^#{1,6}\s/m.test(untagged) || /^\|.+\|/m.test(untagged) || /^```/m.test(untagged)) {
+    return true
+  }
+  if (/<(h[1-6]|ul|ol|blockquote|table)\b/i.test(html)) return false
+  return true
+}
 
 /**
  * Convert HTML to Markdown

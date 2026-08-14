@@ -2,8 +2,9 @@
 
 import { useEditor, EditorContent } from '@tiptap/react'
 import { editorExtensions, editorProps } from '@/lib/editor/tiptapConfig'
-import { htmlToMarkdown } from '@/lib/editor/markdownConverter'
-import { useEffect, useState } from 'react'
+import { htmlToMarkdown, markdownToHtml, clipboardIsRawMarkdown } from '@/lib/editor/markdownConverter'
+import { useEffect, useRef, useState } from 'react'
+import type { Editor } from '@tiptap/react'
 import EditorToolbar from './EditorToolbar'
 import UnsplashImagePicker from './UnsplashImagePicker'
 
@@ -23,12 +24,26 @@ export default function TipTapEditor({
   placeholder,
 }: TipTapEditorProps) {
   const [showUnsplashPicker, setShowUnsplashPicker] = useState(false)
+  const editorRef = useRef<Editor | null>(null)
   const editor = useEditor({
     extensions: editorExtensions,
     content,
     editable,
-    editorProps,
     immediatelyRender: false, // Fix SSR hydration mismatch
+    editorProps: {
+      ...editorProps,
+      handlePaste(_view, event) {
+        const text = event.clipboardData?.getData('text/plain') ?? ''
+        const htmlClip = event.clipboardData?.getData('text/html') ?? ''
+        if (!clipboardIsRawMarkdown(text, htmlClip)) return false
+        const html = markdownToHtml(text)
+        editorRef.current?.commands.insertContent(html)
+        return true
+      },
+    },
+    onCreate: ({ editor }) => {
+      editorRef.current = editor
+    },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
       const markdown = htmlToMarkdown(html)

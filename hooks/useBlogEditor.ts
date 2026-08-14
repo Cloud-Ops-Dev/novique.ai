@@ -137,6 +137,23 @@ export function useBlogEditor({
         }
 
         const result = await response.json()
+        if (result.data) {
+          const created = !formData.id && !!result.data.id
+          setFormData((prev) => ({
+            ...prev,
+            id: result.data.id ?? prev.id,
+            slug: result.data.slug ?? prev.slug,
+            status: result.data.status ?? prev.status,
+          }))
+          if (created && typeof window !== 'undefined') {
+            const admin = window.location.pathname.startsWith('/admin/')
+            router.replace(
+              admin
+                ? `/admin/blog/${result.data.slug}/edit`
+                : `/editor/blog/${result.data.slug}/edit`
+            )
+          }
+        }
         return result.data
       } catch (error) {
         console.error('Save error:', error)
@@ -145,7 +162,7 @@ export function useBlogEditor({
         setIsSaving(false)
       }
     },
-    [formData, validate]
+    [formData, validate, router]
   )
 
   // Delete post

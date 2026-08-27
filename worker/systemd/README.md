@@ -1,6 +1,6 @@
 # systemd templates
 
-These user-unit templates are shipped for the clay-blade ship ceremony. They are not installed by application development work.
+These user-unit templates are shipped for the ship ceremony on the worker host. They are not installed by application development work.
 
 ## Units
 

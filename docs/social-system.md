@@ -6,7 +6,7 @@ The social system has three execution surfaces with Supabase as their shared dur
 
 - **Control plane — Supabase:** campaigns, research/artifacts, approvals, social posts, OAuth accounts, publish attempts, queue leases, template probation, and metric snapshots. Row-level security protects operator-facing access; service-role credentials stay server-side.
 - **Site — novique.ai:** `/admin/social` is the operator surface for accounts, editing, approvals, queueing, manual publishing, and metrics. Vercel callbacks persist OAuth transactions and the short publish executor calls the direct X, LinkedIn, and Meta adapters.
-- **Worker — clay-blade:** the idempotent TypeScript worker performs discovery, planning, research, article generation, and fixed-window metric collection. It runs as a systemd user timer with its own mandatory environment file and never depends on an interactive shell.
+- **Worker — self-hosted worker host:** the idempotent TypeScript worker performs discovery, planning, research, article generation, and fixed-window metric collection. It runs as a systemd user timer with its own mandatory environment file and never depends on an interactive shell.
 
 ## Approval gates
 
@@ -40,7 +40,7 @@ An approved post review moves its post to `queued` and enqueues it immediately. 
 
 ### Queue failures and dead-letter alerts
 
-The publish-queue dispatcher (clay-blade timer → `/api/cron/process-social-queue`) claims due rows in bounded leases and retries retryable failures with 1-, 5-, and 25-minute backoff. At the configured maximum (three attempts by default), it removes the item from active processing, marks the post failed, and sends a Discord dead-letter alert. Treat the alert as requiring operator action: inspect `error_details`, account token status, and the matching publish-attempt ledger before requeueing. Ambiguous or stale `publishing` work is routed to `needs_review`, not automatically retried.
+The publish-queue dispatcher (worker-host timer → `/api/cron/process-social-queue`) claims due rows in bounded leases and retries retryable failures with 1-, 5-, and 25-minute backoff. At the configured maximum (three attempts by default), it removes the item from active processing, marks the post failed, and sends a Discord dead-letter alert. Treat the alert as requiring operator action: inspect `error_details`, account token status, and the matching publish-attempt ledger before requeueing. Ambiguous or stale `publishing` work is routed to `needs_review`, not automatically retried.
 
 ### Worker commands
 
@@ -58,7 +58,7 @@ npm run worker:typecheck
 
 The full environment contract and stage behavior are in [`worker/README.md`](../worker/README.md).
 
-### systemd install on clay-blade
+### systemd install on the worker host
 
 Installation is a ship-ceremony operation, not part of application development:
 
@@ -67,7 +67,7 @@ Installation is a ship-ceremony operation, not part of application development:
 3. Use the fleet’s approved service-install wrapper to reload user units and enable **both** timers.
 4. Validate schedules, run each service once, and inspect journals. Detail: [`worker/systemd/README.md`](../worker/systemd/README.md).
 
-**Why clay-blade owns the 5-minute queue:** Vercel Hobby only allows daily cron jobs. The social queue dispatcher therefore runs on clay-blade (`novique-social-queue.timer`) and calls `GET /api/cron/process-social-queue` with `Authorization: Bearer $CRON_SECRET`. Do not reintroduce a `*/5` schedule in `vercel.json` without upgrading the Vercel plan.
+**Why the worker host owns the 5-minute queue:** Vercel Hobby only allows daily cron jobs. The social queue dispatcher therefore runs on the worker host (`novique-social-queue.timer`) and calls `GET /api/cron/process-social-queue` with `Authorization: Bearer $CRON_SECRET`. Do not reintroduce a `*/5` schedule in `vercel.json` without upgrading the Vercel plan.
 
 ## Ship checklist
 
@@ -77,7 +77,7 @@ Installation is a ship-ceremony operation, not part of application development:
 - [x] Run `npx tsx scripts/encrypt-social-tokens.ts` with the production encryption key available; verify no plaintext social tokens remain. *(scanned 1 / updated 1 / plaintext 0)*
 - [ ] Reconnect X and confirm the granted scope contains `offline.access`. *(no X account row; operator browser OAuth required)*
 - [ ] Reconnect LinkedIn and confirm the granted scopes contain `openid` and `profile` plus the posting scopes required for the selected member/organization mode. *(existing row expired 2026-05-11, scope only `w_member_social`)*
-- [x] Install and validate the worker systemd units on clay-blade with its `%h/.config/novique-worker/env` file. *(content-worker.timer + social-queue.timer; metrics OK; full `worker:run` blocked on Anthropic credits)*
+- [x] Install and validate the worker systemd units on the worker host with its `%h/.config/novique-worker/env` file. *(content-worker.timer + social-queue.timer; metrics OK; full `worker:run` blocked on Anthropic credits)*
 - [ ] Verify one **manual** publish on each **allowed** connected platform (see Meta gate below). Confirm the platform URL, local `published` state, durable attempt, and media where applicable. *(blocked on OAuth reconnect; FB/IG gated)*
 
 ### Meta / Instagram / Facebook publish gate (STRICT)

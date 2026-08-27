@@ -7,7 +7,7 @@
 set -e
 
 PROJECT_NAME="${1:-novique.ai}"
-PORT_REGISTRY="/home/clay/IDE/PORT_REGISTRY.md"
+PORT_REGISTRY="${IDE_ROOT:-$HOME/IDE}/PORT_REGISTRY.md"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 

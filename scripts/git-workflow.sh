@@ -13,7 +13,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Get the project directory
-PROJECT_DIR="/home/clay/Documents/GitHub/novique.ai"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Function to print colored output
 print_info() {

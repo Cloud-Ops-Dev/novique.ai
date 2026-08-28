@@ -1,6 +1,6 @@
 ---
 owner: Clayton
-last_reviewed: 2026-05-05
+last_reviewed: 2026-08-28
 source_of_truth_for: novique.ai operating contract for agents — extends IDE constitution
 supersedes: null
 ---
@@ -186,6 +186,6 @@ projects/novique.ai/
 
 ## Open Brain Integration
 
-> Inherits Section 10 of the IDE constitution (`~/IDE/CLAUDE.md`).
+> Inherits constitution **§13** (files-canonical).
 
-Agents MUST search Open Brain at session start for prior context (`search_thoughts`), capture durable project knowledge during work (`capture_thought`), and review for uncaptured insights at session end. Only store knowledge useful across sessions — not transient task state. Open Brain informs decisions but does not override CLAUDE.md authority.
+Curated durable facts go to `projects/knowledge` (`facts/<domain>/<slug>.md` + `bin/kb-index`). Session-log checkpoints stay `capture_thought(primary_tag="session-log")`. Open Brain `source='kb'` rows are derived — never edit them to correct a fact. `search_thoughts` covers both. Do not capture this constitution, a subordinate AGENTS.md, or a runbook as a thought.
